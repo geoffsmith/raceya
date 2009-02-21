@@ -13,8 +13,12 @@
 #include <time.h>
 #include <string>
 
+#include "obj.h"
+
 
 using namespace std;
+
+static Obj * car;
 
 void setupLighting();
 
@@ -57,7 +61,9 @@ void setupLighting() {
     glLightfv(GL_LIGHT1, GL_AMBIENT, dark);
 }
 
-void init_objects() {
+void initObjects() {
+    // Load up a car obj
+    car = Obj::makeObj("resources/r8/R8.obj");
 }
 
 void reshape(int w, int h) {
@@ -69,13 +75,16 @@ void reshape(int w, int h) {
 }
 
 void display(void) {
-    // display the planets
+    // Render the scene
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     glEnable(GL_TEXTURE_2D);
 
 
     glColor3f(1.0, 1.0, 1.0);
     glLoadIdentity(); // clear the matrix
+
+    // Draw the car
+    car->render();
 
     glDisable(GL_TEXTURE_2D);
 }
@@ -128,7 +137,7 @@ int main(int argc, char** argv) {
     }
 
     init();
-    init_objects();
+    initObjects();
 
     // Enter the main look
     while (1) {
