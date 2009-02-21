@@ -1,0 +1,1374 @@
+# 
+# Wavefront material file
+# Converted by the DEEP Exploration  Deep Exploration 5.5 5.5.3.2642 Release
+# Right Hemisphere, LTD
+# http://www.righthemisphere.com/
+# 
+
+newmtl License
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 64
+map_Kd LICENSE.png
+map_bump 
+bump 
+map_opacity LICENSE MASK.png
+map_d LICENSE MASK.png
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Body_paint
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Badging_Chrome
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 64
+map_Kd R8 BADGING.png
+map_bump R8 BADGING NORMAL.png
+bump R8 BADGING NORMAL.png
+map_opacity R8 BADGING MASK.png
+map_d R8 BADGING MASK.png
+refl R8 BADGING MASK.png
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Base
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material__580
+Ka 0.537255 0.537255 0.537255
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 194.012
+map_Kd R8 BRAKELIGHT.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material__581
+Ka 0.435294 0.435294 0.435294
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 168.897
+map_Kd R8 BRAKELIGHT.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material__582
+Ka 0.639216 0.639216 0.639216
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 59.7141
+map_Kd R8 BRAKELIGHT.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl BackLights
+Ka 0.537255 0.537255 0.537255
+Kd 0.537255 0.537255 0.537255
+Ks 0.9 0.9 0.9
+illum 2
+Ns 194.012
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material__583
+Ka 0.203922 0.203922 0.203922
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 21.1121
+d 0.47
+map_Kd R8 BRAKELIGHT GLASS.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Grill
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 25.9921
+map_Kd R8 GRILL.png
+map_bump 
+bump 
+map_opacity R8 GRILL MASK.png
+map_d R8 GRILL MASK.png
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Body_paint0
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc0
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc1
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Badging_Chrome0
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 64
+map_Kd R8 BADGING.png
+map_bump R8 BADGING NORMAL.png
+bump R8 BADGING NORMAL.png
+map_opacity R8 BADGING MASK.png
+map_d R8 BADGING MASK.png
+refl R8 BADGING MASK.png
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl DoorLine
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd DOORLINE.png
+map_bump 
+bump 
+map_opacity DOORLINE MASK.png
+map_d DOORLINE MASK.png
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc2
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc_Chrome
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 64
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Black
+Ka 0 0 0
+Kd 0 0 0
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Body
+Ka 0 0 0
+Kd 0 0 0
+Ks 0.9 0.9 0.9
+illum 2
+Ns 25.9921
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Body_paint1
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc3
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 238.856
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc4
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 68.5935
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc_Chrome0
+Ka 0 0 0
+Kd 1 1 1
+Ks 1 1 1
+illum 2
+Ns 337.794
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc5
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 64
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Radiator
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 51.9842
+map_Kd R8 RADIATOR.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Bottom
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd BOTTOM.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl BumperF
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Badging_Chrome1
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 64
+map_Kd R8 BADGING1.png
+map_bump R8 BADGING NORMAL1.png
+bump R8 BADGING NORMAL1.png
+map_opacity R8 BADGING MASK.png
+map_d R8 BADGING MASK.png
+refl R8 BADGING MASK.png
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Body_paint2
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc6
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 137.187
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc7
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 111.43
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc8
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 59.7141
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl BumperR
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl DoorLine0
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd DOORLINE.png
+map_bump 
+bump 
+map_opacity DOORLINE MASK.png
+map_d DOORLINE MASK.png
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Badging_Chrome2
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 64
+map_Kd R8 BADGING.png
+map_bump R8 BADGING NORMAL.png
+bump R8 BADGING NORMAL.png
+map_opacity R8 BADGING MASK.png
+map_d R8 BADGING MASK.png
+refl R8 BADGING MASK.png
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl BumperRB
+Ka 0 0 0
+Kd 0 0 0
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Body_paint3
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc9
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 119.428
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc10
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 137.187
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Door
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Badging_Chrome3
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 64
+map_Kd R8 BADGING.png
+map_bump R8 BADGING NORMAL.png
+bump R8 BADGING NORMAL.png
+map_opacity R8 BADGING MASK.png
+map_d R8 BADGING MASK.png
+refl R8 BADGING MASK.png
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl DoorLine1
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd DOORLINE.png
+map_bump 
+bump 
+map_opacity DOORLINE MASK.png
+map_d DOORLINE MASK.png
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl DoorLine2
+Ka 0 0 0
+Kd 0 0 0
+Ks 0.9 0.9 0.9
+illum 2
+Ns 64
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Driver
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd DRIVER.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc_Chrome1
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 64
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Interior_Chrome
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 64
+map_Kd R8 INTERIOR.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Interior
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd R8 INTERIOR.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl HiInt
+Ka 0 0 0
+Kd 0 0 0
+Ks 0.9 0.9 0.9
+illum 2
+Ns 64
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material__589
+Ka 0.588 0.588 0.588
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 73.5167
+map_Kd R8 HEADLIGHT.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc11
+Ka 0.588235 0.588235 0.588235
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 48.5029
+map_Kd R8 HEADLIGHT1.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl HeadLights
+Ka 0.588 0.588 0.588
+Kd 0.588 0.588 0.588
+Ks 0.9 0.9 0.9
+illum 2
+Ns 73.5167
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl DoorLine3
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd DOORLINE.png
+map_bump 
+bump 
+map_opacity DOORLINE MASK.png
+map_d DOORLINE MASK.png
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material__590
+Ka 0.164706 0.164706 0.164706
+Kd 0.164706 0.164706 0.164706
+Ks 0.9 0.9 0.9
+illum 2
+Ns 45.2548
+d 0.4
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl HeadLights_Glass
+Ka 0 0 0
+Kd 0 0 0
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Body_paint4
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Interior0
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd R8 INTERIOR.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Body_paint5
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc_Chrome2
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 64
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl DoorLine4
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd DOORLINE.png
+map_bump 
+bump 
+map_opacity DOORLINE MASK.png
+map_d DOORLINE MASK.png
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material__593
+Ka 0.184314 0.184314 0.184314
+Kd 0.184314 0.184314 0.184314
+Ks 0.9 0.9 0.9
+illum 2
+Ns 32
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Mirror
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Body_paint6
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc12
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material__595
+Ka 0.294118 0.294118 0.294118
+Kd 0.294118 0.294118 0.294118
+Ks 0.9 0.9 0.9
+illum 2
+Ns 48.5029
+d 0.4
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material__5950
+Ka 0.172549 0.941177 0.227451
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 64
+map_Kd R8 BRAKELIGHT GLASS.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Roof
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Body_paint7
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Misc13
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Bottom0
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 4
+map_Kd BOTTOM.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Skirt
+Ka 0.588235 0.721569 0.772549
+Kd 0.588235 0.721569 0.772549
+Ks 1 1 1
+illum 2
+Ns 238.856
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material__598
+Ka 0.0470588 0.109804 0.141176
+Kd 0.0470588 0.109804 0.141176
+Ks 0.9 0.9 0.9
+illum 2
+Ns 36.7583
+d 0.24
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material__5980
+Ka 0.133333 0.133333 0.133333
+Kd 0.133333 0.133333 0.133333
+Ks 0.9 0.9 0.9
+illum 2
+Ns 90.5097
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Wind
+Ka 0.0470588 0.109804 0.141176
+Kd 0.0470588 0.109804 0.141176
+Ks 0.9 0.9 0.9
+illum 2
+Ns 36.7583
+d 0.24
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material__5981
+Ka 0.0470588 0.109804 0.141176
+Kd 0.0470588 0.109804 0.141176
+Ks 0.9 0.9 0.9
+illum 2
+Ns 36.7583
+d 0.24
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl glass
+Ka 0.0980392 0.0980392 0.0980392
+Kd 0.0980392 0.0980392 0.0980392
+Ks 0.9 0.9 0.9
+illum 2
+Ns 73.5167
+d 0.24
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material__602
+Ka 0.0705882 0.0705882 0.0705882
+Kd 0.0705882 0.0705882 0.0705882
+Ks 0.9 0.9 0.9
+illum 2
+Ns 103.968
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Defrost
+Ka 0.0980392 0.0980392 0.0980392
+Kd 0.0980392 0.0980392 0.0980392
+Ks 0.9 0.9 0.9
+illum 2
+Ns 73.5167
+d 0.24
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Brake_Disc
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 34.2967
+map_Kd BRAKDISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Tire
+Ka 0.192157 0.192157 0.192157
+Kd 1 1 1
+Ks 1 1 1
+illum 2
+Ns 5.65685
+map_Kd TIRE.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Material__603
+Ka 0.588 0.588 0.588
+Kd 1 1 1
+Ks 1 1 1
+illum 2
+Ns 256
+map_Kd R8 RIM.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Tire_Back
+Ka 0.192157 0.192157 0.192157
+Kd 0.192157 0.192157 0.192157
+Ks 1 1 1
+illum 2
+Ns 5.65685
+map_Kd 
+map_bump 
+bump 
+map_opacity TIREBACK.png
+map_d TIREBACK.png
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Tire0
+Ka 0.192157 0.192157 0.192157
+Kd 0.192157 0.192157 0.192157
+Ks 1 1 1
+illum 2
+Ns 5.65685
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Brake_Pads
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.9 0.9 0.9
+illum 2
+Ns 13.9288
+map_Kd R8 MISC.png
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl wireframe_color_0x99E499
+Ka 0.117647 0.117647 0.117647
+Kd 0.6 0.894118 0.6
+Ks 0.752941 0.752941 0.752941
+illum 2
+Ns 8
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
