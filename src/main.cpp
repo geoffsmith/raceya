@@ -48,19 +48,6 @@ void init(void) {
 void setupLighting() {
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHT1);
-
-    // Add two lights to the ship
-    glEnable(GL_LIGHT2);
-    //GLfloat ship_left_light[] = { 1, 0, 0 };
-    //glLightfv(GL_LIGHT2, GL_DIFFUSE, ship_left_light);
-    glEnable(GL_LIGHT3);
-
-    // Set up the ambient light so we can see on the dark side of the planet
-    GLfloat light[] = { 0, 0, 0 };
-    GLfloat dark[] = { 1, 1, 1};
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, light);
-    glLightfv(GL_LIGHT1, GL_AMBIENT, dark);
 }
 
 void initObjects() {
@@ -86,6 +73,10 @@ void display(void) {
 
     glColor3f(1.0, 1.0, 1.0);
     glLoadIdentity(); // clear the matrix
+
+    // Position the light at the camera
+    float lightPosition[] = { 0, 0, 1, 0 };
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
     camera->viewTransform();
 

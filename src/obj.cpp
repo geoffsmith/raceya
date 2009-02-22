@@ -184,34 +184,69 @@ vector<string> Obj::_splitLine(string line, const unsigned int length, const cha
 }
 
 void Obj::_createDisplayList() {
-    glLoadIdentity();
+    Material * material = 0;
     Face* face;
     vector<GLfloat>* texture;
     vector<GLfloat>* vertex;
     vector<GLfloat>* normal;
     list< Face * >::iterator it = this->_faces.begin();
+    float defaultAmbient[] = { 0.2, 0.2, 0.2, 1 };
+    float defaultDiffuse[] = { 0.8, 0.8, 0.8, 1 };
+    float defaultSpecular[] = { 0, 0, 0, 1 };
+    float defaultEmission[] = { 0, 0, 0, 1 };
+    float defaultShininess = 0;
 
-    // Keep track of the current texture so that we are not updating too often
-    GLuint currentTexture = 0;
+    glLoadIdentity();
 
     // We're making a display list
-    cout << "Creating display list for " << this->filename << ": " << this->_displayList << endl;
     glNewList(this->_displayList, GL_COMPILE);
 
     // Iterate through all the faces
     while (it != this->_faces.end() ) {
         face = *it;
 
-        // Check if we have a material and it has a texture
-        if (face->material != 0
-                && face->material->textureMap != 0) {
-            if (face->material->textureMap != currentTexture) {
-                currentTexture = face->material->textureMap;
-                //cout << "Binding texuture: " << currentTexture << endl;
-                glBindTexture(GL_TEXTURE_2D, currentTexture);
+        // Check if we have a new material, and set things up for this new material
+        if (material != face->material) {
+            // Check if there is a texture, if not reset
+            if (face->material != 0 && face->material->textureMap != 0) {
+                glBindTexture(GL_TEXTURE_2D, face->material->textureMap);
+            } else {
+                glBindTexture(GL_TEXTURE_2D, 0);
             }
-        } else {
-            glBindTexture(GL_TEXTURE_2D, 0);
+
+            // Check if we have ambient color, if not reset to white
+            if (face->material != 0 && face->material->ambientSet) {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, face->material->ambient);
+            } else {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, defaultAmbient);
+            }
+
+            // Check if we have diffuse color, if not reset to white
+            if (face->material != 0 && face->material->diffuseSet) {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, face->material->diffuse);
+            } else {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, defaultDiffuse);
+            }
+
+            // Check if we have diffuse color, if not reset to white
+            if (face->material != 0 && face->material->specularSet) {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, face->material->specular);
+            } else {
+                glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, defaultSpecular);
+            }
+
+            // Check if we have a shininess value, otherwise set as default
+            if (face->material != 0 && face->material->shininessSet) {
+                glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, face->material->shininess);
+            } else {
+                glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, defaultShininess);
+            }
+
+            // Set the default emission
+            glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, defaultEmission);
+
+
+            material = face->material;
         }
 
         // Draw a triangle
@@ -298,8 +333,7 @@ void Obj::_addMTL(string line) {
             }
             material = new Material;
             trim(parts[1]);
-            material->name = parts[1];
-            material->textureMap = 0;
+            Obj::_initMaterial(material, parts[1]);
         } else if (command == "map_Kd") {
             // Load up the texture
             texPath = "";
@@ -313,12 +347,42 @@ void Obj::_addMTL(string line) {
                 texPath = mtlPath.string() + texPath;
                 Obj::_loadTexture(texPath, material->textureMap);
             }
+        } else if (command == "Ka") {
+            // The ambient color is split into 3 floats
+            for (int i = 1; i < 4; ++i) material->ambient[i - 1] = atof(parts[i].c_str());
+            material->ambientSet = true;
+        } else if (command == "Kd") {
+            // The diffuse color is split into 3 floats
+            for (int i = 1; i < 4; ++i) material->diffuse[i - 1] = atof(parts[i].c_str());
+            material->diffuseSet = true;
+        } else if (command == "Ks") {
+            // The specular color is split into 3 floats
+            for (int i = 1; i < 4; ++i) material->specular[i - 1] = atof(parts[i].c_str());
+            material->specularSet = true;
+        } else if (command == "Ns") {
+            // Shininess is just a single float
+            material->shininess = atof(parts[1].c_str());
+            material->shininessSet = true;
         }
     }
     file.close();
     if (material) {
         this->_materials.push_back(material);
     }
+}
+
+void Obj::_initMaterial(Material * material, string name) {
+    material->name = name;
+    material->textureMap = 0;
+    material->ambientSet = false;
+    material->diffuseSet = false;
+    material->specularSet = false;
+    material->shininessSet = false;
+    
+    // Set alpha in material properties
+    material->ambient[3] = 1;
+    material->diffuse[3] = 1;
+    material->specular[3] = 1;
 }
 
 Material* Obj::_findMaterial(string name) {

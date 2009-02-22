@@ -28,6 +28,14 @@ namespace fs = boost::filesystem;
 struct Material {
     string name;
     GLuint textureMap;
+    bool ambientSet;
+    bool diffuseSet;
+    bool specularSet;
+    bool shininessSet;
+    float ambient[4];
+    float diffuse[4];
+    float specular[4];
+    float shininess;
 };
 
 struct Face {
@@ -72,10 +80,11 @@ class Obj {
          */
         void _addMTL(string line);
 
-        /**
-         * Get a pointer to the named material
-         */
+        // Get a pointer to the named material
         Material* _findMaterial(string name);
+
+        // Initialise a new material
+        void _initMaterial(Material * material, string name);
 
         // Parse a line into a vector of length length
         vector<GLfloat> _parseLine(string line, const unsigned int length, const char seperator=' ');
