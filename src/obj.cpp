@@ -22,6 +22,7 @@ using namespace boost::filesystem;
 namespace fs = boost::filesystem;
 
 list< Obj* > Obj::objectCache;
+unsigned int Obj::_nextDisplayList = 1;
 
 Obj* Obj::makeObj(const char* filename) {
     // First check if we already have an object that fits
@@ -32,23 +33,24 @@ Obj* Obj::makeObj(const char* filename) {
         }
     }
     // we didn't find one, so create one here
-     Obj* result = new Obj(filename, Obj::objectCache.size() + 1);
+     Obj* result = new Obj(filename);
      Obj::objectCache.push_back(result);
      return result;
 }
 
-Obj::Obj(const char *filename, unsigned int displayList) {
+Obj::Obj(const char *filename) {
+    // Keep track of the current material
+    Material* currentMaterial = 0;
+    vector<string> parts;
+    string currentGroup;
+
     this->filename = filename;
-    this->_displayList = displayList;
 
     // Load this file in 
     ifstream file(filename);
     if (!file.is_open()) cout << "Error opening obj file\n";
     string line;
 
-    // Keep track of the current material
-    Material* currentMaterial = 0;
-    vector<string> parts;
 
     while (!file.eof()) {
         getline(file, line);
@@ -64,13 +66,18 @@ Obj::Obj(const char *filename, unsigned int displayList) {
         } else if (command == "vn") {
             this->_addNormal(line);
         } else if (command == "f") {
-            this->_addFace(line, currentMaterial);
+            this->_addFace(line, currentMaterial, currentGroup);
         } else if (command == "mtllib") {
             this->_addMTL(line);
         } else if (command == "usemtl") {
             // Try to find the material
             trim(parts[1]);
             currentMaterial = this->_findMaterial(parts[1]);
+        } else if (command == "g") {
+            cout << "Obj group: " << parts[1] << endl;
+            // TODO: span this name over all parts > 0
+            currentGroup = parts[1];
+
         } else if (command == "s" || command == "g" || command == "#" || command == "") {
             // ignore for now
         } else {
@@ -80,7 +87,7 @@ Obj::Obj(const char *filename, unsigned int displayList) {
     file.close();
 
     // Create the display list
-    this->_createDisplayList();
+    this->_createDisplayLists();
 }
 
 void Obj::_addVertex(string line) {
@@ -120,7 +127,7 @@ void Obj::_addNormal(string line) {
     this->_normals.push_back(normal);
 }
 
-void Obj::_addFace(string line, Material* material) {
+void Obj::_addFace(string line, Material* material, string group) {
 
     vector<string> vertices;
     split(vertices, line, is_any_of(" "), token_compress_on);
@@ -154,8 +161,12 @@ void Obj::_addFace(string line, Material* material) {
         pointer = this->_normals[atoi(vertex[2].c_str()) - 1];
         face->normals[i - 1] = pointer;
     }
+
+    // Add to list of faces
     this->_faces.push_back(face);
 
+    // Add to group's list of faces
+    this->_groupFaces[group].push_back(face);
 }
 
 vector<GLfloat> Obj::_parseLine(string line, const unsigned int length, const char seperator) {
@@ -183,13 +194,29 @@ vector<string> Obj::_splitLine(string line, const unsigned int length, const cha
     return result;
 }
 
-void Obj::_createDisplayList() {
+void Obj::_createDisplayLists() {
+    unsigned int displayList;
+
+    // Generate display lists for each group
+    map<string, list< Face * > >::iterator it = this->_groupFaces.begin();
+    for (; it != this->_groupFaces.end(); ++it) {
+        // Generate a display list and save the reference to that list
+        displayList = this->_createDisplayListForGroup((*it).first);
+        this->_groupDisplayLists[(*it).first] = displayList;
+    }
+}
+
+unsigned int Obj::_createDisplayListForGroup(string group) {
+    unsigned int displayList;
     Material * material = 0;
     Face* face;
     vector<GLfloat>* texture;
     vector<GLfloat>* vertex;
     vector<GLfloat>* normal;
-    list< Face * >::iterator it = this->_faces.begin();
+    //list< Face * >::iterator it = this->_faces.begin();
+    list< Face * > * faces = &(this->_groupFaces[group]);
+    list< Face * >::iterator it = faces->begin();
+
     float defaultAmbient[] = { 0.2, 0.2, 0.2, 1 };
     float defaultDiffuse[] = { 0.8, 0.8, 0.8, 1 };
     float defaultSpecular[] = { 0, 0, 0, 1 };
@@ -199,10 +226,15 @@ void Obj::_createDisplayList() {
     glLoadIdentity();
 
     // We're making a display list
-    glNewList(this->_displayList, GL_COMPILE);
+    // .. so first we set the one from the static member
+    displayList = Obj::_nextDisplayList;
+    // .. and increment it for the next one
+    Obj::_nextDisplayList++;
 
-    // Iterate through all the faces
-    while (it != this->_faces.end() ) {
+    glNewList(displayList, GL_COMPILE);
+
+    // Iterate through all the faces in this group
+    while (it != faces->end() ) {
         face = *it;
 
         // Check if we have a new material, and set things up for this new material
@@ -271,10 +303,20 @@ void Obj::_createDisplayList() {
 
     // Stop making the list
     glEndList();
+
+    return displayList;
+}
+
+void Obj::renderGroup(string group) {
+    cout << "Rendering group with display list: " << this->_groupDisplayLists[group] << endl;
+    glCallList(this->_groupDisplayLists[group]);
 }
 
 void Obj::render() { 
-    glCallList(this->_displayList);
+    map<string, unsigned int>::iterator it = this->_groupDisplayLists.begin();
+    for (; it != this->_groupDisplayLists.end(); ++it) {
+        glCallList((*it).second);
+    }
 }
 
 vector<GLfloat> Obj::getVertex(const unsigned int index) {

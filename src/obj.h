@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <map>
 
 
 /**
@@ -48,8 +49,9 @@ struct Face {
 
 class Obj {
     public:
-        Obj(const char *filename, unsigned int displayList);
+        Obj(const char *filename);
         void render();
+        void renderGroup(string group);
         vector<GLfloat> getVertex(const unsigned int index);
         string filename;
         void calculateBounds(Matrix *transformationMatrix, float *bounds);
@@ -66,13 +68,14 @@ class Obj {
         list< Material * > _materials;
         list< Face * > _faces;
 
+        // obj groups
+        map<string, list< Face * > > _groupFaces;
+        map<string, unsigned int> _groupDisplayLists;
+
         void _addVertex(string line);
         void _addTextureCoord(string line);
         void _addNormal(string line);
-        void _addFace(string line, Material* material);
-
-        // The display list for this object
-        unsigned int _displayList;
+        void _addFace(string line, Material* material, string group);
 
         /**
          * Parse a mtllib line in the obj file. Kicks off a MTL file parse. Return
@@ -91,9 +94,14 @@ class Obj {
         vector<string> _splitLine(string line, const unsigned int length, const char seperator=' ');
 
         // Create the display list
-        void _createDisplayList();
+        unsigned int _createDisplayListForGroup(string group);
+        void _createDisplayLists();
 
         // Load a texture
         static void _loadTexture(string texturePath, GLuint & texture);
+
+        // Keep a counter of display lists so that we can create a new one. Ideally there 
+        // should be a proper management class for this.
+        static unsigned int _nextDisplayList;
 
 };

@@ -14,12 +14,12 @@
 #include <time.h>
 #include <string>
 
-#include "obj.h"
+#include "car.h"
 #include "camera.h"
 
 using namespace std;
 
-static Obj * car;
+static Car * car;
 static Camera * camera;
 
 void setupLighting();
@@ -33,12 +33,14 @@ void init(void) {
 
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_POINT_SMOOTH);
+    glEnable(GL_POLYGON_SMOOTH);
     glLineWidth(1.5);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 
     setupLighting();
 
@@ -52,7 +54,7 @@ void setupLighting() {
 
 void initObjects() {
     // Load up a car obj
-    car = Obj::makeObj("resources/r8/R8.obj");
+    car = new Car();
 
     // Create the camera
     camera = new Camera();
