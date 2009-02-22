@@ -6,6 +6,7 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
 
 #include <list>
 #include <sstream>
@@ -14,11 +15,12 @@
 #include <string>
 
 #include "obj.h"
-
+#include "camera.h"
 
 using namespace std;
 
 static Obj * car;
+static Camera * camera;
 
 void setupLighting();
 
@@ -64,6 +66,9 @@ void setupLighting() {
 void initObjects() {
     // Load up a car obj
     car = Obj::makeObj("resources/r8/R8.obj");
+
+    // Create the camera
+    camera = new Camera();
 }
 
 void reshape(int w, int h) {
@@ -79,9 +84,10 @@ void display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     glEnable(GL_TEXTURE_2D);
 
-
     glColor3f(1.0, 1.0, 1.0);
     glLoadIdentity(); // clear the matrix
+
+    camera->viewTransform();
 
     // Draw the car
     car->render();
@@ -105,6 +111,7 @@ void handleKeyboard() {
             case SDL_QUIT:
                 exit(0);
         }
+        camera->handleKeyPress(event);
     }
 }
 

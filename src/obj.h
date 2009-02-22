@@ -2,14 +2,15 @@
 
 #include "lib.h"
 #include "matrix.h"
+#include <boost/filesystem.hpp>
 
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
-#include <GLUT/glut.h>
 
 #include <string>
 #include <vector>
 #include <list>
+
 
 /**
   * TODO:
@@ -20,6 +21,9 @@
 ***/
 
 using namespace std;
+using namespace boost;
+using namespace boost::filesystem;
+namespace fs = boost::filesystem;
 
 struct Material {
     string name;
@@ -79,5 +83,8 @@ class Obj {
 
         // Create the display list
         void _createDisplayList();
+
+        // Load a texture
+        static void _loadTexture(string texturePath, GLuint & texture);
 
 };

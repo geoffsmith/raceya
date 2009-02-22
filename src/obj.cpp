@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL.h>
 
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -45,7 +47,7 @@ Obj::Obj(const char *filename, unsigned int displayList) {
     string line;
 
     // Keep track of the current material
-    Material* currentMaterial;
+    Material* currentMaterial = 0;
     vector<string> parts;
 
     while (!file.eof()) {
@@ -202,12 +204,14 @@ void Obj::_createDisplayList() {
 
         // Check if we have a material and it has a texture
         if (face->material != 0
-                && face->material->textureMap != 0
-                && face->material->textureMap != currentTexture) {
-
-            currentTexture = face->material->textureMap;
-            //cout << "Binding texuture: " << currentTexture << endl;
-            glBindTexture(GL_TEXTURE_2D, currentTexture);
+                && face->material->textureMap != 0) {
+            if (face->material->textureMap != currentTexture) {
+                currentTexture = face->material->textureMap;
+                //cout << "Binding texuture: " << currentTexture << endl;
+                glBindTexture(GL_TEXTURE_2D, currentTexture);
+            }
+        } else {
+            glBindTexture(GL_TEXTURE_2D, 0);
         }
 
         // Draw a triangle
@@ -251,6 +255,8 @@ vector<GLfloat> Obj::getVertex(const unsigned int index) {
 }
 
 void Obj::_addMTL(string line) {
+    string texPath;
+
     // Get the file path
     path mtlPath(this->filename);
     mtlPath.remove_filename();
@@ -296,9 +302,17 @@ void Obj::_addMTL(string line) {
             material->textureMap = 0;
         } else if (command == "map_Kd") {
             // Load up the texture
-            path texPath = mtlPath / parts[1];
-            glGenTextures(1, &(material->textureMap));
-            load_texture(material->textureMap, texPath.string().c_str());
+            texPath = "";
+            // Glue the parts together to form the path
+            for (unsigned int i = 1; i < parts.size(); ++i) texPath += parts[i] + " ";
+            
+            // If the path is valid load a texture
+            trim(texPath);
+            if (texPath.size() > 0) {
+                // Add the path
+                texPath = mtlPath.string() + texPath;
+                Obj::_loadTexture(texPath, material->textureMap);
+            }
         }
     }
     file.close();
@@ -375,4 +389,59 @@ void Obj::calculateBounds(Matrix *transformationMatrix, float *bounds) {
     // clean up
     delete vertex;
     delete result;
+}
+
+void Obj::_loadTexture(string texturePath, GLuint & texture) {
+    // Try and load the image
+    SDL_Surface * surface;
+    int nOfColours;
+    GLenum textureFormat = 0;
+    if ((surface = IMG_Load(texturePath.c_str()))) {
+        // Check that width and height are powers of 2
+        if ((surface->w & (surface->w - 1)) != 0 ) {
+            cout << "Warning: width not power of 2 " << texturePath << endl;
+            SDL_FreeSurface(surface);
+            return;
+        }
+        if ((surface->h & (surface->h -1)) != 0) {
+            cout << "Warning: height not power of 2 " << texturePath << endl;
+            SDL_FreeSurface(surface);
+            return;
+        }
+
+        // Get the number of channels in the SDL surface
+        nOfColours = surface->format->BytesPerPixel;
+        if (nOfColours == 4) {
+            if (surface->format->Rmask == 0x000000ff) {
+                textureFormat = GL_RGBA;
+            } else {
+                textureFormat = GL_BGRA;
+            }
+        } else if (nOfColours == 3) {
+            if (surface->format->Rmask == 0x000000ff) {
+                textureFormat = GL_RGB;
+            } else {
+                textureFormat = GL_BGR;
+            }
+        }
+        // Have opengl generate a texture object
+        glGenTextures(1, &texture);
+
+        // Bind the texture object
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        // Set the texture's stretching properties
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        // Write the texture data
+        glTexImage2D(GL_TEXTURE_2D, 0, nOfColours, surface->w, surface->h, 0, 
+                textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+
+        // Free the surface
+        SDL_FreeSurface(surface);
+    } else {
+        cout << "With: " << texturePath << endl;
+        cout << "Error loading texture: " << IMG_GetError() << "_" << endl;
+    }
 }
