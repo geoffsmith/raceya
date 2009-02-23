@@ -76,6 +76,7 @@ Obj::Obj(const char *filename) {
         } else if (command == "g") {
             cout << "Obj group: " << parts[1] << endl;
             // TODO: span this name over all parts > 0
+            trim(parts[1]);
             currentGroup = parts[1];
 
         } else if (command == "s" || command == "g" || command == "#" || command == "") {
@@ -213,7 +214,6 @@ unsigned int Obj::_createDisplayListForGroup(string group) {
     vector<GLfloat>* texture;
     vector<GLfloat>* vertex;
     vector<GLfloat>* normal;
-    //list< Face * >::iterator it = this->_faces.begin();
     list< Face * > * faces = &(this->_groupFaces[group]);
     list< Face * >::iterator it = faces->begin();
 
@@ -308,7 +308,6 @@ unsigned int Obj::_createDisplayListForGroup(string group) {
 }
 
 void Obj::renderGroup(string group) {
-    cout << "Rendering group with display list: " << this->_groupDisplayLists[group] << endl;
     glCallList(this->_groupDisplayLists[group]);
 }
 

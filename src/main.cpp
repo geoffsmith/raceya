@@ -64,7 +64,7 @@ void reshape(int w, int h) {
     glViewport(0, 0, (GLsizei)w, (GLsizei)h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glFrustum(-1.0, 1.0, -1.0, 1.0, 1.5, 200.0);
+    glFrustum(-2.0, 2.0, -1.0, 1.0, 1.5, 200.0);
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -127,9 +127,9 @@ int main(int argc, char** argv) {
     SDL_Surface *drawContext;
     const SDL_VideoInfo *info = SDL_GetVideoInfo();
     int bpp = info->vfmt->BitsPerPixel;
-    drawContext = SDL_SetVideoMode(500, 500, bpp, SDL_OPENGL);
+    drawContext = SDL_SetVideoMode(1000, 500, bpp, SDL_OPENGL);
 
-    reshape(500, 500);
+    reshape(1000, 500);
 
     if (drawContext == 0) {
         cout << "Failed to initialise video" << endl;

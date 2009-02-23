@@ -4,6 +4,7 @@
 #pragma once
 
 #include "obj.h"
+#include "wheel.h"
 
 class Car {
     public:
@@ -12,4 +13,5 @@ class Car {
 
     private:
         Obj * _obj;
+        Wheel * _wheels[4];
 };
