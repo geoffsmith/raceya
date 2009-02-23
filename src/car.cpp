@@ -1,4 +1,5 @@
 #include "car.h"
+#include "frame_timer.h"
 
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -12,9 +13,41 @@ Car::Car() {
     this->_wheels[1] = new Wheel(1, this->_obj);
     this->_wheels[2] = new Wheel(2, this->_obj);
     this->_wheels[3] = new Wheel(3, this->_obj);
+
+    // Set up the engine
+    this->_engineRPM = 0;
+    this->_engineMaxRPM = 9000;
+
+    // Set up the gears
+    this->_finalDriveAxisRatio = 3.46;
+    this->_gearRatios[0] = 4.37;
+    this->_gearRatios[1] = 2.71;
+    this->_gearRatios[2] = 1.88;
+    this->_gearRatios[3] = 1.41;
+    this->_gearRatios[4] = 1.13;
+    this->_gearRatios[5] = 0.93;
+    this->_currentGear = 0;
+}
+
+void Car::_updateComponents() {
+    // Find out how much the engine has turned
+    float minutes = FrameTimer::timer.getMinutes();
+    cout << "Minutes: " << minutes << endl;
+    float engineTurns = this->_engineRPM * FrameTimer::timer.getMinutes();
+    // And divide by current gear ratio
+    float wheelTurns = engineTurns / this->_gearRatios[this->_currentGear];
+    // ... and divide by the final drive axis ratio
+    wheelTurns = wheelTurns / this->_finalDriveAxisRatio;
+    // ... and turn the wheels
+    for (int i = 0; i < 4; ++i) {
+        this->_wheels[i]->turn(wheelTurns * 360.0);
+    }
+
 }
 
 void Car::render() {
+    this->_updateComponents();
+
     // Render the various groups in the car obj
     this->_obj->renderGroup("LicenseF");
     this->_obj->renderGroup("LicenseR");
@@ -58,6 +91,24 @@ void Car::render() {
     // Render the wheels
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->render();
-        this->_wheels[i]->turn();
+    }
+}
+
+void Car::handleKeyPress(SDL_Event &event) {
+    switch (event.type) {
+        case SDL_KEYUP:
+            switch (event.key.keysym.sym) {
+                case SDLK_z:
+                    this->_engineRPM += 100;
+                    break;
+                case SDLK_x:
+                    this->_engineRPM -= 100;
+                    break;
+                default:
+                    break;
+            }
+            break;
+        default:
+            break;
     }
 }

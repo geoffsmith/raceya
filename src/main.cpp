@@ -16,6 +16,7 @@
 
 #include "car.h"
 #include "camera.h"
+#include "frame_timer.h"
 
 using namespace std;
 
@@ -105,6 +106,7 @@ void handleKeyboard() {
                 exit(0);
         }
         camera->handleKeyPress(event);
+        car->handleKeyPress(event);
     }
 }
 
@@ -141,6 +143,9 @@ int main(int argc, char** argv) {
 
     // Enter the main look
     while (1) {
+        // Update the frame timer
+        FrameTimer::timer.newFrame();
+
         // Take input
         handleKeyboard();
 

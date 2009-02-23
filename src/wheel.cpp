@@ -40,9 +40,9 @@ void Wheel::render() {
             this->_wheelCenter[1], 
             this->_wheelCenter[2]);
     if (this->_position == 0 || this->_position == 2) {
-        glRotatef(this->_rotation, 0.1, 0, -0.002);
+        glRotatef(this->_rotation, -1, 0, 0.017);
     } else {
-        glRotatef(this->_rotation, -0.1005, 0, -0.0035);
+        glRotatef(this->_rotation, 1, 0, 0.017);
     }
     glTranslatef(-1 * this->_wheelCenter[0], 
             -1 * this->_wheelCenter[1], 
@@ -68,7 +68,7 @@ void Wheel::render() {
     glPopMatrix();
 }
 
-void Wheel::turn() {
-    this->_rotation += 50;
+void Wheel::turn(float turn) {
+    this->_rotation += turn;
     if (this->_rotation >= 360) this->_rotation -= 360;
 }

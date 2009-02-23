@@ -13,8 +13,8 @@ default: $(TARGET)
 
 all: default
 
-$(TARGET): src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o
-	$(CC) $(PROFILE) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o
+$(TARGET): src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o frame_timer.o
+	$(CC) $(PROFILE) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o frame_timer.o
 
 obj.o: src/obj.h src/obj.cpp src/matrix.h src/jpeg.h
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o obj.o src/obj.cpp
@@ -31,11 +31,14 @@ jpeg.o: src/jpeg.cpp src/jpeg.h
 camera.o: src/camera.h src/camera.cpp
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o camera.o src/camera.cpp
 
-car.o: src/car.h src/car.cpp src/obj.h src/wheel.h
+car.o: src/car.h src/car.cpp src/obj.h src/wheel.h src/frame_timer.h
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o car.o src/car.cpp
 
 wheel.o: src/wheel.h src/wheel.cpp src/obj.h
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o wheel.o src/wheel.cpp
+
+frame_timer.o: src/frame_timer.h src/frame_timer.cpp
+	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o frame_timer.o src/frame_timer.cpp
 
 clean:
 	-rm -f *.o $(TARGET)

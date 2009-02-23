@@ -10,7 +10,7 @@ class Wheel {
     public:
         Wheel(int position, Obj * obj);
         void render();
-        void turn();
+        void turn(float turn);
 
     private:
         float _centerVertex[3];
