@@ -2,8 +2,8 @@
  * Class representing a car. This includes (so far) its rendering, animation and movement.
  *
  * TODO:
- *  * Rotate the breaks along with wheel, probably best to refactor rendering group into wheel
  *  * Use a turning circle to calculate the car's rotation
+ *  * Clean up memory, this will be important when there are opponents
  */
 #pragma once
 
@@ -21,6 +21,8 @@ class Car {
 
         // Get a pointer to the player's position
         float * getPosition();
+
+        float getRPM();
 
     private:
         Obj * _obj;

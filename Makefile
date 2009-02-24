@@ -1,6 +1,6 @@
 TARGET = bin/raceya
 
-LIBS =  -lglut -lGLU -lGL -lSDL -lSDLmain -lSDL_mixer -lSDL_image -ljpeg -lboost_filesystem-mt -lboost_system-mt -lftgl -lfreetype -framework Cocoa
+LIBS =  -lglut -lGLU -lGL -lSDL -lSDLmain -lSDL_ttf -lSDL_mixer -lSDL_image -ljpeg -lboost_filesystem-mt -lboost_system-mt -lftgl -lfreetype -framework Cocoa
 INCS = -I/Developer/SDKs/MacOSX10.4u.sdk/usr/X11R6/include/GL/ -I/opt/local/include/GL -I/opt/local/include -L/opt/local/lib -L/Developer/SDKs/MacOSX10.4u.sdk/usr/X11R6/lib/ -I/Users/geoffsmith/usr/local/include/ -L/Users/geoffsmith/usr/local/lib -I/opt/local/include/freetype2/
 
 CC = /usr/bin/g++
@@ -13,8 +13,8 @@ default: $(TARGET)
 
 all: default
 
-$(TARGET): src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o frame_timer.o world.o
-	$(CC) $(PROFILE) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o frame_timer.o world.o
+$(TARGET): src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o frame_timer.o world.o hud.o
+	$(CC) $(PROFILE) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o frame_timer.o world.o hud.o
 
 obj.o: src/obj.h src/obj.cpp src/matrix.h src/jpeg.h
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o obj.o src/obj.cpp
@@ -42,6 +42,9 @@ frame_timer.o: src/frame_timer.h src/frame_timer.cpp
 
 world.o: src/world.cpp src/world.cpp
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o world.o src/world.cpp
+
+hud.o: src/hud.cpp src/hud.h src/car.h
+	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o hud.o src/hud.cpp
 
 clean:
 	-rm -f *.o $(TARGET)

@@ -18,12 +18,15 @@
 #include "camera.h"
 #include "frame_timer.h"
 #include "world.h"
+#include "hud.h"
 
 using namespace std;
 
 static Car * car;
 static Camera * camera;
 static World * world;
+static Hud * hud;
+static SDL_Surface * drawContext;
 
 void setupLighting();
 
@@ -64,6 +67,9 @@ void initObjects() {
 
     // Create the world model
     world = new World();
+    
+    // Create the HUD
+    hud = new Hud(car);
 }
 
 void reshape(int w, int h) {
@@ -81,6 +87,9 @@ void display(void) {
 
     glColor3f(1.0, 1.0, 1.0);
     glLoadIdentity(); // clear the matrix
+
+    // Render the HUD
+    hud->render();
 
     // Position the light at the camera
     float lightPosition[] = { 0, 0, 1, 0 };
@@ -121,6 +130,9 @@ void handleKeyboard() {
 int main(int argc, char** argv) {
     int error = SDL_Init(SDL_INIT_EVERYTHING);
 
+    // Initialise the TTF library
+    TTF_Init();
+
     if (error < 0) {
         cout << "Unable to init SDL: " << SDL_GetError();
         exit(1);
@@ -134,7 +146,6 @@ int main(int argc, char** argv) {
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 
-    SDL_Surface *drawContext;
     const SDL_VideoInfo *info = SDL_GetVideoInfo();
     int bpp = info->vfmt->BitsPerPixel;
     drawContext = SDL_SetVideoMode(1000, 500, bpp, SDL_OPENGL);

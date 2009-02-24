@@ -218,3 +218,7 @@ void Car::handleKeyPress(SDL_Event &event) {
 float * Car::getPosition() {
     return this->_position;
 }
+
+float Car::getRPM() {
+    return this->_engineRPM;
+}
