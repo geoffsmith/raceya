@@ -46,6 +46,11 @@ void Car::_updateComponents() {
 void Car::render() {
     this->_updateComponents();
 
+    glPushMatrix();
+    // Rotate the car to be parallel to ground
+    glRotatef(180, 0, 0, 1);
+    glRotatef(90, 1, 0, 0);
+
     // Render the various groups in the car obj
     this->_obj->renderGroup("LicenseF");
     this->_obj->renderGroup("LicenseR");
@@ -90,6 +95,8 @@ void Car::render() {
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->render();
     }
+
+    glPopMatrix();
 }
 
 void Car::handleKeyPress(SDL_Event &event) {
