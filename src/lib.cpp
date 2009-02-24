@@ -7,6 +7,7 @@
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
 
+#define PI 3.14159265
 
 using namespace std;
 
@@ -73,4 +74,19 @@ void buildYRotationMatrix(float *matrix, float angle) {
     matrix[13] = 0;
     matrix[14] = 0;
     matrix[15] = 1;
+}
+
+float angleBetweenVectors(float * vector1, float * vector2) {
+    // Calculate the dot product
+    float dotProduct = vector1[0] * vector2[0] + vector1[1] * vector2[1] + vector1[2] * vector2[2];
+    float absVector1 = sqrt(vector1[0] * vector1[0] + vector1[1] * vector1[1] + vector1[2] * vector1[2]);
+    float absVector2 = sqrt(vector2[0] * vector2[0] + vector2[1] * vector2[1] + vector2[2] * vector2[2]);
+    // make sure we don't divide by zero
+    if (absVector1 == 0 || absVector2 == 0) {
+        cout << "Error: Divide by zero in angleBetweenVectors-> " 
+            << absVector1 << ", " << absVector2 << endl;
+        return 0;
+    }
+    // Calculate angle and convert into degrees
+    return (acos(dotProduct / (absVector1 * absVector2)) * 180.0) / PI;
 }

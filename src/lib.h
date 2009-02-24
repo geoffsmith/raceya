@@ -13,3 +13,4 @@ void read_obj(const char *filename, GLfloat (*vertices)[3], GLfloat (*textures)[
  *****************************************************************************/
 void matrixMultiply(float* matrix, float* vector, float* result);
 void buildYRotationMatrix(float *matrix, float angle);
+float angleBetweenVectors(float * vector1, float * vector2);

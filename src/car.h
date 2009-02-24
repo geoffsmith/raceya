@@ -1,5 +1,9 @@
 /**
  * Class representing a car. This includes (so far) its rendering, animation and movement.
+ *
+ * TODO:
+ *  * Rotate the breaks along with wheel, probably best to refactor rendering group into wheel
+ *  * Use a turning circle to calculate the car's rotation
  */
 #pragma once
 
@@ -21,6 +25,15 @@ class Car {
     private:
         Obj * _obj;
         Wheel * _wheels[4];
+
+        // The sideways angle of the wheels for steering animation, this is +/- angle away
+        // from front facing
+        float _wheelsAngle;
+
+        // The angle away from rest of the steering wheel, - is left, + is right
+        float _steeringAngle;
+        // How much a keypress changes the steeringAngle
+        float _steeringDelta;
 
         // Model scale -> puts the model into meters's
         float _modelScale;

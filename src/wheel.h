@@ -10,13 +10,27 @@ class Wheel {
     public:
         Wheel(int position, Obj * obj);
         void render();
+
+        // Turn the wheel around its axis
         void turn(float turn);
 
+        // Set the angle away from from facing (for front wheel usually)
+        void setAngle(float angle);
+
     private:
-        float _centerVertex[3];
-        float _rotation;
-        int _position;
+        // The obj model representing the wheel
         Obj * _obj;
+
+        // The current rotation of the wheel
+        float _rotation;
+
+        // The position of the wheel front, back, left and right
+        int _position;
+
+        // The position of the center of the wheel - for rotating around
         float _wheelCenter[3];
+
+        // The angle of the wheel deviating from front facing
+        float _wheelAngle;
 
 };

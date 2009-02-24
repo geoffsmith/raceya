@@ -154,6 +154,30 @@ void Matrix::multiplyVector(float *vector, float *result) {
     }
 }
 
+void Matrix::multiplyVector(float *vector) {
+    float *thisMatrix = this->_matrix;
+    float sum;
+    float tmp[4];
+    float result[4];
+
+    tmp[0] = vector[0];
+    tmp[1] = vector[1];
+    tmp[2] = vector[2];
+    tmp[3] = 1;
+
+    for (int i = 0; i < 4; ++i) {
+        sum = 0;
+        for (int j = 0; j < 4; ++j) {
+            sum += thisMatrix[j * 4 + i] * tmp[j];
+        }
+        result[i] = sum;
+    }
+
+    vector[0] = result[0] / result[3];
+    vector[1] = result[1] / result[3];
+    vector[2] = result[2] / result[3];
+}
+
 void Matrix::multiplyVectorSkipTranslation(float *vector, float *result) {
     float *thisMatrix = this->_matrix;
     float sum;

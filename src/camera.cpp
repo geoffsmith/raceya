@@ -36,22 +36,22 @@ void Camera::handleKeyPress(SDL_Event &event) {
     switch (event.type) {
         case SDL_KEYUP:
             switch (event.key.keysym.sym) {
-                case SDLK_LEFT:
+                case SDLK_KP4:
                     this->_rotationX -= this->_rotationDelta;
                     break;
-                case SDLK_RIGHT:
+                case SDLK_KP6:
                     this->_rotationX += this->_rotationDelta;
                     break;
-                case SDLK_UP:
+                case SDLK_KP8:
                     this->_rotationY += this->_rotationDelta;
                     break;
-                case SDLK_DOWN:
+                case SDLK_KP2:
                     this->_rotationY -= this->_rotationDelta;
                     break;
-                case SDLK_q:
+                case SDLK_KP_MINUS:
                     this->_distance -= 1;
                     break;
-                case SDLK_a:
+                case SDLK_KP_PLUS:
                     this->_distance += 1;
                     break;
                 default:

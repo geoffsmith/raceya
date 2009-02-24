@@ -1,9 +1,12 @@
 #include "car.h"
+#include "matrix.h"
+#include "lib.h"
 #include "frame_timer.h"
 
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <iostream>
+#include <math.h>
 
 #define PI 3.14159265
 
@@ -20,6 +23,9 @@ Car::Car() {
     this->_wheels[2] = new Wheel(2, this->_obj);
     this->_wheels[3] = new Wheel(3, this->_obj);
     this->_wheelDiameter = 0.645; // m;
+    this->_wheelsAngle = 0;
+    this->_steeringAngle = 0;
+    this->_steeringDelta = 10;
 
     // Set up the engine
     this->_engineRPM = 0;
@@ -51,6 +57,11 @@ void Car::_updateComponents() {
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->turn(wheelTurns * 360.0);
     }
+
+    // Update the car's vector
+    Matrix matrix;
+    matrix.rotateY(-1 * this->_steeringAngle * FrameTimer::timer.getSeconds());
+    matrix.multiplyVector(this->_vector);
     
     // Update the car position based on how much the wheels have turned
     float wheelCircumferance = PI * this->_wheelDiameter;
@@ -61,11 +72,27 @@ void Car::_updateComponents() {
 }
 
 void Car::render() {
+    // The car's angle of rotation, calculated from the _vector
+    float angle;
+    float zVector[3];
+
     this->_updateComponents();
 
     glPushMatrix();
     // Move the car to its new position
     glTranslatef(this->_position[0], this->_position[1], this->_position[2]);
+
+    // Rotate the car to point in the right direction
+    zVector[0] = 0;
+    zVector[1] = 0;
+    zVector[2] = -1;
+    angle = -1 * angleBetweenVectors(this->_vector, zVector);
+    // We need to establish the direction so we use the x-component of the vector
+    if (this->_vector[0] != 0) {
+        glRotatef(angle, 0, this->_vector[0], 0);
+    } else {
+        glRotatef(angle, 0, 1, 0);
+    }
 
     // Rotate the car to be parallel to ground
     glRotatef(180, 0, 0, 1);
@@ -112,6 +139,12 @@ void Car::render() {
     this->_obj->renderGroup("CaliperRR");
     this->_obj->renderGroup("CaliperRL");
 
+    // rotate the front wheel according to the steering
+    this->_wheelsAngle = this->_steeringAngle;
+    // Update the rotation of the front wheels
+    this->_wheels[2]->setAngle(this->_wheelsAngle);
+    this->_wheels[3]->setAngle(this->_wheelsAngle);
+
     // Render the wheels
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->render();
@@ -124,6 +157,12 @@ void Car::handleKeyPress(SDL_Event &event) {
     switch (event.type) {
         case SDL_KEYUP:
             switch (event.key.keysym.sym) {
+                case SDLK_LEFT:
+                    this->_steeringAngle -= this->_steeringDelta;
+                    break;
+                case SDLK_RIGHT:
+                    this->_steeringAngle += this->_steeringDelta;
+                    break;
                 case SDLK_z:
                     this->_engineRPM += 100;
                     break;
