@@ -61,6 +61,30 @@ void Wheel::render() {
     // Rotate the wheel to the left or right
     glRotatef(this->_wheelAngle, 0, 0, -1);
 
+    glTranslatef(-1 * (this->_wheelCenter[0] + normal[0]), 
+            -1 * (this->_wheelCenter[1] + normal[1]), 
+            -1 * (this->_wheelCenter[2] + normal[2]));
+
+    // Render the caliper before we rotate the wheel but after we rotate for steering
+    switch (this->_position) {
+        case 0:
+            this->_obj->renderGroup("CaliperRR");
+            break;
+        case 1:
+            this->_obj->renderGroup("CaliperRL");
+            break;
+        case 2:
+            this->_obj->renderGroup("CaliperFR");
+            break;
+        case 3:
+            this->_obj->renderGroup("CaliperFL");
+            break;
+    }
+
+    glTranslatef(this->_wheelCenter[0] + normal[0], 
+            this->_wheelCenter[1] + normal[1], 
+            this->_wheelCenter[2] + normal[2]);
+
     // Rotate the wheel around the axis
     if (this->_position == 0 || this->_position == 2) {
         glRotatef(this->_rotation, normal[0], normal[1], normal[2]);

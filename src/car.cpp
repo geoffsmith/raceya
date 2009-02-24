@@ -14,20 +14,18 @@ using namespace std;
 
 Car::Car() {
     this->_obj = Obj::makeObj("resources/r8/R8.obj");
-    //this->_modelScale = 1248.0312;
-    //this->_modelScale = 1.2480312;
     this->_modelScale = 1;
 
     this->_wheels[0] = new Wheel(0, this->_obj);
     this->_wheels[1] = new Wheel(1, this->_obj);
     this->_wheels[2] = new Wheel(2, this->_obj);
     this->_wheels[3] = new Wheel(3, this->_obj);
-    this->_wheelDiameter = 0.645; // m;
+    this->_wheelDiameter = 0.645; // meters;
     this->_wheelsAngle = 0;
     this->_steeringAngle = 0;
-    this->_steeringDelta = 5;
+    this->_steeringDelta = 5; // degrees
     this->_currentSteering = 0;
-    this->_maxSteeringAngle = 60;
+    this->_maxSteeringAngle = 60; // degrees
 
     // Set up the engine
     this->_engineRPM = 0;
@@ -48,8 +46,7 @@ Car::Car() {
     this->_vector[2] = -1;
 }
 
-void Car::_updateComponents() {
-    // Update the car's steering
+void Car::_updateSteering() {
     // if the _currentSteering is 0, we want to bear back towards a steering of 0
     float direction = fabs(this->_steeringAngle) != this->_steeringAngle ? 1 : -1;
     if (this->_currentSteering == 0) {
@@ -68,6 +65,11 @@ void Car::_updateComponents() {
     if (fabs(this->_steeringAngle) > this->_maxSteeringAngle) {
         this->_steeringAngle = -1 * direction * this->_maxSteeringAngle;
     }
+}
+
+void Car::_updateComponents() {
+    // Update the car's steering
+    this->_updateSteering();
 
     // Find out how much the engine has turned
     float engineTurns = this->_engineRPM * FrameTimer::timer.getMinutes();
@@ -156,10 +158,6 @@ void Car::render() {
     this->_obj->renderGroup("WindR");
     this->_obj->renderGroup("WindRL");
     this->_obj->renderGroup("WindRR");
-    this->_obj->renderGroup("CaliperFR");
-    this->_obj->renderGroup("CaliperFL");
-    this->_obj->renderGroup("CaliperRR");
-    this->_obj->renderGroup("CaliperRL");
 
     // rotate the front wheel according to the steering
     this->_wheelsAngle = this->_steeringAngle;

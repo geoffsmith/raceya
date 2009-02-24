@@ -56,4 +56,6 @@ class Car {
 
         // Update the moving components of the car such as engine and wheels
         void _updateComponents();
+        // Update the car's steering
+        void _updateSteering();
 };
