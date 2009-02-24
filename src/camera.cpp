@@ -3,9 +3,9 @@
 
 Camera::Camera() {
     // Initialise the two rotations and distance
-    this->_distance = 5;
-    this->_rotationX = 0;
-    this->_rotationY = 0;
+    this->_distance = 7;
+    this->_rotationX = -80;
+    this->_rotationY = 30;
     this->_rotationDelta = 10;
 }
 
@@ -13,7 +13,7 @@ void Camera::viewTransform() {
     // Rotate the scene for the camera
     glTranslatef(0, 0, -1 * this->_distance);
     glRotatef(this->_rotationY, 1, 0, 0);
-    glRotatef(this->_rotationX, 0, 0, 1);
+    glRotatef(this->_rotationX, 0, 1, 0);
 }
 
 void Camera::handleKeyPress(SDL_Event &event) {

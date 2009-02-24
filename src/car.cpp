@@ -5,14 +5,21 @@
 #include <OpenGL/glu.h>
 #include <iostream>
 
+#define PI 3.14159265
+
 using namespace std;
 
 Car::Car() {
     this->_obj = Obj::makeObj("resources/r8/R8.obj");
+    //this->_modelScale = 1248.0312;
+    //this->_modelScale = 1.2480312;
+    this->_modelScale = 1;
+
     this->_wheels[0] = new Wheel(0, this->_obj);
     this->_wheels[1] = new Wheel(1, this->_obj);
     this->_wheels[2] = new Wheel(2, this->_obj);
     this->_wheels[3] = new Wheel(3, this->_obj);
+    this->_wheelDiameter = 0.645; // m;
 
     // Set up the engine
     this->_engineRPM = 0;
@@ -27,6 +34,10 @@ Car::Car() {
     this->_gearRatios[4] = 1.13;
     this->_gearRatios[5] = 0.93;
     this->_currentGear = 0;
+
+    this->_vector[0] = 0;
+    this->_vector[1] = 0;
+    this->_vector[2] = -1;
 }
 
 void Car::_updateComponents() {
@@ -40,16 +51,26 @@ void Car::_updateComponents() {
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->turn(wheelTurns * 360.0);
     }
-
+    
+    // Update the car position based on how much the wheels have turned
+    float wheelCircumferance = PI * this->_wheelDiameter;
+    float moveForward = wheelTurns * wheelCircumferance;
+    this->_position[0] += moveForward * this->_vector[0];
+    this->_position[1] += moveForward * this->_vector[1];
+    this->_position[2] += moveForward * this->_vector[2];
 }
 
 void Car::render() {
     this->_updateComponents();
 
     glPushMatrix();
+    // Move the car to its new position
+    glTranslatef(this->_position[0], this->_position[1], this->_position[2]);
+
     // Rotate the car to be parallel to ground
     glRotatef(180, 0, 0, 1);
     glRotatef(90, 1, 0, 0);
+    glScalef(this->_modelScale, this->_modelScale, this->_modelScale);
 
     // Render the various groups in the car obj
     this->_obj->renderGroup("LicenseF");

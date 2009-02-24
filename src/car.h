@@ -19,12 +19,22 @@ class Car {
         Obj * _obj;
         Wheel * _wheels[4];
 
+        // Model scale -> puts the model into meters's
+        float _modelScale;
+
+        // Engine related variables
         float _engineRPM;
         float _engineMaxRPM;
 
+        // Gear related variables
         float _finalDriveAxisRatio;
         float _gearRatios[6];
         int _currentGear;
+        float _wheelDiameter;
+
+        // Position
+        float _position[3];
+        float _vector[3];
 
         // Update the moving components of the car such as engine and wheels
         void _updateComponents();
