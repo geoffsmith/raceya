@@ -62,7 +62,11 @@ void Wheel::render() {
     glRotatef(this->_wheelAngle, 0, 0, -1);
 
     // Rotate the wheel around the axis
-    glRotatef(this->_rotation, -1 * normal[0], normal[1], normal[2]);
+    if (this->_position == 0 || this->_position == 2) {
+        glRotatef(this->_rotation, normal[0], normal[1], normal[2]);
+    } else {
+        glRotatef(this->_rotation, -1 * normal[0], normal[1], normal[2]);
+    }
 
     glTranslatef(-1 * (this->_wheelCenter[0] + normal[0]), 
             -1 * (this->_wheelCenter[1] + normal[1]), 

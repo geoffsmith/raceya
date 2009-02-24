@@ -25,8 +25,9 @@ Car::Car() {
     this->_wheelDiameter = 0.645; // m;
     this->_wheelsAngle = 0;
     this->_steeringAngle = 0;
-    this->_steeringDelta = 2;
+    this->_steeringDelta = 5;
     this->_currentSteering = 0;
+    this->_maxSteeringAngle = 60;
 
     // Set up the engine
     this->_engineRPM = 0;
@@ -49,7 +50,24 @@ Car::Car() {
 
 void Car::_updateComponents() {
     // Update the car's steering
-    this->_steeringAngle += this->_currentSteering * this->_steeringDelta;
+    // if the _currentSteering is 0, we want to bear back towards a steering of 0
+    float direction = fabs(this->_steeringAngle) != this->_steeringAngle ? 1 : -1;
+    if (this->_currentSteering == 0) {
+        // make sure there isn't any wobble
+        if (fabs(this->_steeringAngle) <= this->_steeringDelta) {
+            this->_steeringAngle = 0;
+        } else if (this->_steeringAngle != 0) {
+            this->_steeringAngle +=  direction * this->_steeringDelta * 2;
+        }
+    // Otherwise we turn in the direction set by the player
+    } else {
+        this->_steeringAngle += this->_currentSteering * this->_steeringDelta;
+    }
+    
+    // If the steering has gone too far, we clamp it
+    if (fabs(this->_steeringAngle) > this->_maxSteeringAngle) {
+        this->_steeringAngle = -1 * direction * this->_maxSteeringAngle;
+    }
 
     // Find out how much the engine has turned
     float engineTurns = this->_engineRPM * FrameTimer::timer.getMinutes();
@@ -163,10 +181,10 @@ void Car::handleKeyPress(SDL_Event &event) {
             switch (event.key.keysym.sym) {
                 // If the key is down, we increase the steering angle
                 case SDLK_LEFT:
-                    this->_currentSteering = -1;
+                    this->_currentSteering -= 1;
                     break;
                 case SDLK_RIGHT:
-                    this->_currentSteering = +1;
+                    this->_currentSteering += 1;
                     break;
                 default:
                     break;
@@ -176,12 +194,10 @@ void Car::handleKeyPress(SDL_Event &event) {
             switch (event.key.keysym.sym) {
                 // If the steering key goes up,  we move back to the center
                 case SDLK_LEFT:
-                    this->_currentSteering = 0;
-                    this->_steeringAngle = 0;
+                    this->_currentSteering += 1;
                     break;
                 case SDLK_RIGHT:
-                    this->_currentSteering = 0;
-                    this->_steeringAngle = 0;
+                    this->_currentSteering -= 1;
                     break;
                 case SDLK_z:
                     this->_engineRPM += 100;
