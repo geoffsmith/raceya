@@ -28,7 +28,7 @@ lib.o: src/lib.cpp src/lib.h
 jpeg.o: src/jpeg.cpp src/jpeg.h
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o jpeg.o src/jpeg.cpp
 
-camera.o: src/camera.h src/camera.cpp
+camera.o: src/camera.h src/camera.cpp src/car.h
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o camera.o src/camera.cpp
 
 car.o: src/car.h src/car.cpp src/obj.h src/wheel.h src/frame_timer.h

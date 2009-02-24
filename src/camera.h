@@ -5,10 +5,11 @@
 #pragma once
 
 #include <SDL/SDL.h>
+#include "car.h"
 
 class Camera {
     public:
-        Camera();
+        Camera(Car * playersCar);
 
         // Transform the scene to a view from the camera
         void viewTransform();
@@ -22,4 +23,7 @@ class Camera {
         float _rotationX;
         float _rotationY;
         float _rotationDelta;
+
+        // The player's car, so we can follow it
+        Car * _playersCar;
 };

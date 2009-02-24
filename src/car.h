@@ -15,6 +15,9 @@ class Car {
         // Handle key presses
         void handleKeyPress(SDL_Event &event);
 
+        // Get a pointer to the player's position
+        float * getPosition();
+
     private:
         Obj * _obj;
         Wheel * _wheels[4];

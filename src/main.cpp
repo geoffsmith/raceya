@@ -59,8 +59,8 @@ void initObjects() {
     // Load up a car obj
     car = new Car();
 
-    // Create the camera
-    camera = new Camera();
+    // Create the camera, pointing at the player's car
+    camera = new Camera(car);
 
     // Create the world model
     world = new World();
