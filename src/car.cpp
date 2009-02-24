@@ -25,7 +25,8 @@ Car::Car() {
     this->_wheelDiameter = 0.645; // m;
     this->_wheelsAngle = 0;
     this->_steeringAngle = 0;
-    this->_steeringDelta = 10;
+    this->_steeringDelta = 2;
+    this->_currentSteering = 0;
 
     // Set up the engine
     this->_engineRPM = 0;
@@ -47,6 +48,9 @@ Car::Car() {
 }
 
 void Car::_updateComponents() {
+    // Update the car's steering
+    this->_steeringAngle += this->_currentSteering * this->_steeringDelta;
+
     // Find out how much the engine has turned
     float engineTurns = this->_engineRPM * FrameTimer::timer.getMinutes();
     // And divide by current gear ratio
@@ -155,13 +159,29 @@ void Car::render() {
 
 void Car::handleKeyPress(SDL_Event &event) {
     switch (event.type) {
-        case SDL_KEYUP:
+        case SDL_KEYDOWN:
             switch (event.key.keysym.sym) {
+                // If the key is down, we increase the steering angle
                 case SDLK_LEFT:
-                    this->_steeringAngle -= this->_steeringDelta;
+                    this->_currentSteering = -1;
                     break;
                 case SDLK_RIGHT:
-                    this->_steeringAngle += this->_steeringDelta;
+                    this->_currentSteering = +1;
+                    break;
+                default:
+                    break;
+            }
+            break;
+        case SDL_KEYUP:
+            switch (event.key.keysym.sym) {
+                // If the steering key goes up,  we move back to the center
+                case SDLK_LEFT:
+                    this->_currentSteering = 0;
+                    this->_steeringAngle = 0;
+                    break;
+                case SDLK_RIGHT:
+                    this->_currentSteering = 0;
+                    this->_steeringAngle = 0;
                     break;
                 case SDLK_z:
                     this->_engineRPM += 100;

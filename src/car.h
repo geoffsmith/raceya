@@ -34,6 +34,7 @@ class Car {
         float _steeringAngle;
         // How much a keypress changes the steeringAngle
         float _steeringDelta;
+        float _currentSteering;
 
         // Model scale -> puts the model into meters's
         float _modelScale;
