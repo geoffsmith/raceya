@@ -17,11 +17,13 @@
 #include "car.h"
 #include "camera.h"
 #include "frame_timer.h"
+#include "world.h"
 
 using namespace std;
 
 static Car * car;
 static Camera * camera;
+static World * world;
 
 void setupLighting();
 
@@ -59,6 +61,9 @@ void initObjects() {
 
     // Create the camera
     camera = new Camera();
+
+    // Create the world model
+    world = new World();
 }
 
 void reshape(int w, int h) {
@@ -85,6 +90,9 @@ void display(void) {
 
     // Draw the car
     car->render();
+
+    // Draw the world
+    world->render();
 
     glDisable(GL_TEXTURE_2D);
 }

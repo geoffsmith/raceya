@@ -33,10 +33,12 @@ struct Material {
     bool diffuseSet;
     bool specularSet;
     bool shininessSet;
+    bool transparencySet;
     float ambient[4];
     float diffuse[4];
     float specular[4];
     float shininess;
+    float transparency;
 };
 
 struct Face {

@@ -74,7 +74,6 @@ Obj::Obj(const char *filename) {
             trim(parts[1]);
             currentMaterial = this->_findMaterial(parts[1]);
         } else if (command == "g") {
-            cout << "Obj group: " << parts[1] << endl;
             // TODO: span this name over all parts > 0
             trim(parts[1]);
             currentGroup = parts[1];
@@ -222,6 +221,7 @@ unsigned int Obj::_createDisplayListForGroup(string group) {
     float defaultSpecular[] = { 0, 0, 0, 1 };
     float defaultEmission[] = { 0, 0, 0, 1 };
     float defaultShininess = 0;
+    float defaultColor[] = { 1, 1, 1, 1 };
 
     glLoadIdentity();
 
@@ -272,6 +272,13 @@ unsigned int Obj::_createDisplayListForGroup(string group) {
                 glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, face->material->shininess);
             } else {
                 glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, defaultShininess);
+            }
+
+            // Check and set the transparency
+            if (face->material != 0 && face->material->transparencySet) {
+                glColor4f(defaultColor[0], defaultColor[1], defaultColor[2], face->material->transparency);
+            } else {
+                glColor4f(defaultColor[0], defaultColor[1], defaultColor[2], defaultColor[3]);
             }
 
             // Set the default emission
@@ -404,6 +411,13 @@ void Obj::_addMTL(string line) {
             // Shininess is just a single float
             material->shininess = atof(parts[1].c_str());
             material->shininessSet = true;
+        } else if (command == "d") {
+            material->transparency = atof(parts[1].c_str());
+            material->transparencySet = true;
+
+            material->ambient[3] = material->transparency;
+            material->diffuse[3] = material->transparency;
+            material->specular[3] = material->transparency;
         }
     }
     file.close();
@@ -419,6 +433,7 @@ void Obj::_initMaterial(Material * material, string name) {
     material->diffuseSet = false;
     material->specularSet = false;
     material->shininessSet = false;
+    material->transparencySet = false;
     
     // Set alpha in material properties
     material->ambient[3] = 1;

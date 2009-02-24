@@ -13,8 +13,8 @@ default: $(TARGET)
 
 all: default
 
-$(TARGET): src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o frame_timer.o
-	$(CC) $(PROFILE) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o frame_timer.o
+$(TARGET): src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o frame_timer.o world.o
+	$(CC) $(PROFILE) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o frame_timer.o world.o
 
 obj.o: src/obj.h src/obj.cpp src/matrix.h src/jpeg.h
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o obj.o src/obj.cpp
@@ -39,6 +39,9 @@ wheel.o: src/wheel.h src/wheel.cpp src/obj.h
 
 frame_timer.o: src/frame_timer.h src/frame_timer.cpp
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o frame_timer.o src/frame_timer.cpp
+
+world.o: src/world.cpp src/world.cpp
+	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o world.o src/world.cpp
 
 clean:
 	-rm -f *.o $(TARGET)

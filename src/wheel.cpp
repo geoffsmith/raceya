@@ -29,7 +29,6 @@ Wheel::Wheel(int position, Obj * obj) {
             this->_wheelCenter[1] = -1.217;
             this->_wheelCenter[2] = 0.342;
             break;
-
     }
 
 }
@@ -40,7 +39,7 @@ void Wheel::render() {
             this->_wheelCenter[1], 
             this->_wheelCenter[2]);
     if (this->_position == 0 || this->_position == 2) {
-        glRotatef(this->_rotation, -1, 0, 0.017);
+        glRotatef(-1 * this->_rotation, -1, 0, 0.017);
     } else {
         glRotatef(this->_rotation, 1, 0, 0.017);
     }

@@ -31,8 +31,6 @@ Car::Car() {
 
 void Car::_updateComponents() {
     // Find out how much the engine has turned
-    float minutes = FrameTimer::timer.getMinutes();
-    cout << "Minutes: " << minutes << endl;
     float engineTurns = this->_engineRPM * FrameTimer::timer.getMinutes();
     // And divide by current gear ratio
     float wheelTurns = engineTurns / this->_gearRatios[this->_currentGear];
