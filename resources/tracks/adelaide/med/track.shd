@@ -1,0 +1,3309 @@
+; Adelaide track shaders by Teancum 18 July 04
+; Updated by Miran Amon 30 July 04
+;
+shader_IdealLine0
+{
+  layer0
+  {
+    map=IdealLine0.tga
+    blendfunc=blend
+    alphafunc=gequal 1
+    depthwrite=0
+  }
+}
+shader_IdealLine1
+{
+  layer0
+  {
+    map=IdealLine1.tga
+    blendfunc=blend
+    alphafunc=gequal 1
+    depthwrite=0
+  }
+}
+shader_IdealLine2
+{
+  layer0
+  {
+    map=IdealLine2.tga
+    blendfunc=blend
+    alphafunc=gequal 1
+    depthwrite=0
+  }
+}
+shader_IdealLine3
+{
+  layer0
+  {
+    map=IdealLine3.tga
+    blendfunc=blend
+    alphafunc=gequal 1
+    depthwrite=0
+  }
+}
+shader_himmel03
+{
+  sky=1
+  fog=0
+  layer0
+  {
+    texenv=replace
+    map=cloudsny.tga
+    cull=back
+    depthfunc=always
+    depthwrite=0
+  }
+}
+shader_aab1
+{
+  layer0
+  {
+    map=aab1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aab2
+{
+  layer0
+  {
+    map=aab2.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aab3
+{
+  layer0
+  {
+    map=aab3.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aab4
+{
+  layer0
+  {
+    map=aab4.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aac1
+{
+  layer0
+  {
+    map=aac1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aae2roof
+{
+  layer0
+  {
+    map=aae2roof.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aae4
+{
+  layer0
+  {
+    map=aae4.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aag1
+{
+  layer0
+  {
+    map=aag1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aag2
+{
+  layer0
+  {
+    map=aag2.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aag5
+{
+  layer0
+  {
+    map=aag5.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aag6
+{
+  layer0
+  {
+    map=aag6.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aah1
+{
+  layer0
+  {
+    map=aah1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aah2
+{
+  layer0
+  {
+    map=aah2.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aah3
+{
+  layer0
+  {
+    map=aah3.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aai1
+{
+  layer0
+  {
+    map=aai1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aai2
+{
+  layer0
+  {
+    map=aai2.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aai3
+{
+  layer0
+  {
+    map=aai3.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aai4
+{
+  layer0
+  {
+    map=aai4.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aai5
+{
+  layer0
+  {
+    map=aai5.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_aawindows1
+{
+  layer0
+  {
+    map=aawindows1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_ac1
+{
+  layer0
+  {
+    map=ac1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_ac3
+{
+  layer0
+  {
+    map=ac3.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_ac4
+{
+  layer0
+  {
+    map=ac4.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_adehous1
+{
+  layer0
+  {
+    map=adehous1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_adehous2
+{
+  layer0
+  {
+    map=adehous2.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_adehous3
+{
+  layer0
+  {
+    map=adehous3.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_adehous4
+{
+  layer0
+  {
+    map=adehous4.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_adehous5
+{
+  layer0
+  {
+    map=adehous5.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_adehous6
+{
+  layer0
+  {
+    map=adehous6.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_adeltwr1
+{
+  layer0
+  {
+    map=adeltwr1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_adeltwr2
+{
+  layer0
+  {
+    map=adeltwr2.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_adeltwr3
+{
+  layer0
+  {
+    map=adeltwr3.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_adeltwr4
+{
+  layer0
+  {
+    map=adeltwr4.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_adeltwr5
+{
+  layer0
+  {
+    map=adeltwr5.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_adeltwr6
+{
+  layer0
+  {
+    map=adeltwr6.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_ademark1
+{
+  layer0
+  {
+    map=ademark1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_ademark4
+{
+  layer0
+  {
+    map=ademark4.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_ademark5
+{
+  layer0
+  {
+    map=ademark5.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_ademark7
+{
+  layer0
+  {
+    map=ademark7.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_adroad01
+{
+  layer0
+  {
+    map=adroad01.bmp
+    texenv=disable
+    mipmap=0
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_ae1
+{
+  layer0
+  {
+    map=ae1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_ae2
+{
+  layer0
+  {
+    map=ae2.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_ae3
+{
+  layer0
+  {
+    map=ae3.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_ae4
+{
+  layer0
+  {
+    map=ae4.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_ae5
+{
+  layer0
+  {
+    map=ae5.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_ae6
+{
+  layer0
+  {
+    map=ae6.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_af2
+{
+  layer0
+  {
+    map=af2.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_af3
+{
+  layer0
+  {
+    map=af3.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_af4
+{
+  layer0
+  {
+    map=af4.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_af5
+{
+  layer0
+  {
+    map=af5.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_af7
+{
+  layer0
+  {
+    map=af7.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_af8
+{
+  layer0
+  {
+    map=af8.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_ASILO1
+{
+  layer0
+  {
+    map=ASILO1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_asilo2
+{
+  layer0
+  {
+    map=asilo2.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_asilo3
+{
+  layer0
+  {
+    map=asilo3.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_asilo4
+{
+  layer0
+  {
+    map=asilo4.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_astnd
+{
+  layer0
+  {
+    map=astnd.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_bb1
+{
+  layer0
+  {
+    map=bb1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_bb2
+{
+  layer0
+  {
+    map=bb2.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_bb3
+{
+  layer0
+  {
+    map=bb3.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_bldgec
+{
+  layer0
+  {
+    map=bldgec.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_bldgpa
+{
+  layer0
+  {
+    map=bldgpa.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_bldgpq
+{
+  layer0
+  {
+    map=bldgpq.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_blue
+{
+  layer0
+  {
+    map=blue.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_brdgroof
+{
+  layer0
+  {
+    map=brdgroof.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_brdgtop
+{
+  layer0
+  {
+    map=brdgtop.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_brdgwht
+{
+  layer0
+  {
+    map=brdgwht.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_cmnta
+{
+  layer0
+  {
+    map=cmnta.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_cmntb
+{
+  layer0
+  {
+    map=cmntb.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_cmwld
+{
+  layer0
+  {
+    map=cmwld.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_cmwlgb
+{
+  layer0
+  {
+    map=cmwlgb.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_cmwlgc
+{
+  layer0
+  {
+    map=cmwlgc.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_cmwlquan
+{
+  layer0
+  {
+    map=cmwlquan.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_cmwltp
+{
+  layer0
+  {
+    map=cmwltp.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_cmwltpa
+{
+  layer0
+  {
+    map=cmwltpa.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_cmwlya
+{
+  layer0
+  {
+    map=cmwlya.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_cmwlyb
+{
+  layer0
+  {
+    map=cmwlyb.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_cmwlyc
+{
+  layer0
+  {
+    map=cmwlyc.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_concsema
+{
+  layer0
+  {
+    map=concsema.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_concsemb
+{
+  layer0
+  {
+    map=concsemb.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_concwala
+{
+  layer0
+  {
+    map=concwala.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_conesonoma
+{
+  layer0
+  {
+    map=conesonoma.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_cnrfwin
+{
+  layer0
+  {
+    map=crnfwin.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_crnpist
+{
+  layer0
+  {
+    map=crnpist.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_crnsbod
+{
+  layer0
+  {
+    map=crnsbod.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_crnstred
+{
+  layer0
+  {
+    map=crnstred.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_crnswin
+{
+  layer0
+  {
+    map=crnswin.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_crnttred
+{
+  layer0
+  {
+    map=crnttred.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_doorside
+{
+  layer0
+  {
+    map=doorside.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_drkwla
+{
+  layer0
+  {
+    map=drkwla.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_fnceb
+{
+  layer0
+  {
+    map=fnceb.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_grass1a
+{
+  layer0
+  {
+    map=gsbump.tga
+	texscale=16
+    mipmap=1
+  }
+  layer1
+  {
+    map=grass1a.bmp
+    blendfunc=blend
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.15
+    specular=0.05 0.05 0.05
+    alphafunc=gequal 180
+    texenv=replace
+    mipmap=0
+  }
+}
+shader_grasslow
+{
+  layer0
+  {
+    map=gsbump.tga
+	texscale=16
+    mipmap=1
+  }
+  layer1
+  {
+    map=grasslow.tga
+    blendfunc=blend
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.15
+    specular=0.05 0.05 0.05
+    alphafunc=gequal 180
+    texenv=replace
+    mipmap=0
+  }
+}
+shader_grvg
+{
+  layer0
+  {
+    map=roadnoise2.tga
+	texscale=16
+    mipmap=1
+  }
+  layer1
+  {
+    map=grvg.bmp
+    blendfunc=blend
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.15
+    specular=0.05 0.05 0.05
+    alphafunc=gequal 180
+    texenv=replace
+    mipmap=0
+  }
+}
+shader_grvy
+{
+  layer0
+  {
+    map=roadnoise2.tga
+	texscale=16
+    mipmap=1
+  }
+  layer1
+  {
+    map=grvy.bmp
+    blendfunc=blend
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.15
+    specular=0.05 0.05 0.05
+    alphafunc=gequal 180
+    texenv=replace
+    mipmap=0
+  }
+}
+shader_gsfnc
+{
+  layer0
+  {
+    map=gsfnc.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_gsmap02
+{
+  layer0
+  {
+    map=gsmap02.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_gstnda
+{
+  layer0
+  {
+    map=gstnda.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_gsunder
+{
+  layer0
+  {
+    map=gsunder.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_hosp1floor
+{
+  layer0
+  {
+    map=hosp1floor.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_hosp3floor
+{
+  layer0
+  {
+    map=hosp3floor.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_hosptop1
+{
+  layer0
+  {
+    map=hosptop1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_hosptop2
+{
+  layer0
+  {
+    map=hosptop2.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_hospwin1
+{
+  layer0
+  {
+    map=hospwin1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_housea03
+{
+  layer0
+  {
+    map=housea03.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_housea04
+{
+  layer0
+  {
+    map=housea04.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_housea06
+{
+  layer0
+  {
+    map=housea06.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_houseb01
+{
+  layer0
+  {
+    map=houseb01.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_houseb04
+{
+  layer0
+  {
+    map=houseb04.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_houseb05
+{
+  layer0
+  {
+    map=houseb05.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_lodge2
+{
+  layer0
+  {
+    map=lodge2.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_lodge4
+{
+  layer0
+  {
+    map=lodge4.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_lodge5
+{
+  layer0
+  {
+    map=lodge5.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_logoadel
+{
+  layer0
+  {
+    map=logoadel.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_logocoop
+{
+  layer0
+  {
+    map=logocoop.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_logoeds
+{
+  layer0
+  {
+    map=logoeds.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_logofire
+{
+  layer0
+  {
+    map=logofire.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_logomag
+{
+  layer0
+  {
+    map=logomag.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_logomblo
+{
+  layer0
+  {
+    map=logomblo.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_logomela
+{
+  layer0
+  {
+    map=logomela.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_logomelc
+{
+  layer0
+  {
+    map=logomelc.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_logoquan
+{
+  layer0
+  {
+    map=logoquan.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_logoshl
+{
+  layer0
+  {
+    map=logoshl.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_metala
+{
+  layer0
+  {
+    map=metala.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_walla
+{
+  layer0
+  {
+    map=walla.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_mhdojor
+{
+  layer0
+  {
+    map=mhdojor.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_padding1
+{
+  layer0
+  {
+    map=padding1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_padding
+{
+  layer0
+  {
+    map=padding.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_pitdrk
+{
+  layer0
+  {
+    map=pitdrk.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_pitwb
+{
+  layer0
+  {
+    map=pitwb.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_pitwht
+{
+  layer0
+  {
+    map=pitwht.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_rmbla
+{
+  layer0
+  {
+    map=rmbla.bmp
+    texenv=disable
+    mipmap=0
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_rmblb
+{
+  layer0
+  {
+    map=rmblb.bmp
+    texenv=disable
+    mipmap=0
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_rmbld
+{
+  layer0
+  {
+    map=rmbld.bmp
+    texenv=disable
+    mipmap=0
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_roada
+{
+  layer0
+  {
+    map=roadnoise2.tga
+	texscale=8
+    mipmap=0
+    shininess=10
+    specular=0.2 0.2 0.2 1
+  }
+  layer1
+  {
+    map=roada.bmp
+    blendfunc=blend
+    texenv=modulate
+    mipmap=0
+    emission=0.5 0.5 0.5
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.13
+    shininess=25
+  }
+}
+shader_roadadel
+{
+  layer0
+  {
+    map=roadadel.bmp
+    texenv=disable
+    mipmap=0
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_roadb
+{
+  layer0
+  {
+    map=roadnoise2.tga
+	texscale=8
+    mipmap=0
+    shininess=10
+    specular=0.2 0.2 0.2 1
+  }
+  layer1
+  {
+    map=roadb.bmp
+    blendfunc=blend
+    texenv=modulate
+    mipmap=0
+    emission=0.5 0.5 0.5
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.13
+    shininess=25
+  }
+}
+shader_roadc
+{
+  layer0
+  {
+    map=roadnoise2.tga
+	texscale=8
+    mipmap=0
+    shininess=10
+    specular=0.2 0.2 0.2 1
+  }
+  layer1
+  {
+    map=roadc.bmp
+    blendfunc=blend
+    texenv=modulate
+    mipmap=0
+    emission=0.5 0.5 0.5
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.13
+    shininess=25
+  }
+}
+shader_roadd
+{
+  layer0
+  {
+    map=roadnoise2.tga
+	texscale=8
+    mipmap=0
+    shininess=10
+    specular=0.2 0.2 0.2 1
+  }
+  layer1
+  {
+    map=roadd.bmp
+    blendfunc=blend
+    texenv=modulate
+    mipmap=0
+    emission=0.5 0.5 0.5
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.13
+    shininess=25
+  }
+}
+shader_roade
+{
+  layer0
+  {
+    map=roadnoise2.tga
+	texscale=8
+    mipmap=0
+    shininess=10
+    specular=0.2 0.2 0.2 1
+  }
+  layer1
+  {
+    map=roade.bmp
+    blendfunc=blend
+    texenv=modulate
+    mipmap=0
+    emission=0.5 0.5 0.5
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.13
+    shininess=25
+  }
+}
+shader_roadf
+{
+  layer0
+  {
+    map=roadnoise2.tga
+	texscale=8
+    mipmap=0
+    shininess=10
+    specular=0.2 0.2 0.2 1
+  }
+  layer1
+  {
+    map=roadf.tga
+    blendfunc=blend
+    texenv=modulate
+    mipmap=0
+    emission=0.5 0.5 0.5
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.13
+    shininess=25
+  }
+}
+shader_road
+{
+  layer0
+  {
+    map=roadnoise2.tga
+	texscale=8
+    mipmap=0
+    shininess=10
+    specular=0.2 0.2 0.2 1
+  }
+  layer1
+  {
+    map=road.tga
+    blendfunc=blend
+    texenv=modulate
+    mipmap=0
+    emission=0.5 0.5 0.5
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.13
+    shininess=25
+  }
+}
+shader_rosa
+{
+  layer0
+  {
+    map=rosa.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_royal1
+{
+  layer0
+  {
+    map=royal1.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_royal2
+{
+  layer0
+  {
+    map=royal2.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_royal3
+{
+  layer0
+  {
+    map=royal3.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_royal4
+{
+  layer0
+  {
+    map=royal4.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_stairs
+{
+  layer0
+  {
+    map=stairs.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_stndunr
+{
+  layer0
+  {
+    map=stndundr.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_tenta
+{
+  layer0
+  {
+    map=tenta.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_tentb
+{
+  layer0
+  {
+    map=tentb.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_tentd
+{
+  layer0
+  {
+    map=tentd.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_tente
+{
+  layer0
+  {
+    map=tente.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_tentf
+{
+  layer0
+  {
+    map=tentf.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_undrbrdg
+{
+  layer0
+  {
+    map=undrbrdg.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_wala
+{
+  layer0
+  {
+    map=wala.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_walab
+{
+  layer0
+  {
+    map=walab.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_walat
+{
+  layer0
+  {
+    map=walat.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+shader_white
+{
+  layer0
+  {
+    map=white.bmp
+    texenv=disable
+    mipmap=1
+    shininess=0
+    emission=0.3 0.3 0.3
+    ambient=0.15 0.15 0.1
+    ;specular=0.2 0.2 0.2
+  }
+}
+;--------------------------------------TRANSPARENT SHADERS-------------------------------------
+;
+shader_peoplea
+{
+  layer0
+  {
+    map=peoplea.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_peopleb
+{
+  layer0
+  {
+    map=peopleb.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_peoplec
+{
+  layer0
+  {
+    map=peoplec.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_position
+{
+  layer0
+  {
+    map=position.bmp
+    texenv=disable
+    mipmap=0
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_treec
+{
+  layer0
+  {
+    map=treec.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.85 0.85 0.85 1
+    ambient=0.5 0.5 0.5 0.5
+    ;;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_treef
+{
+  layer0
+  {
+    map=treef.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.85 0.85 0.85 1
+    ambient=0.5 0.5 0.5 0.5
+    ;;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_treesd
+{
+  layer0
+  {
+    map=treesd.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.85 0.85 0.85 1
+    ambient=0.5 0.5 0.5 0.5
+    ;;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_trewalla
+{
+  layer0
+  {
+    map=trewalla.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.85 0.85 0.85 1
+    ambient=0.5 0.5 0.5 0.5
+    ;;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_trewallb
+{
+  layer0
+  {
+    map=trewallb.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.85 0.85 0.85 1
+    ambient=0.5 0.5 0.5 0.5
+    ;;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_trewallc
+{
+  layer0
+  {
+    map=trewallc.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.85 0.85 0.85 1
+    ambient=0.5 0.5 0.5 0.5
+    ;;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_aa1
+{
+  layer0
+  {
+    map=aa1.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_aa2
+{
+  layer0
+  {
+    map=aa2.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_aaa1
+{
+  layer0
+  {
+    map=aaa1.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_aaa2
+{
+  layer0
+  {
+    map=aaa2.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_aaa3
+{
+  layer0
+  {
+    map=aaa3.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_aab5
+{
+  layer0
+  {
+    map=aab5.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_aae1
+{
+  layer0
+  {
+    map=aae1.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_aad1
+{
+  layer0
+  {
+    map=aad1.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_aae3
+{
+  layer0
+  {
+    map=aae3.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_aae7
+{
+  layer0
+  {
+    map=aae7.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_aag3
+{
+  layer0
+  {
+    map=aag3.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_ac5
+{
+  layer0
+  {
+    map=ac5.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_aag7
+{
+  layer0
+  {
+    map=aag7.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_ad1
+{
+  layer0
+  {
+    map=ad1.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_adeltwr6
+{
+  layer0
+  {
+    map=adeltwr6.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_ademark2
+{
+  layer0
+  {
+    map=ademark2.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_ademark3
+{
+  layer0
+  {
+    map=ademark3.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_ademark6
+{
+  layer0
+  {
+    map=ademark6.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_ademark8
+{
+  layer0
+  {
+    map=ademark8.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_adroad02
+{
+  layer0
+  {
+    map=adroad02.bmp
+    texenv=disable
+    mipmap=0
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_adroad04
+{
+  layer0
+  {
+    map=adroad04.bmp
+    texenv=disable
+    mipmap=0
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_adroad05
+{
+  layer0
+  {
+    map=adroad05.bmp
+    texenv=disable
+    mipmap=0
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_adroad06
+{
+  layer0
+  {
+    map=adroad06.bmp
+    texenv=disable
+    mipmap=0
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_adroad07
+{
+  layer0
+  {
+    map=adroad07.bmp
+    texenv=disable
+    mipmap=0
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_adroad10
+{
+  layer0
+  {
+    map=adroad10.bmp
+    texenv=disable
+    mipmap=0
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_adroad11
+{
+  layer0
+  {
+    map=adroad11.bmp
+    texenv=disable
+    mipmap=0
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_af1
+{
+  layer0
+  {
+    map=af1.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_anhouse01
+{
+  layer0
+  {
+    map=anhouse01.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_af6
+{
+  layer0
+  {
+    map=af6.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_anhouse02
+{
+  layer0
+  {
+    map=anhouse02.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_anhouse03
+{
+  layer0
+  {
+    map=anhouse03.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_anhouse
+{
+  layer0
+  {
+    map=anhouse.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_ba1
+{
+  layer0
+  {
+    map=ba1.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_ba2
+{
+  layer0
+  {
+    map=ba2.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_ba3
+{
+  layer0
+  {
+    map=ba3.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_ba4
+{
+  layer0
+  {
+    map=ba4.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_ba5
+{
+  layer0
+  {
+    map=ba5.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_bars
+{
+  layer0
+  {
+    map=bars.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_bk01
+{
+  layer0
+  {
+    map=bk01.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_bk02
+{
+  layer0
+  {
+    map=bk02.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_bk03
+{
+  layer0
+  {
+    map=bk03.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_bk04
+{
+  layer0
+  {
+    map=bk04.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_crnftop
+{
+  layer0
+  {
+    map=crnftop.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_eastend1
+{
+  layer0
+  {
+    map=eastend1.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_fncec
+{
+  layer0
+  {
+    map=fncec.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_grdrwht
+{
+  layer0
+  {
+    map=grdrwht.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_grdra
+{
+  layer0
+  {
+    map=grdra.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_gsgates
+{
+  layer0
+  {
+    map=gsgates.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_gsmap01
+{
+  layer0
+  {
+    map=gsmap01.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_housea01
+{
+  layer0
+  {
+    map=housea01.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_housea07
+{
+  layer0
+  {
+    map=housea07.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_houseb03
+{
+  layer0
+  {
+    map=houseb03.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_image1
+{
+  layer0
+  {
+    map=image1.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_image2
+{
+  layer0
+  {
+    map=image2.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_image3
+{
+  layer0
+  {
+    map=image3.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_image4
+{
+  layer0
+  {
+    map=image4.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_image5
+{
+  layer0
+  {
+    map=image5.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_lodge1
+{
+  layer0
+  {
+    map=lodge1.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_lodge3
+{
+  layer0
+  {
+    map=lodge3.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_lodge6
+{
+  layer0
+  {
+    map=lodge6.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_raila
+{
+  layer0
+  {
+    map=raila.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_royal5
+{
+  layer0
+  {
+    map=royal5.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_stairtran
+{
+  layer0
+  {
+    map=stairtran.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_tentc
+{
+  layer0
+  {
+    map=tentc.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_truck1
+{
+  layer0
+  {
+    map=truck1.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_truck
+{
+  layer0
+  {
+    map=truck.bmp
+    texenv=disable
+    mipmap=1
+    alphafunc=gequal 100
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;specular=0.5 0.5 0.5 0.5
+  }
+}
+shader_shada
+{
+  layer0
+  {
+    map=shada.tga
+    texenv=disable
+    mipmap=1
+    blendfunc=blend
+    shininess=0
+    emission=0.4 0.4 0.4 0.4
+    ambient=0.5 0.5 0.5 0.5
+    ;;specular=0.5 0.5 0.5 0.5
+  }
+}
+;--------------------------------------SKY SHADERS-------------------------------------
+;
+shader_sky
+{
+  sky=1
+  fog=0
+  layer0
+  {
+    texenv=replace
+    map=himmel03.jpg
+    cull=back
+    depthfunc=always
+    depthwrite=1
+  }
+}

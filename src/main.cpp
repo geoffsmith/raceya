@@ -19,6 +19,7 @@
 #include "frame_timer.h"
 #include "world.h"
 #include "hud.h"
+#include "dof.h"
 
 using namespace std;
 
@@ -27,6 +28,7 @@ static Camera * camera;
 static World * world;
 static Hud * hud;
 static SDL_Surface * drawContext;
+static Dof * dof;
 
 void setupLighting();
 
@@ -59,6 +61,9 @@ void setupLighting() {
 }
 
 void initObjects() {
+    // Load a DOF
+    dof = new Dof("resources/tracks/adelaide/aahouse.dof");
+
     // Load up a car obj
     car = new Car();
 
@@ -70,6 +75,7 @@ void initObjects() {
     
     // Create the HUD
     hud = new Hud(car);
+
 }
 
 void reshape(int w, int h) {
@@ -96,6 +102,9 @@ void display(void) {
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
     camera->viewTransform();
+
+    // render the dof
+    dof->render();
 
     // Draw the car
     car->render();
