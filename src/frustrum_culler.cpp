@@ -15,10 +15,6 @@ bool ViewFrustrumCulling::testObject(float * boundingBox) {
     float size;
 
     // First we need the center of the box
-    /*center[0] = (boundingBox[1] - boundingBox[0]) / 2.0 + boundingBox[0];
-    center[1] = (boundingBox[3] - boundingBox[2]) / 2.0 + boundingBox[2];
-    center[2] = (boundingBox[5] - boundingBox[4]) / 2.0 + boundingBox[4];
-    */
     center[0] = (boundingBox[0] + boundingBox[1]) / 2.0;
     center[1] = (boundingBox[2] + boundingBox[3]) / 2.0;
     center[2] = (boundingBox[4] + boundingBox[5]) / 2.0;
@@ -26,34 +22,6 @@ bool ViewFrustrumCulling::testObject(float * boundingBox) {
     sizeVector[0] = boundingBox[0] - center[0];
     sizeVector[1] = boundingBox[2] - center[1];
     sizeVector[2] = boundingBox[4] - center[2];
-
-    // And now get the size of the size vector
-    size = sqrt(
-            sizeVector[0] * sizeVector[0] + 
-            sizeVector[1] * sizeVector[1] + 
-            sizeVector[2] * sizeVector[2] );
-
-
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
-    glPushMatrix();
-
-    glColor4f(1, 1, 1, 1);
-    glTranslatef(center[0], center[1], center[2]);
-    //glTranslatef(boundingBox[0], boundingBox[2], boundingBox[4]);
-
-    GLUquadric * quad = gluNewQuadric();
-    gluQuadricDrawStyle(quad, GLU_LINE);
-    gluSphere(quad, size, 10, 10);
-    gluDeleteQuadric(quad);
-
-    glPopMatrix();
-    glEnable(GL_LIGHTING);
-    glEnable(GL_TEXTURE_2D);
-
-    // Convert the size vector and center into modelview * projection space
-    this->_matrix.multiplyVector(center);
-    this->_matrix.multiplyVector(sizeVector);
 
     // And now get the size of the size vector
     size = sqrt(
@@ -84,8 +52,8 @@ void ViewFrustrumCulling::refreshMatrices() {
 
     // Combine the two matrices
     this->_matrix.reset();
-    this->_matrix.multiplyMatrix(modelView);
     this->_matrix.multiplyMatrix(projection);
+    this->_matrix.multiplyMatrix(modelView);
 
     // Calculate the frustrum
     // ... for the right plane
@@ -109,7 +77,8 @@ void ViewFrustrumCulling::refreshMatrices() {
     frustrum[1][3] = this->_matrix[15] + this->_matrix[12];
 
     // and normalise
-    t = sqrt(frustrum[1][0] * frustrum[1][0] + frustrum[1][1] * frustrum[1][1] 
+    t = sqrt(frustrum[1][0] * frustrum[1][0]
+            + frustrum[1][1] * frustrum[1][1] 
             + frustrum[1][2] * frustrum[1][2]);
     frustrum[1][0] /= t;
     frustrum[1][1] /= t;
@@ -123,7 +92,8 @@ void ViewFrustrumCulling::refreshMatrices() {
     frustrum[2][3] = this->_matrix[15] + this->_matrix[13];
 
     // and normalise
-    t = sqrt(frustrum[2][0] * frustrum[2][0] + frustrum[2][1] * frustrum[2][1] 
+    t = sqrt(frustrum[2][0] * frustrum[2][0]
+            + frustrum[2][1] * frustrum[2][1] 
             + frustrum[2][2] * frustrum[2][2]);
     frustrum[2][0] /= t;
     frustrum[2][1] /= t;
@@ -137,7 +107,8 @@ void ViewFrustrumCulling::refreshMatrices() {
     frustrum[3][3] = this->_matrix[15] - this->_matrix[13];
 
     // and normalise
-    t = sqrt(frustrum[3][0] * frustrum[3][0] + frustrum[3][1] * frustrum[3][1] 
+    t = sqrt(frustrum[3][0] * frustrum[3][0] 
+            + frustrum[3][1] * frustrum[3][1] 
             + frustrum[3][2] * frustrum[3][2]);
     frustrum[3][0] /= t;
     frustrum[3][1] /= t;
@@ -151,7 +122,8 @@ void ViewFrustrumCulling::refreshMatrices() {
     frustrum[4][3] = this->_matrix[15] - this->_matrix[14];
 
     // and normalise
-    t = sqrt(frustrum[4][0] * frustrum[4][0] + frustrum[4][1] * frustrum[4][1] 
+    t = sqrt(frustrum[4][0] * frustrum[4][0] 
+            + frustrum[4][1] * frustrum[4][1] 
             + frustrum[4][2] * frustrum[4][2]);
     frustrum[4][0] /= t;
     frustrum[4][1] /= t;
@@ -165,7 +137,8 @@ void ViewFrustrumCulling::refreshMatrices() {
     frustrum[5][3] = this->_matrix[15] + this->_matrix[14];
 
     // and normalise
-    t = sqrt(frustrum[5][0] * frustrum[5][0] + frustrum[5][1] * frustrum[5][1] 
+    t = sqrt(frustrum[5][0] * frustrum[5][0] 
+            + frustrum[5][1] * frustrum[5][1] 
             + frustrum[5][2] * frustrum[5][2]);
     frustrum[5][0] /= t;
     frustrum[5][1] /= t;

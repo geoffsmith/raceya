@@ -83,10 +83,7 @@ void Track::_loadGeometryIni() {
 
 void Track::render() {
     int count = 0;
-    //for (unsigned int i = 0; i < this->_nDofs; ++i) {
-    int only = 80;
-    for (int i = only; i < only + 1; i++) {
+    for (unsigned int i = 0; i < this->_nDofs; ++i) {
         count += this->_dofs[i]->render();
     }    
-    cout << "Rendered " << count << endl;
 }

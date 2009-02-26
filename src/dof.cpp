@@ -326,8 +326,8 @@ void Dof::_loadTexture(string name, unsigned int & texture) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 
         // Write the texture data
@@ -469,53 +469,6 @@ void Dof::_calculateBoundingBox() {
                 if (geob->boundingBox[5] < vertex[2]) geob->boundingBox[5] = vertex[2];
             }
         }
-
-        float center[3];
-        float size;
-        float sizeVector[3];
-        center[0] = (geob->boundingBox[0] + geob->boundingBox[1]) / 2.0;
-        center[1] = (geob->boundingBox[2] + geob->boundingBox[3]) / 2.0;
-        center[2] = (geob->boundingBox[4] + geob->boundingBox[5]) / 2.0;
-
-        sizeVector[0] = geob->boundingBox[0] - center[0];
-        sizeVector[1] = geob->boundingBox[2] - center[1];
-        sizeVector[2] = geob->boundingBox[4] - center[2];
-
-        // And now get the size of the size vector
-        size = sqrt(
-                sizeVector[0] * sizeVector[0] + 
-                sizeVector[1] * sizeVector[1] + 
-                sizeVector[2] * sizeVector[2] );
-
-
-        glDisable(GL_LIGHTING);
-        glDisable(GL_TEXTURE_2D);
-        glPushMatrix();
-
-        glColor4f(1, 1, 1, 1);
-        glTranslatef(center[0], center[1], center[2]);
-        //glTranslatef(geob->boundingBox[0], geob->boundingBox[2], geob->boundingBox[4]);
-
-        GLUquadric * quad = gluNewQuadric();
-        gluQuadricDrawStyle(quad, GLU_LINE);
-        //gluSphere(quad, size, 10, 10);
-        gluDeleteQuadric(quad);
-
-        glPopMatrix();
-
-
-        glBegin(GL_POINTS);
-        for (int point = 0; point < 2; point++) {
-            for (int point2 = 2; point2 < 4; ++point2) {
-                for (int point3 = 4; point3 < 6; ++point3) {
-                    glVertex3f(geob->boundingBox[point], geob->boundingBox[point2], geob->boundingBox[point3]);
-                }
-            }
-        }
-        glEnd();
-
-        glEnable(GL_LIGHTING);
-        glEnable(GL_TEXTURE_2D);
     }
 }
 
