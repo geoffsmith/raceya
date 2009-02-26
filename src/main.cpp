@@ -20,6 +20,7 @@
 #include "world.h"
 #include "hud.h"
 #include "track.h"
+#include "frustrum_culler.h"
 
 using namespace std;
 
@@ -104,6 +105,8 @@ void display(void) {
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
     camera->viewTransform();
+
+    ViewFrustrumCulling::culler->refreshMatrices();
 
     // Draw the car
     car->render();

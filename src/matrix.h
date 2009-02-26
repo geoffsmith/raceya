@@ -29,7 +29,10 @@ class Matrix {
         void multiplyVector(float *vector);
 
         void multiplyVectorSkipTranslation(float *vector, float *result);
-        void multiplyMatrix(Matrix *matrix);
+
+        void multiplyMatrix(Matrix * matrix);
+        void multiplyMatrix(float * matrix);
+
         float* getMatrix();
 
     private:

@@ -24,9 +24,6 @@ Track::Track(string trackPath) {
     }
 
     this->_loadGeometryIni();
-
-    // Create the display list
-    this->_createDisplayList();
 }
 
 Track::~Track() {
@@ -85,14 +82,11 @@ void Track::_loadGeometryIni() {
 }
 
 void Track::render() {
-        glCallList(this->_displayList);
-}
-
-void Track::_createDisplayList() {
-    this->_displayList = glGenLists(1);
-    glNewList(this->_displayList, GL_COMPILE);
-    for (unsigned int i = 0; i < this->_nDofs; ++i) {
-        this->_dofs[i]->render();
+    int count = 0;
+    //for (unsigned int i = 0; i < this->_nDofs; ++i) {
+    int only = 80;
+    for (int i = only; i < only + 1; i++) {
+        count += this->_dofs[i]->render();
     }    
-    glEndList();
+    cout << "Rendered " << count << endl;
 }

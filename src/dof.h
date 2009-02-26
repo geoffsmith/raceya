@@ -35,8 +35,8 @@ class Geob {
         int * burstsMaterials;
         // Still to implement
         // * VCOL
-        // * BRST
-        // * INDI
+        unsigned int displayList;
+        float boundingBox[6];
 };
 
 class Mat {
@@ -64,7 +64,7 @@ class Dof {
     public:
         Dof(string filePath);
         ~Dof();
-        void render();
+        int render();
 
     private:
         string _filePath;
@@ -87,5 +87,11 @@ class Dof {
 
         // Load a texture
         void _loadTexture(string name, unsigned int & texture);
+
+        // This DOFs display list
+        void _createDisplayLists();
+
+        // The bounding box for the dof
+        void _calculateBoundingBox();
 };
 

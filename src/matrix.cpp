@@ -197,6 +197,11 @@ float& Matrix::operator[] (const unsigned int index) {
     return this->_matrix[index];
 }
 
+void Matrix::multiplyMatrix(float * matrix) {
+    Matrix tmp(matrix);
+    this->multiplyMatrix(&tmp);
+}
+
 void Matrix::multiplyMatrix(Matrix *matrix) {
     float *thisMatrix = this->_matrix;
     float sum;

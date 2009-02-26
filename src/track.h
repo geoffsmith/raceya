@@ -26,8 +26,4 @@ class Track {
         // NOTE: this is ultra simplified at the moment and will almost certainly need 
         // expanding. It just looks for lines with a dof file and loads it.
         void _loadGeometryIni();
-
-        // Create display list for the track
-        void _createDisplayList();
-        unsigned int _displayList;
 };

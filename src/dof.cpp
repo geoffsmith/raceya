@@ -1,4 +1,5 @@
 #include "dof.h"
+#include "frustrum_culler.h"
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
@@ -8,6 +9,7 @@
 #include <SDL/SDL_image.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <math.h>
 
 using namespace std;
 using namespace boost;
@@ -20,7 +22,7 @@ Dof::Dof(string filePath) {
     int dofLength;
     this->_filePath = filePath;
     buffer[4] = NULL;
-
+    
     // Load the file
     ifstream file(this->_filePath.c_str());
     if (!file.is_open()) {
@@ -59,6 +61,12 @@ Dof::Dof(string filePath) {
 
     // close the file
     file.close();
+
+    // Create the display lists
+    this->_createDisplayLists();
+    
+    // Calculate bounding box
+    this->_calculateBoundingBox();
 }
 
 Dof::~Dof() {
@@ -344,23 +352,26 @@ void Dof::_loadTexture(string name, unsigned int & texture) {
     } else {
         cout << "With: " << name << endl;
         cout << "Error loading texture: " << IMG_GetError() << "_" << endl;
-        &texture = 0;
+        texture = 0;
     }
 }
 
-void Dof::render() {
+void Dof::_createDisplayLists() {
     Geob * geob;
     Mat * mat;
     unsigned short index;
     int burstCount, burstStart;
     int stop;
-    float textureX, textureY;
     unsigned int error;
 
 
     for (int i = 0; i < this->_nGeobs; ++i) {
         geob = &(this->_geobs[i]);
         mat = &(this->_mats[geob->material]);
+
+        // Create a new display list
+        geob->displayList = glGenLists(1);
+        glNewList(geob->displayList, GL_COMPILE);
 
         if (mat->nTextures > 0 && mat->textures[0]) {
             error = glGetError();
@@ -399,9 +410,118 @@ void Dof::render() {
 
         glEnd();
 
+        glEndList();
     }
 
+
 }
+
+int Dof::render() {
+    int count = 0;
+    Geob * geob;
+
+    this->_calculateBoundingBox();
+    for (int i = 0; i < this->_nGeobs; ++i) {
+        geob = &(this->_geobs[i]);
+        // Check if we need to render this geob
+        if (ViewFrustrumCulling::culler->testObject(geob->boundingBox)) {
+            // call the previously created display list
+            glCallList(geob->displayList);
+            ++count;
+        }
+    }
+    return count;
+}
+
+/****************************************************************************************
+ * Bounding box and collision detection
+ ***************************************************************************************/
+void Dof::_calculateBoundingBox() {
+    Geob * geob;
+    float * vertex;
+    // The first vertex is always set, so we have a starting point
+    bool firstVertex;
+
+    // Go through each geob and each vertex to find the min / max points for each
+    // axis
+    for (int i = 0; i < this->_nGeobs; ++i) {
+        geob = &(this->_geobs[i]);
+        firstVertex = true;
+        for (int j = 0; j < geob->nIndices; ++j) {
+            vertex = geob->vertices[geob->indices[j]];
+
+            // If this is the first vertex, set the bounds
+            if (firstVertex) {
+                geob->boundingBox[0] = vertex[0];
+                geob->boundingBox[1] = vertex[0];
+                geob->boundingBox[2] = vertex[1];
+                geob->boundingBox[3] = vertex[1];
+                geob->boundingBox[4] = vertex[2];
+                geob->boundingBox[5] = vertex[2];
+                firstVertex = false;
+            } else {
+                // Now check if the vertex expands any of the bounds
+                if (geob->boundingBox[0] > vertex[0]) geob->boundingBox[0] = vertex[0];
+                if (geob->boundingBox[1] < vertex[0]) geob->boundingBox[1] = vertex[0];
+                if (geob->boundingBox[2] > vertex[1]) geob->boundingBox[2] = vertex[1];
+                if (geob->boundingBox[3] < vertex[1]) geob->boundingBox[3] = vertex[1];
+                if (geob->boundingBox[4] > vertex[2]) geob->boundingBox[4] = vertex[2];
+                if (geob->boundingBox[5] < vertex[2]) geob->boundingBox[5] = vertex[2];
+            }
+        }
+
+        float center[3];
+        float size;
+        float sizeVector[3];
+        center[0] = (geob->boundingBox[0] + geob->boundingBox[1]) / 2.0;
+        center[1] = (geob->boundingBox[2] + geob->boundingBox[3]) / 2.0;
+        center[2] = (geob->boundingBox[4] + geob->boundingBox[5]) / 2.0;
+
+        sizeVector[0] = geob->boundingBox[0] - center[0];
+        sizeVector[1] = geob->boundingBox[2] - center[1];
+        sizeVector[2] = geob->boundingBox[4] - center[2];
+
+        // And now get the size of the size vector
+        size = sqrt(
+                sizeVector[0] * sizeVector[0] + 
+                sizeVector[1] * sizeVector[1] + 
+                sizeVector[2] * sizeVector[2] );
+
+
+        glDisable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_2D);
+        glPushMatrix();
+
+        glColor4f(1, 1, 1, 1);
+        glTranslatef(center[0], center[1], center[2]);
+        //glTranslatef(geob->boundingBox[0], geob->boundingBox[2], geob->boundingBox[4]);
+
+        GLUquadric * quad = gluNewQuadric();
+        gluQuadricDrawStyle(quad, GLU_LINE);
+        //gluSphere(quad, size, 10, 10);
+        gluDeleteQuadric(quad);
+
+        glPopMatrix();
+
+
+        glBegin(GL_POINTS);
+        for (int point = 0; point < 2; point++) {
+            for (int point2 = 2; point2 < 4; ++point2) {
+                for (int point3 = 4; point3 < 6; ++point3) {
+                    glVertex3f(geob->boundingBox[point], geob->boundingBox[point2], geob->boundingBox[point3]);
+                }
+            }
+        }
+        glEnd();
+
+        glEnable(GL_LIGHTING);
+        glEnable(GL_TEXTURE_2D);
+    }
+}
+
+/****************************************************************************************
+ * Utilities
+ ***************************************************************************************/
 
 template <class T> void parseVector(ifstream * file, T * vector, int length) {
     for (int i = 0; i < length; ++i) {
