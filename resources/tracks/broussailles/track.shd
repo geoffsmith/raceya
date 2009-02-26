@@ -1,0 +1,797 @@
+; Broussailles track shaders
+shader_ciel
+{
+  sky=1
+  fog=0
+  layer0
+  {
+    texenv=replace
+    map=ciel.bmp
+    cull=back
+    depthfunc=always
+    depthwrite=0
+  }
+}
+shader_sol5
+{
+layer0
+  {
+    texenv=replace
+    map=sol5.bmp
+  }
+}
+shader_sol1
+{
+layer0
+  {
+    texenv=replace
+    map=sol1.bmp
+  }
+}
+shader_sol2
+{
+layer0
+  {
+    texenv=replace
+    map=sol2.bmp
+  }
+}
+shader_sol3
+{
+layer0
+  {
+    texenv=replace
+    map=sol3.bmp
+  }
+}
+shader_sol4
+{
+layer0
+  {
+    texenv=replace
+    map=sol4.bmp
+  }
+}
+shader_sol0
+{
+layer0
+  {
+    texenv=replace
+    map=sol0.bmp
+  }
+}
+shader_rou0
+{
+layer0
+  {
+    texenv=replace
+    map=rou0.bmp
+  }
+}
+shader_rou1
+{
+layer0
+  {
+    texenv=replace
+    map=rou1.bmp
+  }
+}
+shader_rou2
+{
+layer0
+  {
+    texenv=replace
+    map=rou2.bmp
+  }
+}
+shader_rou3
+{
+layer0
+  {
+    texenv=replace
+    map=rou3.bmp
+  }
+}
+shader_rou4
+{
+layer0
+  {
+    texenv=replace
+    map=rou4.bmp
+  }
+}
+shader_rou5
+{
+layer0
+  {
+    texenv=replace
+    map=rou5.bmp
+  }
+}
+shader_rou6
+{
+layer0
+  {
+    texenv=replace
+    map=rou6.bmp
+  }
+}
+shader_roo0
+{
+layer0
+  {
+    texenv=replace
+    map=roo0.bmp
+  }
+}
+shader_roc0
+{
+layer0
+  {
+    texenv=replace
+    map=roc0.bmp
+  }
+}
+shader_roc1
+{
+layer0
+  {
+    texenv=replace
+    map=roc1.bmp
+  }
+}
+shader_roc2
+{
+layer0
+  {
+    texenv=replace
+    map=roc2.bmp
+  }
+}
+shader_roc3
+{
+layer0
+  {
+    texenv=replace
+    map=roc3.bmp
+  }
+}
+shader_sol02
+{
+layer0
+  {
+    texenv=replace
+    map=rallyeGF_sol02.bmp
+  }
+}
+shader_sol03
+{
+layer0
+  {
+    texenv=replace
+    map=rallyeGF_sol03.bmp
+  }
+}
+shader_sol04
+{
+layer0
+  {
+    texenv=replace
+    map=rallyeGF_sol04.bmp
+  }
+}
+shader_sol05
+{
+layer0
+  {
+    texenv=replace
+    map=rallyeGF_sol05.bmp
+  }
+}
+shader_route01
+{
+layer0
+  {
+    texenv=replace
+    map=rallyeGF_route01.bmp
+  }
+}
+shader_route02
+{
+layer0
+  {
+    texenv=replace
+    map=rallyeGF_route02.bmp
+  }
+}
+shader_route03
+{
+layer0
+  {
+    texenv=replace
+    map=rallyeGF_route03.bmp
+  }
+}
+shader_route00
+{
+layer0
+  {
+    texenv=replace
+    map=rallyeGF_route00.bmp
+  }
+}
+shader_roche01
+{
+layer0
+  {
+    texenv=replace
+    map=rallyeGF_roche01.bmp
+  }
+}
+shader_rallyeGF_roche02
+{
+layer0
+  {
+    texenv=replace
+    map=rallyeGF_roche02.bmp
+  }
+}
+shader_herbe01
+{
+  cull=disable
+  layer0
+  {
+    map=rallyeGF_herbe01.bmp
+    texenv=disable
+    mipmap=1
+    blendfunc=blend
+    alphafunc=gequal 128
+    wrap_t=clamp_to_edge
+    shininess=0
+    emission=0.7 0.7 0.7
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.2
+  }
+}
+shader_herbe02
+{
+  cull=disable
+  layer0
+  {
+    map=rallyeGF_herbe02.bmp
+    texenv=disable
+    mipmap=1
+    blendfunc=blend
+    alphafunc=gequal 128
+    wrap_t=clamp_to_edge
+    shininess=0
+    emission=0.7 0.7 0.7
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.2
+  }
+}
+shader_divers01
+{
+layer0
+  {
+    texenv=replace
+    map=rallyeGF_divers01.bmp
+  }
+}
+shader_bord00
+{
+layer0
+  {
+    texenv=replace
+    map=rallyeGF_bord00.bmp
+  }
+}
+shader_bois00
+{
+layer0
+  {
+    texenv=replace
+    map=rallyeGF_bois00.bmp
+  }
+}
+shader_arbre00
+{
+  cull=disable
+  layer0
+  {
+    map=rallyeGF_arbre00.bmp
+    texenv=disable
+    mipmap=1
+    blendfunc=blend
+    alphafunc=gequal 128
+    wrap_t=clamp_to_edge
+    shininess=0
+    emission=0.7 0.7 0.7
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.2
+  }
+}
+shader_arbre01
+{
+  cull=disable
+  layer0
+  {
+    map=rallyeGF_arbre01.bmp
+    texenv=disable
+    mipmap=1
+    blendfunc=blend
+    alphafunc=gequal 128
+    wrap_t=clamp_to_edge
+    shininess=0
+    emission=0.7 0.7 0.7
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.2
+  }
+}
+shader_arbre02
+{
+  cull=disable
+  layer0
+  {
+    map=rallyeGF_arbre02.bmp
+    texenv=disable
+    mipmap=1
+    blendfunc=blend
+    alphafunc=gequal 128
+    wrap_t=clamp_to_edge
+    shininess=0
+    emission=0.7 0.7 0.7
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.2
+  }
+}
+shader_arbre03
+{
+  cull=disable
+  layer0
+  {
+    map=rallyeGF_arbre03.bmp
+    texenv=disable
+    mipmap=1
+    blendfunc=blend
+    alphafunc=gequal 128
+    wrap_t=clamp_to_edge
+    shininess=0
+    emission=0.7 0.7 0.7
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.2
+  }
+}
+shader_arbre04
+{
+  cull=disable
+  layer0
+  {
+    map=rallyeGF_arbre04.bmp
+    texenv=disable
+    mipmap=1
+    blendfunc=blend
+    alphafunc=gequal 128
+    wrap_t=clamp_to_edge
+    shininess=0
+    emission=0.7 0.7 0.7
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.2
+  }
+}
+shader_arbre05
+{
+  cull=disable
+  layer0
+  {
+    map=rallyeGF_arbre05.bmp
+    texenv=disable
+    mipmap=1
+    blendfunc=blend
+    alphafunc=gequal 128
+    wrap_t=clamp_to_edge
+    shininess=0
+    emission=0.7 0.7 0.7
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.2
+  }
+}
+shader_pon2
+{
+layer0
+  {
+    texenv=replace
+    map=pon2.bmp
+  }
+}
+shader_mur0
+{
+layer0
+  {
+    texenv=replace
+    map=mur0.bmp
+  }
+}
+shader_fond00
+{
+layer0
+  {
+    texenv=replace
+    map=fond00.bmp
+  }
+}
+shader_eau
+{
+layer0
+  {
+    texenv=replace
+    map=eau.bmp
+  }
+}
+shader_decor00
+{
+layer0
+  {
+    texenv=replace
+    map=decor00.bmp
+  }
+}
+shader_sol01
+{
+layer0
+  {
+    texenv=replace
+    map=ces_camb_sol01.bmp
+  }
+}
+shader_sol00
+{
+layer0
+  {
+    texenv=replace
+    map=ces_camb_sol00.bmp
+  }
+}
+shader_route08
+{
+layer0
+  {
+    texenv=replace
+    map=ces_camb_route08.bmp
+  }
+}
+shader_route02
+{
+layer0
+  {
+    texenv=replace
+    map=ces_camb_route02.bmp
+  }
+}
+shader_route01
+{
+layer0
+  {
+    texenv=replace
+    map=ces_camb_route01.bmp
+  }
+}
+shader_ravin01
+{
+layer0
+  {
+    texenv=replace
+    map=ces_camb_ravin01.bmp
+  }
+}
+shader_bordure00
+{
+layer0
+  {
+    texenv=replace
+    map=ces_camb_bordure00.bmp
+  }
+}
+shader_bordure01
+{
+layer0
+  {
+    texenv=replace
+    map=ces_camb_bordure01.bmp
+  }
+}
+shader_bor1
+{
+layer0
+  {
+    texenv=replace
+    map=bor1.bmp
+  }
+}
+shader_bor0
+{
+layer0
+  {
+    texenv=replace
+    map=bor0.bmp
+  }
+}
+shader_bod0
+{
+layer0
+  {
+    texenv=replace
+    map=bod0.bmp
+  }
+}
+shader_bod1
+{
+layer0
+  {
+    texenv=replace
+    map=bod1.bmp
+  }
+}
+shader_bod2
+{
+layer0
+  {
+    texenv=replace
+    map=bod2.bmp
+  }
+}
+shader_bod3
+{
+layer0
+  {
+    texenv=replace
+    map=bod3.bmp
+  }
+}
+shader_bod4
+{
+layer0
+  {
+    texenv=replace
+    map=bod4.bmp
+  }
+}
+shader_herbe04
+{
+layer0
+{
+texenv=replace
+map=rallyeGF_herbe04.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_herbe03
+{
+layer0
+{
+texenv=replace
+map=rallyeGF_herbe03.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_herbe00
+{
+layer0
+{
+texenv=replace
+map=rallyeGF_herbe00.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_her1
+{
+layer0
+{
+texenv=replace
+map=her1.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_her2
+{
+layer0
+{
+texenv=replace
+map=her2.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_her3
+{
+layer0
+{
+texenv=replace
+map=her3.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_her7
+{
+layer0
+{
+texenv=replace
+map=her7.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_her5
+{
+layer0
+{
+texenv=replace
+map=her5.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_her6
+{
+layer0
+{
+texenv=replace
+map=her6.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_her 8
+{
+layer0
+{
+texenv=replace
+map=her 8.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_arb0
+{
+layer0
+{
+texenv=replace
+map=arb0.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_arb1
+{
+layer0
+{
+texenv=replace
+map=arb1.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_arb2
+{
+layer0
+{
+texenv=replace
+map=arb2.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_arb3
+{
+layer0
+{
+texenv=replace
+map=arb 3.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_arb4
+{
+layer0
+{
+texenv=replace
+map=arb4.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_arb5
+{
+layer0
+{
+texenv=replace
+map=arb5.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_arb6
+{
+layer0
+{
+texenv=replace
+map=arb6.tga
+mipmap=0
+blendfunc=blend
+alphafunc=gequal 180
+depthwrite=1
+wrap_t=clamp_to_edge
+  }
+}
+shader_divers00
+{
+  cull=disable
+  layer0
+  {
+    map=rallyeGF_divers00.bmp
+    texenv=disable
+    mipmap=1
+    blendfunc=blend
+    alphafunc=gequal 128
+    wrap_t=clamp_to_edge
+    shininess=0
+    emission=0.7 0.7 0.7
+    ambient=0.15 0.15 0.1
+    specular=0.2 0.2 0.2
+  }
+}
+}

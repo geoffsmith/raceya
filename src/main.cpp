@@ -19,7 +19,7 @@
 #include "frame_timer.h"
 #include "world.h"
 #include "hud.h"
-#include "dof.h"
+#include "track.h"
 
 using namespace std;
 
@@ -28,7 +28,7 @@ static Camera * camera;
 static World * world;
 static Hud * hud;
 static SDL_Surface * drawContext;
-static Dof * dof;
+static Track * track;
 
 void setupLighting();
 
@@ -37,7 +37,7 @@ void init(void) {
     glShadeModel(GL_SMOOTH);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_NORMALIZE);
+    //glEnable(GL_NORMALIZE);
 
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_POINT_SMOOTH);
@@ -61,11 +61,13 @@ void setupLighting() {
 }
 
 void initObjects() {
-    // Load a DOF
-    dof = new Dof("resources/tracks/adelaide/aahouse.dof");
+    // Load a track
 
     // Load up a car obj
     car = new Car();
+
+    //track = new Track("resources/tracks/adelaide/");
+    track = new Track("resources/tracks/broussailles/");
 
     // Create the camera, pointing at the player's car
     camera = new Camera(car);
@@ -95,7 +97,7 @@ void display(void) {
     glLoadIdentity(); // clear the matrix
 
     // Render the HUD
-    hud->render();
+    //hud->render();
 
     // Position the light at the camera
     float lightPosition[] = { 0, 0, 1, 0 };
@@ -103,14 +105,14 @@ void display(void) {
 
     camera->viewTransform();
 
-    // render the dof
-    dof->render();
-
     // Draw the car
     car->render();
 
+    track->render();
+
+
     // Draw the world
-    world->render();
+    //world->render();
 
     glDisable(GL_TEXTURE_2D);
 }

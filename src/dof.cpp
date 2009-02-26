@@ -3,14 +3,21 @@
 #include <iostream>
 #include <unistd.h>
 #include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
+using namespace boost;
+using namespace boost::filesystem;
+namespace fs = boost::filesystem;
 
 Dof::Dof(string filePath) {
     // 4 characters used for tokens such as DOF1 and 32 bit integers
     char buffer[5];
-    int dofLength, matsLength, matsChunkLength;
-    int matLength;
+    int dofLength;
     this->_filePath = filePath;
     buffer[4] = NULL;
 
@@ -31,7 +38,6 @@ Dof::Dof(string filePath) {
     
     // Read the length of the DOF object
     file.read((char *)&dofLength, sizeof(int));
-    cout << "Reading a DOF of length: " << dofLength << endl;
 
     // Read the object components
     // .. first up should be the MATS
@@ -39,27 +45,8 @@ Dof::Dof(string filePath) {
     if (strcmp(buffer, "MATS") != 0) {
         cout << "Warning: MATS was expected but not found" << endl;
     }
-    file.read((char *)&matsChunkLength, sizeof(int));
-    cout << "MATS Chunk length: " << matsChunkLength << endl;
 
-    file.read((char *)&matsLength, sizeof(int));
-    cout << "MATS Length: " << matsLength << endl;
-
-    // For now we skip the materials
-    for (int i = 0; i < matsLength; ++i) {
-        // read the token
-        file.read(buffer, 4);
-        if (strcmp(buffer, "MAT0") != 0) {
-            cout << "Warning: MAT0[" << i << "] expected, got " << buffer << endl;
-        }
-
-        // Read this length
-        file.read((char *)&matLength, sizeof(int));
-        cout << "MAT length: " << matLength << endl;
-
-        // skip this mat
-        file.seekg(matLength, ios::cur);
-    }
+    this->_parseMats(&file);
 
     // Now read the GEOB components
     file.read(buffer, 4);
@@ -79,29 +66,100 @@ Dof::~Dof() {
     if (this->_nGeobs != 0) delete[] this->_geobs;
 }
 
+void Dof::_parseMats(ifstream * file) {
+    Mat * mat;
+    int length;
+    char token[5];
+    char fileString[255];
+    int fileStringLength;
+    token[4] = NULL;
+
+    // Read the MAT0 chunk length
+    file->read((char *)&length, sizeof(int));
+    // .. and the number of MAT0s
+    file->read((char *)&(this->_nMats), sizeof(int));
+
+    // Create all the mats
+    this->_mats = new Mat[this->_nMats];
+
+    // Create all the mats
+    for (int i = 0; i < this->_nMats; ++i) {
+        mat = &(this->_mats[i]);
+
+        // read the token
+        file->read(token, 4);
+        if (strcmp(token, "MAT0")) {
+            cout << "Warning: expected MAT0 (" << i << "), got " << token << endl;
+        }
+
+        // read the chunk length
+        file->read((char *)&length, sizeof(int));
+
+        // Parse the object component attributes
+        do {
+            // Get the token
+            file->read(token, 4);
+            // .. and the length
+            if (strcmp(token, "MEND") != 0) {
+                file->read((char *)&length, sizeof(int));
+            }
+
+            if (strcmp(token, "MHDR") == 0) {
+                // The header just contains a string, skip this for now TODO
+                file->seekg(length, ios::cur);
+            } else if (strcmp(token, "MCOL") == 0) {
+                // Contains the various material colors
+                parseVector<float>(file, mat->ambient, 4);
+                parseVector<float>(file, mat->diffuse, 4);
+                parseVector<float>(file, mat->specular, 4);
+                parseVector<float>(file, mat->emission, 4);
+                file->read((char *)&(mat->shininess), sizeof(float));
+            } else if (strcmp(token, "MTEX") == 0) {
+                // Load the textures
+                file->read((char *)&(mat->nTextures), sizeof(int));
+                mat->textures = new unsigned int[mat->nTextures];
+
+                for (int j = 0; j < mat->nTextures; ++j) {
+                    fileStringLength = parseString(file, fileString);
+                    this->_loadTexture(fileString, mat->textures[j]);
+                }
+            } else if (strcmp(token, "MUVW") == 0) {
+                file->read((char *)&(mat->uvwUoffset), sizeof(float));
+                file->read((char *)&(mat->uvwVoffset), sizeof(float));
+                file->read((char *)&(mat->uvwUtiling), sizeof(float));
+                file->read((char *)&(mat->uvwVtiling), sizeof(float));
+                file->read((char *)&(mat->uvwAngle), sizeof(float));
+                file->read((char *)&(mat->uvwBlur), sizeof(float));
+                file->read((char *)&(mat->uvwBlurOffset), sizeof(float));
+            } else if (strcmp(token, "MEND") == 0) {
+                // do nothing
+            } else {
+                file->seekg(length, ios::cur);
+            }
+        } while (strcmp(token, "MEND") != 0);
+    }
+}
+
 void Dof::_parseGeobs(ifstream * file) {
     Geob * geob;
     int geobChunkLength, geobLength;
     int length, chunkLength;
-    float tmpFloat;
     char token[5];
 
     // We need to add a null to the token so that we can print and compare the string
     token[4] = NULL;
 
     file->read((char *)&geobChunkLength, sizeof(int));
-    cout << "GEOB Chunk length: " << geobChunkLength << endl;
 
     file->read((char *)&(this->_nGeobs), sizeof(int));
-    cout << "GEOB Length: " << this->_nGeobs << endl;
 
     // Create a number of geob instances
     this->_geobs = new Geob[this->_nGeobs];
 
     // Create all the geobs
-    for (unsigned int i = 0; i < this->_nGeobs; ++i) {
+    for (int i = 0; i < this->_nGeobs; ++i) {
         geob = &(this->_geobs[i]);
-        
+
         // read the token, this should be GOB1
         file->read(token, 4);
         if (strcmp(token, "GOB1") != 0) {
@@ -125,14 +183,20 @@ void Dof::_parseGeobs(ifstream * file) {
                 // The header is made up of
                 // 0: int flags (not defined in spec)
                 // 1: int paintFlags (not defined)
-                // 2: int materialRef, the material reference TODO
-                file->seekg(3 * sizeof(int), ios::cur);
+                // 2: int materialRef, the material reference 
+
+                // We ignore the first two
+                file->seekg(2 * sizeof(int), ios::cur);
+                file->read((char *)&(geob->material), sizeof(int));
             } else if (strcmp(token, "INDI") == 0) {
                 // Parse the indices, not sure what these are for, an index which is global 
                 // to DOF for the vertices?
-                file->read((char *)&length, sizeof(int));
-                // ... we'll skip this for now TODO
-                file->seekg(length * sizeof(short), ios::cur);
+                file->read((char *)&(geob->nIndices), sizeof(int));
+                geob->indices = new unsigned short[geob->nIndices];
+                for (int j = 0; j < geob->nIndices; ++j) {
+                    file->read((char *)&(geob->indices[j]), sizeof(unsigned short));
+                }
+
             } else if (strcmp(token, "VERT") == 0) {
                 // These are the vertices
                 file->read((char *)&length, sizeof(int));
@@ -141,12 +205,7 @@ void Dof::_parseGeobs(ifstream * file) {
 
                 // Read the vertices
                 for (int j = 0; j < length; ++j) {
-                    file->read((char *)&tmpFloat, sizeof(float));
-                    geob->vertices[j][0] = tmpFloat;
-                    file->read((char *)&tmpFloat, sizeof(float));
-                    geob->vertices[j][1] = tmpFloat;
-                    file->read((char *)&tmpFloat, sizeof(float));
-                    geob->vertices[j][2] = tmpFloat;
+                    parseVector<float>(file, geob->vertices[j], 3);
                 }
             } else if (strcmp(token, "TVER") == 0) {
                 // Read the texture coordinates
@@ -156,10 +215,7 @@ void Dof::_parseGeobs(ifstream * file) {
 
                 // Read the vertices
                 for (int j = 0; j < length; ++j) {
-                    file->read((char *)&tmpFloat, sizeof(float));
-                    geob->textureCoords[j][0] = tmpFloat;
-                    file->read((char *)&tmpFloat, sizeof(float));
-                    geob->textureCoords[j][1] = tmpFloat;
+                    parseVector<float>(file, geob->textureCoords[j], 2);
                 }
             } else if (strcmp(token, "NORM") == 0) {
                 // These are the normals
@@ -169,12 +225,7 @@ void Dof::_parseGeobs(ifstream * file) {
 
                 // Read the vertices
                 for (int j = 0; j < length; ++j) {
-                    file->read((char *)&tmpFloat, sizeof(float));
-                    geob->normals[j][0] = tmpFloat;
-                    file->read((char *)&tmpFloat, sizeof(float));
-                    geob->normals[j][1] = tmpFloat;
-                    file->read((char *)&tmpFloat, sizeof(float));
-                    geob->normals[j][2] = tmpFloat;
+                    parseVector<float>(file, geob->normals[j], 3);
                 }
             } else if (strcmp(token, "VCOL") == 0) {
                 // We're ignoring this for now
@@ -182,34 +233,188 @@ void Dof::_parseGeobs(ifstream * file) {
                 file->seekg(length * 3 * sizeof(float), ios::cur);
             } else if (strcmp(token, "BRST") == 0) {
                 // We're ignoring this for now
-                file->read((char *)&length, sizeof(int));
-                file->seekg(length * sizeof(int), ios::cur);
-                file->seekg(length * sizeof(int), ios::cur);
-                file->seekg(length * sizeof(int), ios::cur);
-                file->seekg(length * sizeof(int), ios::cur);
+                file->read((char *)&(geob->nBursts), sizeof(int));
+                geob->burstStarts = new int[geob->nBursts];
+                for (int j = 0; j < geob->nBursts; ++j) {
+                    file->read((char *)&(geob->burstStarts[j]), sizeof(int));
+                }
+                
+                geob->burstsCount = new int[geob->nBursts];
+                for (int j = 0; j < geob->nBursts; ++j) {
+                    file->read((char *)&(geob->burstsCount[j]), sizeof(int));
+                }
+                
+                geob->burstsMaterials = new int[geob->nBursts];
+                for (int j = 0; j < geob->nBursts; ++j) {
+                    file->read((char *)&(geob->burstsMaterials[j]), sizeof(int));
+                }
+                //file->seekg(length * sizeof(int), ios::cur);
+                file->seekg(geob->nBursts * sizeof(int), ios::cur);
             } else if (strcmp(token, "GEND") == 0) {
                 // ignore this
             } else {
                 cout << "Warning: unknown token in GOB1, " << token << endl;
+                file->seekg(chunkLength, ios::cur);
                 break;
             }
         } while (strcmp(token, "GEND") != 0);
     }
 }
 
+void Dof::_loadTexture(string name, unsigned int & texture) {
+    // Try and load the image
+    SDL_Surface * surface;
+    int nOfColours;
+    GLenum textureFormat = 0;
+    path texturePath(this->_filePath);
+    unsigned int error = glGetError();
+    
+    texturePath.remove_filename();
+    texturePath = texturePath / name;
+    
+    if ((surface = IMG_Load(texturePath.string().c_str()))) {
+        // Check that width and height are powers of 2
+        if ((surface->w & (surface->w - 1)) != 0 ) {
+            cout << "Warning: width not power of 2 " << name << endl;
+            SDL_FreeSurface(surface);
+            return;
+        }
+        if ((surface->h & (surface->h -1)) != 0) {
+            cout << "Warning: height not power of 2 " << name << endl;
+            SDL_FreeSurface(surface);
+            return;
+        }
+
+        // Get the number of channels in the SDL surface
+        nOfColours = surface->format->BytesPerPixel;
+        if (nOfColours == 4) {
+            if (surface->format->Rmask == 0x000000ff) {
+                textureFormat = GL_RGBA;
+            } else {
+                textureFormat = GL_BGRA;
+            }
+        } else if (nOfColours == 3) {
+            if (surface->format->Rmask == 0x000000ff) {
+                textureFormat = GL_RGB;
+            } else {
+                textureFormat = GL_BGR;
+            }
+        }
+        // Have opengl generate a texture object
+        glGenTextures(1, &texture);
+
+        // Bind the texture object
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+
+        glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
+        glPixelStorei(GL_UNPACK_SKIP_ROWS,0);
+        glPixelStorei(GL_UNPACK_SKIP_PIXELS,0);
+
+        // mix color with texture
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+        // Set the texture's stretching properties
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+
+        // Write the texture data
+        if ((error = glGetError()) != 0) {
+            cout << "Error before loading texture: " << gluErrorString(error) << endl;
+            texture = 0;
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, nOfColours, surface->w, surface->h, 0, 
+                textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+
+        // TODO: check the flags for loading Mipmaps
+        //gluBuild2DMipmaps(GL_TEXTURE_2D,nOfColours, surface->w, surface->h, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+
+        if ((error = glGetError()) != 0) {
+            cout << "Error loading texture into OpenGL: " << gluErrorString(error) << endl;
+            texture = 0;
+        }
+
+
+        // Free the surface
+        SDL_FreeSurface(surface);
+    } else {
+        cout << "With: " << name << endl;
+        cout << "Error loading texture: " << IMG_GetError() << "_" << endl;
+        &texture = 0;
+    }
+}
+
 void Dof::render() {
     Geob * geob;
-    glBegin(GL_TRIANGLES);
+    Mat * mat;
+    unsigned short index;
+    int burstCount, burstStart;
+    int stop;
+    float textureX, textureY;
+    unsigned int error;
+
 
     for (int i = 0; i < this->_nGeobs; ++i) {
         geob = &(this->_geobs[i]);
-        glVertex3f(geob->vertices[0][0], geob->vertices[0][1], geob->vertices[0][2]);
-        glVertex3f(geob->vertices[1][0], geob->vertices[1][1], geob->vertices[1][2]);
-        glVertex3f(geob->vertices[2][0], geob->vertices[2][1], geob->vertices[2][2]);
-        cout << "V: " << geob->vertices[0][0] << endl;
+        mat = &(this->_mats[geob->material]);
+
+        if (mat->nTextures > 0 && mat->textures[0]) {
+            error = glGetError();
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, mat->textures[0]);
+            if ((error = glGetError()) != 0) {
+                cout << "Error binding textre: " << gluErrorString(error) << endl;
+            }
+        } else {
+            glDisable(GL_TEXTURE_2D);
+        }
+
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat->ambient);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat->diffuse);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat->specular);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mat->emission);
+        
+        glBegin(GL_TRIANGLES);
+
+        for (int j = 0; j < geob->nBursts; ++j) {
+            burstCount = geob->burstsCount[j] / 3;
+            burstStart = geob->burstStarts[j] / 3;
+
+            // Some files have fewer indices than bursts, which is really odd. Racer's source
+            // doesn't handle this case, something really odd is going on there... 
+            // It only happens with some tracks, so it might be a bug in a track generator.
+            stop = min(burstStart + burstCount, geob->nIndices);
+
+            for (int k = burstStart; k < stop; ++k) {
+                index = geob->indices[k];
+                glNormal3f(geob->normals[index][0], geob->normals[index][1], geob->normals[index][2]);
+                glTexCoord2f(geob->textureCoords[index][0], geob->textureCoords[index][1]);
+                glVertex3f(geob->vertices[index][0], geob->vertices[index][1], geob->vertices[index][2]);
+            }
+        }
+
+        glEnd();
+
     }
 
-    glEnd();
+}
+
+template <class T> void parseVector(ifstream * file, T * vector, int length) {
+    for (int i = 0; i < length; ++i) {
+        file->read((char *)&(vector[i]), sizeof(T));
+    }
+}
+
+int parseString(ifstream * file, char * buffer) {
+    short length;
+    file->read((char *)&length, sizeof(short));
+    file->read(buffer, length);
+    buffer[length] = NULL;
+    return length;
 }
 
 
