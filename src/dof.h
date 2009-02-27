@@ -5,10 +5,12 @@
  *
  * TODO:
  *  * Be able to load more than 1 DOF from a single file
+ *  * Remove _loadTexture in favour of version in lib
  */
 #pragma once
 
 #include <string>
+#include "shader.h"
 
 using namespace std;
 
@@ -58,6 +60,9 @@ class Mat {
 
         int nTextures;
         unsigned int * textures;
+        // Pointer to some shaders, this array will be the same size as textures
+        // but may have NULL entries
+        Shader ** shaders;
 };
 
 class Dof {

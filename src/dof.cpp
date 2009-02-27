@@ -76,6 +76,7 @@ Dof::~Dof() {
 
 void Dof::_parseMats(ifstream * file) {
     Mat * mat;
+    Shader * shader;
     int length;
     char token[5];
     char fileString[255];
@@ -126,10 +127,21 @@ void Dof::_parseMats(ifstream * file) {
                 // Load the textures
                 file->read((char *)&(mat->nTextures), sizeof(int));
                 mat->textures = new unsigned int[mat->nTextures];
+                mat->shaders = new Shader *[mat->nTextures];
 
                 for (int j = 0; j < mat->nTextures; ++j) {
                     fileStringLength = parseString(file, fileString);
-                    this->_loadTexture(fileString, mat->textures[j]);
+
+                    // Check if there is a shader for this file
+                    shader = Shader::getShader(fileString);
+                    if (shader != NULL) {
+                        mat->textures[j] = shader->textureMap;
+                        mat->shaders[j] = shader;
+                    } else {
+                        this->_loadTexture(fileString, mat->textures[j]);
+                        mat->shaders[j] = NULL;
+                    }
+
                 }
             } else if (strcmp(token, "MUVW") == 0) {
                 file->read((char *)&(mat->uvwUoffset), sizeof(float));
@@ -323,11 +335,11 @@ void Dof::_loadTexture(string name, unsigned int & texture) {
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
         // Set the texture's stretching properties
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 
         // Write the texture data
@@ -335,11 +347,11 @@ void Dof::_loadTexture(string name, unsigned int & texture) {
             cout << "Error before loading texture: " << gluErrorString(error) << endl;
             texture = 0;
         }
-        glTexImage2D(GL_TEXTURE_2D, 0, nOfColours, surface->w, surface->h, 0, 
-                textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+        //glTexImage2D(GL_TEXTURE_2D, 0, nOfColours, surface->w, surface->h, 0, 
+         //       textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
 
         // TODO: check the flags for loading Mipmaps
-        //gluBuild2DMipmaps(GL_TEXTURE_2D,nOfColours, surface->w, surface->h, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+        gluBuild2DMipmaps(GL_TEXTURE_2D,nOfColours, surface->w, surface->h, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
 
         if ((error = glGetError()) != 0) {
             cout << "Error loading texture into OpenGL: " << gluErrorString(error) << endl;
@@ -373,6 +385,9 @@ void Dof::_createDisplayLists() {
         geob->displayList = glGenLists(1);
         glNewList(geob->displayList, GL_COMPILE);
 
+        // Set the defaults
+        glDisable(GL_ALPHA_TEST);
+
         if (mat->nTextures > 0 && mat->textures[0]) {
             error = glGetError();
             glEnable(GL_TEXTURE_2D);
@@ -380,6 +395,15 @@ void Dof::_createDisplayLists() {
             if ((error = glGetError()) != 0) {
                 cout << "Error binding textre: " << gluErrorString(error) << endl;
             }
+            
+            // See if there is an alpha function to be set
+            if (mat->shaders[0]) {
+                if (mat->shaders[0]->alphaFuncSet) {
+                    glEnable(GL_ALPHA_TEST);
+                    glAlphaFunc(GL_EQUAL, mat->shaders[0]->alphaFunc);
+                }
+            }
+
         } else {
             glDisable(GL_TEXTURE_2D);
         }

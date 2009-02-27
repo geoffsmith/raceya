@@ -5,6 +5,9 @@
  * References: 
  * 	* http://www.lighthouse3d.com/opengl/maths/index.php?planes
  * 	* http://racer.nl/reference/vfc_markmorley.htm
+ *
+ * TODO:
+ *  * Rename everything to FRUSTUM!
  */
 #pragma once
 

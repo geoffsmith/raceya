@@ -3,8 +3,11 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
+#include <string>
 
-void load_texture(GLuint &tex_name, const char *filename);
+using namespace std;
+
+void loadTexture(string name, unsigned int & texture, bool isMipmap = false, unsigned int wrapT = GL_REPEAT);
 void read_obj(const char *filename, GLfloat (*vertices)[3], GLfloat (*textures)[2], GLfloat (*normals)[3]);
 
 

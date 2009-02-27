@@ -1,4 +1,5 @@
 #include "track.h"
+#include "shader.h"
 
 #include <OpenGL/gl.h>
 #include <unistd.h>
@@ -16,6 +17,9 @@ namespace fs = boost::filesystem;
 Track::Track(string trackPath) {
     path currentDir("./");
     this->_path = trackPath;
+
+    // try to load shaders
+    Shader::parseShaderFile((currentDir / trackPath / "track.shd").string().c_str());
 
     // Look for a geometry.ini file, and use this to load the dofs
     if (!exists(currentDir / trackPath / "geometry.ini")) {
