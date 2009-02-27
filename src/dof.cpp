@@ -138,6 +138,7 @@ void Dof::_parseMats(ifstream * file) {
                         mat->textures[j] = shader->textureMap;
                         mat->shaders[j] = shader;
                     } else {
+                        cout << "No shader for: " << fileString << endl;
                         this->_loadTexture(fileString, mat->textures[j]);
                         mat->shaders[j] = NULL;
                     }
@@ -284,15 +285,23 @@ void Dof::_parseGeobs(ifstream * file) {
 void Dof::_loadTexture(string name, unsigned int & texture) {
     // Try and load the image
     SDL_Surface * surface;
+    SDL_Surface * alphaSurface;
     int nOfColours;
     GLenum textureFormat = 0;
     path texturePath(this->_filePath);
     unsigned int error = glGetError();
+    cout << "_Load: " << name << endl;
     
     texturePath.remove_filename();
     texturePath = texturePath / name;
     
     if ((surface = IMG_Load(texturePath.string().c_str()))) {
+        SDL_SetColorKey(surface, SDL_SRCCOLORKEY, SDL_MapRGB(surface->format, 255, 0, 255));
+        alphaSurface = SDL_DisplayFormatAlpha(surface);
+
+        SDL_FreeSurface(surface);
+        surface = alphaSurface;
+
         // Check that width and height are powers of 2
         if ((surface->w & (surface->w - 1)) != 0 ) {
             cout << "Warning: width not power of 2 " << name << endl;
@@ -401,6 +410,7 @@ void Dof::_createDisplayLists() {
                 if (mat->shaders[0]->alphaFuncSet) {
                     glEnable(GL_ALPHA_TEST);
                     glAlphaFunc(GL_EQUAL, mat->shaders[0]->alphaFunc);
+                    //glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
                 }
             }
 

@@ -15,11 +15,20 @@ using namespace std;
 void loadTexture(string name, unsigned int & texture, bool isMipmap, unsigned int wrapT) {
     // Try and load the image
     SDL_Surface * surface;
+    SDL_Surface * alphaSurface;
     int nOfColours;
     GLenum textureFormat = 0;
     unsigned int error = glGetError();
     
     if ((surface = IMG_Load(name.c_str()))) {
+        // Make it transparent
+        SDL_SetColorKey(surface, SDL_SRCCOLORKEY, SDL_MapRGB(surface->format, 255, 0, 255));
+        alphaSurface = SDL_DisplayFormatAlpha(surface);
+
+        SDL_FreeSurface(surface);
+        surface = alphaSurface;
+
+
         // Check that width and height are powers of 2
         if ((surface->w & (surface->w - 1)) != 0 ) {
             cout << "Warning: width not power of 2 " << name << endl;
@@ -31,6 +40,8 @@ void loadTexture(string name, unsigned int & texture, bool isMipmap, unsigned in
             SDL_FreeSurface(surface);
             return;
         }
+
+
 
         // Get the number of channels in the SDL surface
         nOfColours = surface->format->BytesPerPixel;
