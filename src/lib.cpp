@@ -164,3 +164,49 @@ float angleBetweenVectors(float * vector1, float * vector2) {
     // Calculate angle and convert into degrees
     return (acos(dotProduct / (absVector1 * absVector2)) * 180.0) / PI;
 }
+
+float dotProduct(float * a, float * b) {
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
+void vertexSub(float * a, float * b, float * result) {
+    result[0] = a[0] - b[0];
+    result[1] = a[1] - b[1];
+    result[2] = a[2] - b[2];
+}
+
+void vertexCopy(float * from, float * to) {
+    to[0] = from[0];
+    to[1] = from[1];
+    to[2] = from[2];
+}
+
+void crossProduct(float * a, float * b, float * result) {
+    result[0] =  a[1] * b[2] - b[1] * a[2];
+    result[0] =  a[0] * b[2] - b[0] * a[2];
+    result[0] =  a[0] * b[1] - b[0] * a[1];
+}
+
+void vertexMultiply(float a, float * b, float * result) {
+    result[0] = a * b[0];
+    result[1] = a * b[1];
+    result[2] = a * b[2];
+}
+
+void vertexAdd(float * a, float * b, float * result) {
+    result[0] = a[0] + b[0];
+    result[1] = a[1] + b[1];
+    result[2] = a[2] + b[2];
+}
+
+float vertexDistance(float * a, float * b) {
+    float tmp[3];
+    vertexSub(b, a, tmp);
+    return sqrt(tmp[0] * tmp[0] + tmp[1] * tmp[1] + tmp[2] * tmp[2]);
+}
+
+float vertexSquareDistance(float * a, float * b) {
+    float tmp[3];
+    vertexSub(b, a, tmp);
+    return tmp[0] * tmp[0] + tmp[1] * tmp[1] + tmp[2] * tmp[2];
+}

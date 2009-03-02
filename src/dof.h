@@ -65,6 +65,9 @@ class Mat {
         // Pointer to some shaders, this array will be the same size as textures
         // but may have NULL entries
         Shader ** shaders;
+
+        Geob * getGeob(int index);
+        int getNGeobs();
 };
 
 class Dof {
@@ -75,6 +78,9 @@ class Dof {
 
         // Return true if one of the materials is transparent
         bool isTransparent();
+
+        Geob * getGeob(unsigned int index);
+        int getNGeobs();
 
     private:
         string _filePath;

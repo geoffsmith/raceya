@@ -433,7 +433,7 @@ void Dof::_createDisplayLists() {
         glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat->specular);
         glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mat->emission);
         
-        glBegin(GL_TRIANGLES);
+        //glBegin(GL_TRIANGLES);
 
         for (int j = 0; j < geob->nBursts; ++j) {
             burstCount = geob->burstsCount[j] / 3;
@@ -445,14 +445,16 @@ void Dof::_createDisplayLists() {
             stop = min(burstStart + burstCount, geob->nIndices);
 
             for (int k = burstStart; k < stop; ++k) {
+                if (k % 3 == 0) glBegin(GL_LINE_LOOP);
                 index = geob->indices[k];
                 glNormal3f(geob->normals[index][0], geob->normals[index][1], geob->normals[index][2]);
                 glTexCoord2f(geob->textureCoords[index][0], geob->textureCoords[index][1]);
                 glVertex3f(geob->vertices[index][0], geob->vertices[index][1], geob->vertices[index][2]);
+                if (k % 3 == 2) glEnd();
             }
         }
 
-        glEnd();
+        //glEnd();
 
         glEndList();
     }
@@ -495,6 +497,14 @@ bool Dof::isTransparent() {
         if (result) break;
     }
     return result;
+}
+
+Geob * Dof::getGeob(unsigned int index) {
+    return &(this->_geobs[index]);
+}
+
+int Dof::getNGeobs() {
+    return this->_nGeobs;
 }
 
 /****************************************************************************************

@@ -24,6 +24,8 @@ class Car {
 
         float getRPM();
 
+        float * getWheelPosition();
+
     private:
         Obj * _obj;
         Wheel * _wheels[4];
@@ -60,4 +62,7 @@ class Car {
         void _updateComponents();
         // Update the car's steering
         void _updateSteering();
+
+        // the car's transformation matrix
+        Matrix _matrix;
 };

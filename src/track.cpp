@@ -1,5 +1,6 @@
 #include "track.h"
 #include "shader.h"
+#include "closest_point.h"
 
 #include <OpenGL/gl.h>
 #include <unistd.h>
@@ -85,7 +86,7 @@ void Track::_loadGeometryIni() {
     }
 }
 
-void Track::render() {
+void Track::render(Car * car) {
     int count = 0;
     // We do this in two passes, first for non-transparent, then for transparent
     for (unsigned int i = 0; i < this->_nDofs; ++i) {
@@ -99,4 +100,33 @@ void Track::render() {
             count += this->_dofs[i]->render();
         }
     }    
+
+    // Find the closest point to the wheel and rendeer a sphere there
+    float * point = car->getWheelPosition();
+    float closestPoint[3];
+    findClosestPoint(this->_dofs, this->_nDofs, point, closestPoint);
+    cout << "P: " << point[0] << ", c: " << closestPoint[0] << endl;
+
+    glPushMatrix();
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE);
+    GLUquadric * quad = gluNewQuadric();
+    gluQuadricDrawStyle(quad, GLU_LINE);
+    glColor4f(1, 1, 1, 1);
+
+    glTranslatef(point[0], point[1], point[2]);
+    gluSphere(quad, 0.2, 10, 10);
+
+    glPopMatrix();
+    glPushMatrix();
+
+    glTranslatef(closestPoint[0], closestPoint[1], closestPoint[2]);
+    gluSphere(quad, 0.2, 10, 10);
+
+    gluDeleteQuadric(quad);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_TEXTURE);
+    glPopMatrix();
+
+    delete[] point;
 }

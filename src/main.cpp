@@ -111,7 +111,7 @@ void display(void) {
     // Draw the car
     car->render();
 
-    track->render();
+    track->render(car);
 
 
     // Draw the world

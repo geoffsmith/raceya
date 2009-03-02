@@ -102,9 +102,14 @@ void Car::render() {
 
     this->_updateComponents();
 
+    // Reset the matrix
+    this->_matrix.reset();
+
     glPushMatrix();
     // Move the car to its new position
-    glTranslatef(this->_position[0], this->_position[1], this->_position[2]);
+    //glTranslatef(this->_position[0], this->_position[1], this->_position[2]);
+    this->_matrix.translate(this->_position[0], this->_position[1], this->_position[2]);
+
 
     // Rotate the car to point in the right direction
     zVector[0] = 0;
@@ -112,16 +117,24 @@ void Car::render() {
     zVector[2] = -1;
     angle = -1 * angleBetweenVectors(this->_vector, zVector);
     // We need to establish the direction so we use the x-component of the vector
+    // TODO: What is going on here? the rotation is always around Y?
     if (this->_vector[0] != 0) {
-        glRotatef(angle, 0, this->_vector[0], 0);
+        //glRotatef(angle, 0, this->_vector[0], 0);
+        this->_matrix.rotateY(angle * (fabs(this->_vector[0]) / this->_vector[0]));
     } else {
-        glRotatef(angle, 0, 1, 0);
+        //glRotatef(angle, 0, 1, 0);
+        this->_matrix.rotateY(angle);
     }
 
     // Rotate the car to be parallel to ground
-    glRotatef(180, 0, 0, 1);
-    glRotatef(90, 1, 0, 0);
-    glScalef(this->_modelScale, this->_modelScale, this->_modelScale);
+    //glRotatef(180, 0, 0, 1);
+    this->_matrix.rotateZ(180);
+    //glRotatef(90, 1, 0, 0);
+    this->_matrix.rotateX(90);
+    //glScalef(this->_modelScale, this->_modelScale, this->_modelScale);
+    this->_matrix.scale(this->_modelScale);
+
+    glMultMatrixf(this->_matrix.getMatrix());
 
     // Render the various groups in the car obj
     this->_obj->renderGroup("LicenseF");
@@ -221,4 +234,14 @@ float * Car::getPosition() {
 
 float Car::getRPM() {
     return this->_engineRPM;
+}
+
+float * Car::getWheelPosition() {
+    float * result = new float[3];
+    result[0] = 0.953;
+    result[1] = 1.434;
+    result[2] = 0.342;
+    // transform the vertex
+    this->_matrix.multiplyVector(result);
+    return result;
 }
