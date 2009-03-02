@@ -20,6 +20,8 @@ class Shader {
     public:
         Shader(); 
         string name;
+
+        // Texture stuff
         unsigned int texEnv;
         bool isMipmap;
         unsigned int textureMap;
@@ -28,6 +30,7 @@ class Shader {
 
         // Alpha stuff
         // This assume a gequal function
+        bool blend;
         unsigned int alphaFunc;
         bool alphaFuncSet;
 

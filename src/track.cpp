@@ -87,7 +87,16 @@ void Track::_loadGeometryIni() {
 
 void Track::render() {
     int count = 0;
+    // We do this in two passes, first for non-transparent, then for transparent
     for (unsigned int i = 0; i < this->_nDofs; ++i) {
-        count += this->_dofs[i]->render();
+        if (!(this->_dofs[i]->isTransparent())) {
+            count += this->_dofs[i]->render();
+        }
+    }    
+
+    for (unsigned int i = 0; i < this->_nDofs; ++i) {
+        if (this->_dofs[i]->isTransparent()) {
+            count += this->_dofs[i]->render();
+        }
     }    
 }

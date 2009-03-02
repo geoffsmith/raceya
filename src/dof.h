@@ -57,6 +57,8 @@ class Mat {
         float uvwAngle;
         float uvwBlur;
         float uvwBlurOffset;
+        // 0: no blending, 1: source alpha blending
+        int blendMode;
 
         int nTextures;
         unsigned int * textures;
@@ -70,6 +72,9 @@ class Dof {
         Dof(string filePath);
         ~Dof();
         int render();
+
+        // Return true if one of the materials is transparent
+        bool isTransparent();
 
     private:
         string _filePath;

@@ -1,5 +1,8 @@
 /**
  * Class to load and render a racer format track. See http://racer.nl for details.
+ *
+ * Possible optimisations:
+ *  * Cache transparent and non-transparent dofs
  */
 #pragma once
 

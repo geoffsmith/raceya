@@ -138,7 +138,6 @@ void Dof::_parseMats(ifstream * file) {
                         mat->textures[j] = shader->textureMap;
                         mat->shaders[j] = shader;
                     } else {
-                        cout << "No shader for: " << fileString << endl;
                         this->_loadTexture(fileString, mat->textures[j]);
                         mat->shaders[j] = NULL;
                     }
@@ -152,6 +151,12 @@ void Dof::_parseMats(ifstream * file) {
                 file->read((char *)&(mat->uvwAngle), sizeof(float));
                 file->read((char *)&(mat->uvwBlur), sizeof(float));
                 file->read((char *)&(mat->uvwBlurOffset), sizeof(float));
+            } else if (strcmp(token, "MTRA") == 0) {
+                // The transparency float isn't used
+                file->seekg(sizeof(float), ios::cur);
+
+                // get the blendMode
+                file->read((char *)&(mat->blendMode), sizeof(int));
             } else if (strcmp(token, "MEND") == 0) {
                 // do nothing
             } else {
@@ -290,7 +295,6 @@ void Dof::_loadTexture(string name, unsigned int & texture) {
     GLenum textureFormat = 0;
     path texturePath(this->_filePath);
     unsigned int error = glGetError();
-    cout << "_Load: " << name << endl;
     
     texturePath.remove_filename();
     texturePath = texturePath / name;
@@ -397,6 +401,12 @@ void Dof::_createDisplayLists() {
         // Set the defaults
         glDisable(GL_ALPHA_TEST);
 
+        if (this->isTransparent()) {
+            glEnable(GL_BLEND);
+        } else {
+            glDisable(GL_BLEND);
+        }
+
         if (mat->nTextures > 0 && mat->textures[0]) {
             error = glGetError();
             glEnable(GL_TEXTURE_2D);
@@ -465,6 +475,26 @@ int Dof::render() {
         }
     }
     return count;
+}
+
+bool Dof::isTransparent() {
+    Mat * mat;
+    Geob * geob;
+    bool result = false;
+    for (int i = 0; i < this->_nGeobs; ++i) {
+        geob = &(this->_geobs[i]);
+        mat = &(this->_mats[geob->material]);
+        if (mat->blendMode > 0) {
+            result = true;
+        }
+        // Check if this material has a shader
+        if (mat->shaders[0] && mat->shaders[0]->blend) {
+            result = true;
+        }
+
+        if (result) break;
+    }
+    return result;
 }
 
 /****************************************************************************************

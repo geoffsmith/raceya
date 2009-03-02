@@ -23,6 +23,7 @@ Shader::Shader() {
     this->wrapT = GL_REPEAT;
     this->alphaFunc = 0;
     this->alphaFuncSet = false;
+    this->blend = false;
 }
 
 void Shader::parseShaderFile(string shaderPath) {
@@ -99,6 +100,9 @@ void Shader::parseShaderFile(string shaderPath) {
             split(parts, line, is_any_of(" "));
             shader->alphaFunc = atoi(parts[1].c_str());
             shader->alphaFuncSet = true;
+        } else if (starts_with(line, "blendfunc")) {
+            // NOTE: This is oversimplified from the spec,but seems to be the only use
+            shader->blend = true;
         }
     }
 }
