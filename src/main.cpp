@@ -63,12 +63,10 @@ void setupLighting() {
 
 void initObjects() {
     // Load a track
+    track = new Track("resources/tracks/broussailles/");
 
     // Load up a car obj
-    car = new Car();
-
-    //track = new Track("resources/tracks/adelaide/");
-    track = new Track("resources/tracks/broussailles/");
+    car = new Car(track);
 
     // Create the camera, pointing at the player's car
     camera = new Camera(car);
@@ -111,8 +109,7 @@ void display(void) {
     // Draw the car
     car->render();
 
-    track->render(car);
-
+    track->render();
 
     // Draw the world
     //world->render();
@@ -188,7 +185,7 @@ int main(int argc, char** argv) {
         // Swap the buffers
         SDL_GL_SwapBuffers();
 
-        SDL_Delay(20);
+        SDL_Delay(40);
     }
     return 0;
 }

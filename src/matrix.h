@@ -18,6 +18,7 @@ class Matrix {
         ~Matrix();
         void reset();
         float& operator[] (const unsigned int index);
+        void rotate(float angle, float * normal);
         void rotateY(float angle);
         void rotateX(float angle);
         void rotateZ(float angle);

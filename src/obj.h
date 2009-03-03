@@ -56,7 +56,7 @@ class Obj {
         void renderGroup(string group);
         vector<GLfloat> getVertex(const unsigned int index);
         string filename;
-        void calculateBounds(Matrix *transformationMatrix, float *bounds);
+        void calculateBounds(Matrix *transformationMatrix, float * bounds);
 
         // A cache for loaded objects
         static list< Obj* > objectCache;

@@ -210,3 +210,14 @@ float vertexSquareDistance(float * a, float * b) {
     vertexSub(b, a, tmp);
     return tmp[0] * tmp[0] + tmp[1] * tmp[1] + tmp[2] * tmp[2];
 }
+
+float vectorLength(float * a) {
+    return sqrt(a[0] * a[0] + a[1] * a[1]  + a[2] * a[2]);
+}
+
+void normaliseVector(float * a) {
+    float length = vectorLength(a);
+    a[0] /= length;
+    a[1] /= length;
+    a[2] /= length;
+}

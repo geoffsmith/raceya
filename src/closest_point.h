@@ -1,5 +1,8 @@
 /**
- * Functions to calculate the closest point on a triangle to an abitrary point
+ * Functions to calculate the closest point on a triangle to an abitrary point.
+ * This algorithm is taken from "Real-Time Collision Detection" by Christer 
+ * Ericson and is pretty optimised. Any improvement should probably come from
+ * a partioning scheme.
  */
 #pragma once
 

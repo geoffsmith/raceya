@@ -25,3 +25,5 @@ void crossProduct(float * a, float * b, float * result);
 void vertexMultiply(float a, float * b, float * result);
 void vertexAdd(float * a, float * b, float * result);
 float vertexSquareDistance(float * a, float * b);
+float vectorLength(float * a);
+void normaliseVector(float * a);

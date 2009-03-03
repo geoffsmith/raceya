@@ -17,6 +17,9 @@ class Wheel {
         // Set the angle away from from facing (for front wheel usually)
         void setAngle(float angle);
 
+        // Get the point at which the wheel touches the ground
+        void getGroundContact(float * point);
+
     private:
         // The obj model representing the wheel
         Obj * _obj;

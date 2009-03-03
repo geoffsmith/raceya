@@ -86,7 +86,7 @@ void Track::_loadGeometryIni() {
     }
 }
 
-void Track::render(Car * car) {
+void Track::render() {
     int count = 0;
     // We do this in two passes, first for non-transparent, then for transparent
     for (unsigned int i = 0; i < this->_nDofs; ++i) {
@@ -102,7 +102,7 @@ void Track::render(Car * car) {
     }    
 
     // Find the closest point to the wheel and rendeer a sphere there
-    float * point = car->getWheelPosition();
+    /*float * point = car->getWheelPosition();
     float closestPoint[3];
     findClosestPoint(this->_dofs, this->_nDofs, point, closestPoint);
     cout << "P: " << point[0] << ", c: " << closestPoint[0] << endl;
@@ -128,5 +128,5 @@ void Track::render(Car * car) {
     glEnable(GL_TEXTURE);
     glPopMatrix();
 
-    delete[] point;
+    delete[] point;*/
 }

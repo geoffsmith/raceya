@@ -126,3 +126,30 @@ void Wheel::turn(float turn) {
 void Wheel::setAngle(float angle) {
     this->_wheelAngle = angle;
 }
+
+void Wheel::getGroundContact(float * point) {
+    // This is actually static, even though the wheel turns, just depends on
+    // the wheel we want
+    switch (this->_position) {
+        case 0:
+            point[0] = -0.928;
+            point[1] = 1.47;
+            point[2] = 0.0;
+            break;
+        case 1:
+            point[0] = 0.928;
+            point[1] = 1.399;
+            point[2] = 0.0;
+            break;
+        case 2:
+            point[0] = -0.914;
+            point[1] = -1.181;
+            point[2] = 0.0;
+            break;
+        case 3:
+            point[0] = 0.914;
+            point[1] = -1.252;
+            point[2] = 0.0;
+            break;
+    }
+}

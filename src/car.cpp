@@ -2,6 +2,7 @@
 #include "matrix.h"
 #include "lib.h"
 #include "frame_timer.h"
+#include "closest_point.h"
 
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -12,7 +13,9 @@
 
 using namespace std;
 
-Car::Car() {
+Car::Car(Track * track) {
+    this->_track = track;
+
     this->_obj = Obj::makeObj("resources/r8/R8.obj");
     this->_modelScale = 1;
 
@@ -44,6 +47,9 @@ Car::Car() {
     this->_vector[0] = 0;
     this->_vector[1] = 0;
     this->_vector[2] = -1;
+
+    // Calculate the center of the object
+    this->_calculateCenter();
 }
 
 void Car::_updateSteering() {
@@ -65,6 +71,106 @@ void Car::_updateSteering() {
     if (fabs(this->_steeringAngle) > this->_maxSteeringAngle) {
         this->_steeringAngle = -1 * direction * this->_maxSteeringAngle;
     }
+}
+
+void Car::_updateLay() {
+    float wheelPoint[4][3];
+    float groundPoint[4][3];
+    // Vector from center to target position
+    float ct[3];
+    // vector from center to current position
+    float cp[3];
+    float angle;
+    float normal[3];
+    float center[3];
+    float distance;
+    Matrix matrix;
+
+    // For each wheel find the closest point on the ground
+    for (int i = 0; i < 4; ++i) {
+        this->_wheels[i]->getGroundContact(wheelPoint[i]);
+        // Transform this point to world coords
+        this->_matrix.multiplyVector(wheelPoint[i]);
+        this->_matrix.multiplyVector(this->_center, center);
+
+        // Get the closest point on the track
+        findClosestPoint(this->_track->getDofs(), this->_track->getNDofs(), 
+                wheelPoint[i], groundPoint[i]);
+
+        // check for NaN
+        // TODO: this is probably caused by a bug in closest point
+        if (isnan(groundPoint[i][0]) 
+                || isnan(groundPoint[i][1]) 
+                || isnan(groundPoint[i][2])) {
+            // Set the ground point to the wheel point
+            vertexCopy(wheelPoint[i], groundPoint[i]);
+        }
+    }
+
+    // Move the car to the highest point
+    int maxIndex;
+    float maxY;
+    for (int i = 0; i < 4; ++i) {
+        if (i == 0 || maxY < groundPoint[i][1]) {
+            maxIndex = i;
+            maxY = groundPoint[i][1];
+        }
+    }
+
+    vertexSub(groundPoint[maxIndex], wheelPoint[maxIndex], ct);
+    vertexAdd(ct, this->_position, this->_position);
+
+
+        /*
+        // Find the closest point to the wheel and rendeer a sphere there
+        glPushMatrix();
+        glDisable(GL_LIGHTING);
+        glDisable(GL_TEXTURE_2D);
+        GLUquadric * quad = gluNewQuadric();
+        gluQuadricDrawStyle(quad, GLU_LINE);
+        glColor4f(1, 1, 1, 1);
+
+        glTranslatef(groundPoint[0], groundPoint[1], groundPoint[2]);
+        gluSphere(quad, 0.2, 10, 10);
+
+        glPopMatrix();
+        glPushMatrix();
+
+        //glTranslatef(closestPoint[0], closestPoint[1], closestPoint[2]);
+        //gluSphere(quad, 0.2, 10, 10);
+
+        gluDeleteQuadric(quad);
+        glEnable(GL_LIGHTING);
+        glEnable(GL_TEXTURE_2D);
+        glPopMatrix();
+
+        // Move the car to make teh distance between the two as small as 
+        // possible
+        // .. first we rotate the car around its center
+        matrix.reset();
+        cout << "gournd poitn: " << groundPoint[0] << endl;
+        vertexSub(wheelPoint, center, cp);
+        vertexSub(groundPoint, center, ct);
+        crossProduct(cp, ct, normal);
+        angle = angleBetweenVectors(cp, ct);
+        matrix.rotate(angle, normal);
+        // ... apply this to vector
+        matrix.multiplyVector(this->_vector);
+
+        // .. then move in the direction of the target
+        matrix.reset();
+        distance = vectorLength(ct) - vectorLength(cp);
+        cout << "Distance: " << distance << endl;
+        normaliseVector(ct);
+        vertexMultiply(distance, ct, ct);
+        matrix.translate(ct[0], ct[1], ct[2]);
+
+        // .. apply this to the current position
+        matrix.multiplyVector(this->_position);
+
+        // ... Now we need to recalulate the main matrix
+        this->_updateMatrix();
+        */
 }
 
 void Car::_updateComponents() {
@@ -93,23 +199,21 @@ void Car::_updateComponents() {
     this->_position[0] += moveForward * this->_vector[0];
     this->_position[1] += moveForward * this->_vector[1];
     this->_position[2] += moveForward * this->_vector[2];
+
+    // Update the car's position in relation to the ground
+    this->_updateLay();
 }
 
-void Car::render() {
+void Car::_updateMatrix() {
     // The car's angle of rotation, calculated from the _vector
     float angle;
     float zVector[3];
 
-    this->_updateComponents();
-
     // Reset the matrix
     this->_matrix.reset();
 
-    glPushMatrix();
     // Move the car to its new position
-    //glTranslatef(this->_position[0], this->_position[1], this->_position[2]);
     this->_matrix.translate(this->_position[0], this->_position[1], this->_position[2]);
-
 
     // Rotate the car to point in the right direction
     zVector[0] = 0;
@@ -119,20 +223,25 @@ void Car::render() {
     // We need to establish the direction so we use the x-component of the vector
     // TODO: What is going on here? the rotation is always around Y?
     if (this->_vector[0] != 0) {
-        //glRotatef(angle, 0, this->_vector[0], 0);
         this->_matrix.rotateY(angle * (fabs(this->_vector[0]) / this->_vector[0]));
     } else {
-        //glRotatef(angle, 0, 1, 0);
         this->_matrix.rotateY(angle);
     }
 
     // Rotate the car to be parallel to ground
-    //glRotatef(180, 0, 0, 1);
     this->_matrix.rotateZ(180);
-    //glRotatef(90, 1, 0, 0);
     this->_matrix.rotateX(90);
-    //glScalef(this->_modelScale, this->_modelScale, this->_modelScale);
     this->_matrix.scale(this->_modelScale);
+}
+
+void Car::render() {
+    this->_updateMatrix();
+
+    this->_updateComponents();
+
+    glPushMatrix();
+
+    this->_updateMatrix();
 
     glMultMatrixf(this->_matrix.getMatrix());
 
@@ -225,9 +334,22 @@ void Car::handleKeyPress(SDL_Event &event) {
     }
 }
 
-/****************************************************************************************
+void Car::_calculateCenter() {
+    float bounds[6];
+    Matrix matrix;
+
+    // Find the bounds
+    this->_obj->calculateBounds(&matrix, bounds);
+
+    // And calculate the center
+    this->_center[0] = (bounds[0] + bounds[1]) / 2.0;
+    this->_center[1] = (bounds[2] + bounds[3]) / 2.0;
+    this->_center[2] = (bounds[4] + bounds[5]) / 2.0;
+}
+
+/*******************************************************************************
  * Getters / setters
- ***************************************************************************************/
+ ******************************************************************************/
 float * Car::getPosition() {
     return this->_position;
 }

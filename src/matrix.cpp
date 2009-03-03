@@ -46,6 +46,49 @@ Matrix::~Matrix() {
     delete[] this->_matrix;
 }
 
+void Matrix::rotate(float angle, float * normal) {
+    float radians = angle * PI / 180.0;
+    float c = cos(radians);
+    float s = sin(radians);
+
+    // Normalised normal
+    float n[3];
+    float d;
+
+    n[0] = normal[0];
+    n[1] = normal[1];
+    n[2] = normal[2];
+    
+    d = sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
+    // .. normalise so that x2 + y2 + z2 = 1
+    n[0] /= d;
+    n[1] /= d;
+    n[2] /= d;
+    
+    Matrix rotation;
+    rotation[0] = n[0] * n[0] + (1 - n[0] * n[0]) * c;
+    rotation[1] = n[0] * n[1] + (1 - c) + (n[2] * s);
+    rotation[2] = n[0] * n[2] + (1 - c) - (n[1] * s);
+    rotation[3] = 0;
+
+    rotation[4] = n[0] * n[1] + (1 - c) - (n[2] * s);
+    rotation[5] = n[1] * n[1] + (1 - n[1] * n[1]) * c;
+    rotation[6] = n[1] * n[2] + (1 - c) + (n[0] * s);
+    rotation[7] = 0;
+
+    rotation[8] = n[0] * n[2] + (1 - c) + (n[1] * s);
+    rotation[9] = n[1] * n[2] + (1 - c) - (n[0] * s);
+    rotation[10] = n[2] * n[2] + (1 - n[2] * n[2]) * c;
+    rotation[11] = 0;
+
+    rotation[12] = 0;
+    rotation[13] = 0;
+    rotation[14] = 0;
+    rotation[15] = 1;
+
+    this->multiplyMatrix(&rotation);
+}
+
 void Matrix::rotateY(float angle) {
     // Convert into radians
     float radians = angle * PI / 180.0;

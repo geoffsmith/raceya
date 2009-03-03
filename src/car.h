@@ -10,10 +10,11 @@
 #include <SDL/SDL.h>
 #include "obj.h"
 #include "wheel.h"
+#include "track.h"
 
 class Car {
     public:
-        Car();
+        Car(Track * track);
         void render();
 
         // Handle key presses
@@ -29,6 +30,9 @@ class Car {
     private:
         Obj * _obj;
         Wheel * _wheels[4];
+
+        // Needs a reference to the track to do collision detection
+        Track * _track;
 
         // The sideways angle of the wheels for steering animation, this is +/- angle away
         // from front facing
@@ -58,10 +62,21 @@ class Car {
         float _position[3];
         float _vector[3];
 
+        // Center of the car
+        float _center[3];
+
         // Update the moving components of the car such as engine and wheels
         void _updateComponents();
         // Update the car's steering
         void _updateSteering();
+        // Update the car's position so that it lies on the ground
+        void _updateLay();
+        // Update hte transformation matrix
+        void _updateMatrix();
+
+        // Calculate the center of the car, which is the middle of the bounding
+        // box
+        void _calculateCenter();
 
         // the car's transformation matrix
         Matrix _matrix;

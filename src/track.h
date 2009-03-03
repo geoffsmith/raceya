@@ -8,7 +8,6 @@
 
 #include <string>
 #include "dof.h"
-#include "car.h"
 
 using namespace std;
 
@@ -19,7 +18,11 @@ class Track {
         ~Track();
         
         // Render a track
-        void render(Car * car);
+        void render();
+
+        // Getters
+        Dof ** getDofs() { return this->_dofs; }
+        unsigned int getNDofs() { return this->_nDofs; }
 
     private:
         string _path;
