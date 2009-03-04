@@ -20,10 +20,17 @@ class FrameTimer {
         // Singleton class
         static FrameTimer timer;
 
+        // Get the time to pause until it's time to draw the next frame. We use 
+        // the target FPS to calculate the time until we need to draw the next
+        // frame. Result in milliseconds.
+        int getTimeTillNextDraw();
+        
+
 
     private:
         unsigned int _currentFrame;
         unsigned int _lastFrame;
         unsigned int _ticksPerSecond;
+        unsigned int _targetFPS;
 
 };

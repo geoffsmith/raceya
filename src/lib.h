@@ -18,6 +18,10 @@ void matrixMultiply(float* matrix, float* vector, float* result);
 void buildYRotationMatrix(float *matrix, float angle);
 float angleBetweenVectors(float * vector1, float * vector2);
 
+
+// Calculate the angle between two vectors in the Z plane
+float angleInZPlane(float * vector1, float * vector2);
+
 float dotProduct(float * a, float * b);
 void vertexSub(float * a, float * b, float * result);
 void vertexCopy(float * from, float * to);

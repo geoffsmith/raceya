@@ -22,7 +22,6 @@ using namespace boost::filesystem;
 namespace fs = boost::filesystem;
 
 list< Obj* > Obj::objectCache;
-unsigned int Obj::_nextDisplayList = 1;
 
 Obj* Obj::makeObj(const char* filename) {
     // First check if we already have an object that fits
@@ -225,11 +224,8 @@ unsigned int Obj::_createDisplayListForGroup(string group) {
 
     glLoadIdentity();
 
-    // We're making a display list
-    // .. so first we set the one from the static member
-    displayList = Obj::_nextDisplayList;
-    // .. and increment it for the next one
-    Obj::_nextDisplayList++;
+    // Generate a display list
+    displayList = glGenLists(1);
 
     glNewList(displayList, GL_COMPILE);
 

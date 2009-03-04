@@ -50,6 +50,7 @@ void Matrix::rotate(float angle, float * normal) {
     float radians = angle * PI / 180.0;
     float c = cos(radians);
     float s = sin(radians);
+    Matrix rotation;
 
     // Normalised normal
     float n[3];
@@ -60,24 +61,27 @@ void Matrix::rotate(float angle, float * normal) {
     n[2] = normal[2];
     
     d = sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
+
+    // If d is 0, we need to stop
+    if (d == 0.0) return;
+
     // .. normalise so that x2 + y2 + z2 = 1
     n[0] /= d;
     n[1] /= d;
     n[2] /= d;
     
-    Matrix rotation;
     rotation[0] = n[0] * n[0] + (1 - n[0] * n[0]) * c;
-    rotation[1] = n[0] * n[1] + (1 - c) + (n[2] * s);
-    rotation[2] = n[0] * n[2] + (1 - c) - (n[1] * s);
+    rotation[1] = n[0] * n[1] * (1 - c) + (n[2] * s);
+    rotation[2] = n[0] * n[2] * (1 - c) - (n[1] * s);
     rotation[3] = 0;
 
-    rotation[4] = n[0] * n[1] + (1 - c) - (n[2] * s);
+    rotation[4] = n[0] * n[1] * (1 - c) - (n[2] * s);
     rotation[5] = n[1] * n[1] + (1 - n[1] * n[1]) * c;
-    rotation[6] = n[1] * n[2] + (1 - c) + (n[0] * s);
+    rotation[6] = n[1] * n[2] * (1 - c) + (n[0] * s);
     rotation[7] = 0;
 
-    rotation[8] = n[0] * n[2] + (1 - c) + (n[1] * s);
-    rotation[9] = n[1] * n[2] + (1 - c) - (n[0] * s);
+    rotation[8] = n[0] * n[2] * (1 - c) + (n[1] * s);
+    rotation[9] = n[1] * n[2] * (1 - c) - (n[0] * s);
     rotation[10] = n[2] * n[2] + (1 - n[2] * n[2]) * c;
     rotation[11] = 0;
 

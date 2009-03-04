@@ -120,57 +120,109 @@ void Car::_updateLay() {
     vertexSub(groundPoint[maxIndex], wheelPoint[maxIndex], ct);
     vertexAdd(ct, this->_position, this->_position);
 
+    // We also need to add this to each wheel position
+    for (int i = 0; i < 4; ++i) {
+        vertexAdd(ct, wheelPoint[i], wheelPoint[i]);
+    }
 
-        /*
-        // Find the closest point to the wheel and rendeer a sphere there
-        glPushMatrix();
-        glDisable(GL_LIGHTING);
-        glDisable(GL_TEXTURE_2D);
-        GLUquadric * quad = gluNewQuadric();
-        gluQuadricDrawStyle(quad, GLU_LINE);
-        glColor4f(1, 1, 1, 1);
 
-        glTranslatef(groundPoint[0], groundPoint[1], groundPoint[2]);
-        gluSphere(quad, 0.2, 10, 10);
+    float os[3];
+    float ot[3];
+    // Find angle to rotate the car around the axis pointing forward through
+    // the bottom of the wheel just found, we do this around the the topmost of
+    // the two wheels on the opposite side of the car to the wheel just found 
+    // i.e. left -> right, right -> left
+    // maxIndex % 2 == 0 -> original wheel is on right, we want left
+    /*int maxIndex2;
+    if (maxIndex % 2 == 0) {
+        if (groundPoint[1][1] > groundPoint[3][1]) {
+            maxIndex2 = 1;
+        } else {
+            maxIndex2 = 3;
+        }
+    } else {
+        if (groundPoint[0][1] > groundPoint[2][1]) {
+            maxIndex2 = 0;
+        } else {
+            maxIndex2 = 2;
+        }
+    }
 
-        glPopMatrix();
-        glPushMatrix();
+    // Find angle between this new point, the highest and this new groundPoint
+    vertexSub(wheelPoint[maxIndex2], groundPoint[maxIndex], os);
+    vertexSub(groundPoint[maxIndex2], groundPoint[maxIndex], ot);
+    float angle2 = angleBetweenVectors(os, ot);*/
 
-        //glTranslatef(closestPoint[0], closestPoint[1], closestPoint[2]);
-        //gluSphere(quad, 0.2, 10, 10);
+    // Adjust the roll of the car
+    // TODO: we don't have a roll variable yet
 
-        gluDeleteQuadric(quad);
-        glEnable(GL_LIGHTING);
-        glEnable(GL_TEXTURE_2D);
-        glPopMatrix();
+    // Now we do the same with the pitch of the car, this time front->back, 
+    // back -> front
+    int maxIndex3;
+    if (maxIndex < 2) {
+        if (groundPoint[2][1] > groundPoint[3][1]) {
+            maxIndex3 = 2;
+        } else {
+            maxIndex3 = 3;
+        }
+    } else {
+        if (groundPoint[0][1] > groundPoint[1][1]) {
+            maxIndex3 = 0;
+        } else {
+            maxIndex3 = 1;
+        }
+    }
 
-        // Move the car to make teh distance between the two as small as 
-        // possible
-        // .. first we rotate the car around its center
+    // When the car is far away from an object, some of these vectors might be 0
+    vertexSub(wheelPoint[maxIndex3], groundPoint[maxIndex], os);
+    vertexSub(groundPoint[maxIndex3], groundPoint[maxIndex], ot);
+    
+    // Get the angle between these vectors in the plane in the direction of _vector
+    float angle3 = angleBetweenVectors(os, ot);
+    float yAxis[3];
+
+    // TODO: Investigate why this angle is sometimes nan
+    if (!isnan(angle3)) {
+        yAxis[0] = 0;
+        yAxis[1] = 1;
+        yAxis[2] = 0;
+
+        // flip the sign of the angle if ground is above the wheel
+        if (groundPoint[maxIndex3][1] > wheelPoint[maxIndex3][1]) {
+            angle3 *= -1;
+        }
+
+        cout << "Angle 3: " << angle3 << endl;
+
+        // Rotate the car vector around normal between vector and y = 1
+        crossProduct(this->_vector, yAxis, normal);
         matrix.reset();
-        cout << "gournd poitn: " << groundPoint[0] << endl;
-        vertexSub(wheelPoint, center, cp);
-        vertexSub(groundPoint, center, ct);
-        crossProduct(cp, ct, normal);
-        angle = angleBetweenVectors(cp, ct);
-        matrix.rotate(angle, normal);
-        // ... apply this to vector
+        matrix.rotate(angle3, normal);
         matrix.multiplyVector(this->_vector);
 
-        // .. then move in the direction of the target
+        // Rotate the _position of the car around the top wheel
+        float oldPosition[3];
+        vertexCopy(this->_position, oldPosition);
+
         matrix.reset();
-        distance = vectorLength(ct) - vectorLength(cp);
-        cout << "Distance: " << distance << endl;
-        normaliseVector(ct);
-        vertexMultiply(distance, ct, ct);
-        matrix.translate(ct[0], ct[1], ct[2]);
+        matrix.translate(oldPosition[0], oldPosition[1], oldPosition[2]);
+        matrix.translate(
+                -1 * wheelPoint[maxIndex][0], 
+                -1 * wheelPoint[maxIndex][1], 
+                -1 * wheelPoint[maxIndex][2]);
 
-        // .. apply this to the current position
-        matrix.multiplyVector(this->_position);
+        matrix.rotate(angle3, normal);
+        //matrix.multiplyVector(this->_position);
 
-        // ... Now we need to recalulate the main matrix
-        this->_updateMatrix();
-        */
+        matrix.translate(
+                wheelPoint[maxIndex][0], 
+                wheelPoint[maxIndex][1], 
+                wheelPoint[maxIndex][2]);
+        matrix.translate(
+                -1 * oldPosition[0],
+                -1 * oldPosition[1], 
+                -1 * oldPosition[2]);
+    }
 }
 
 void Car::_updateComponents() {
@@ -208,6 +260,16 @@ void Car::_updateMatrix() {
     // The car's angle of rotation, calculated from the _vector
     float angle;
     float zVector[3];
+    float yVector[3];
+    float xVector[3];
+
+    yVector[0] = 0;
+    yVector[1] = 1;
+    yVector[2] = 0;
+
+    xVector[0] = 1;
+    xVector[1] = 0;
+    xVector[2] = 0;
 
     // Reset the matrix
     this->_matrix.reset();
@@ -215,18 +277,44 @@ void Car::_updateMatrix() {
     // Move the car to its new position
     this->_matrix.translate(this->_position[0], this->_position[1], this->_position[2]);
 
+    Matrix centerMatrix;
+    centerMatrix.rotateZ(180);
+    centerMatrix.rotateX(90);
+    centerMatrix.scale(this->_modelScale);
+    float center[3];
+
+    centerMatrix.multiplyVector(this->_center, center);
+
+
+    // Translate away from center
+    this->_matrix.translate(-1 * center[0], -1 * center[1], -1 * center[2]);
+    
+    // Adjust the pitch of the car
+    float n[3];
+    crossProduct(yVector, this->_vector, n);
+    angle = 90 - angleBetweenVectors(this->_vector, yVector);
+    if (this->_vector[2] != 0) angle *= -1 * fabs(this->_vector[2]) / this->_vector[2];
+    cout << "Angle: " << angle << endl;
+    this->_matrix.rotate(angle, n);
+
     // Rotate the car to point in the right direction
     zVector[0] = 0;
     zVector[1] = 0;
     zVector[2] = -1;
     angle = -1 * angleBetweenVectors(this->_vector, zVector);
     // We need to establish the direction so we use the x-component of the vector
-    // TODO: What is going on here? the rotation is always around Y?
+    // We use the sign of _vector to direct the rotation, the angle is always
+    // 0 <= angle <= 180
     if (this->_vector[0] != 0) {
-        this->_matrix.rotateY(angle * (fabs(this->_vector[0]) / this->_vector[0]));
+        this->_matrix.rotate(angle * (fabs(this->_vector[0]) / this->_vector[0]), yVector);
     } else {
-        this->_matrix.rotateY(angle);
+        this->_matrix.rotate(angle, yVector);
     }
+
+
+    this->_matrix.translate(center[0], center[1], center[2]);
+
+    //cout << "V: " << this->_vector[0] << ", " << this->_vector[1] << ", " << this->_vector[2] << endl;
 
     // Rotate the car to be parallel to ground
     this->_matrix.rotateZ(180);

@@ -101,9 +101,4 @@ class Obj {
 
         // Load a texture
         static void _loadTexture(string texturePath, GLuint & texture);
-
-        // Keep a counter of display lists so that we can create a new one. Ideally there 
-        // should be a proper management class for this.
-        static unsigned int _nextDisplayList;
-
 };

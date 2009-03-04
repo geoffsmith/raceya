@@ -152,9 +152,18 @@ void buildYRotationMatrix(float *matrix, float angle) {
 
 float angleBetweenVectors(float * vector1, float * vector2) {
     // Calculate the dot product
-    float dotProduct = vector1[0] * vector2[0] + vector1[1] * vector2[1] + vector1[2] * vector2[2];
-    float absVector1 = sqrt(vector1[0] * vector1[0] + vector1[1] * vector1[1] + vector1[2] * vector1[2]);
-    float absVector2 = sqrt(vector2[0] * vector2[0] + vector2[1] * vector2[1] + vector2[2] * vector2[2]);
+    float dotProduct = 
+        vector1[0] * vector2[0] + 
+        vector1[1] * vector2[1] + 
+        vector1[2] * vector2[2];
+    float absVector1 = sqrt(
+        vector1[0] * vector1[0] + 
+        vector1[1] * vector1[1] + 
+        vector1[2] * vector1[2]);
+    float absVector2 = sqrt(
+        vector2[0] * vector2[0] + 
+        vector2[1] * vector2[1] + 
+        vector2[2] * vector2[2]);
     // make sure we don't divide by zero
     if (absVector1 == 0 || absVector2 == 0) {
         cout << "Error: Divide by zero in angleBetweenVectors-> " 
@@ -163,6 +172,55 @@ float angleBetweenVectors(float * vector1, float * vector2) {
     }
     // Calculate angle and convert into degrees
     return (acos(dotProduct / (absVector1 * absVector2)) * 180.0) / PI;
+}
+
+float angleInZPlane(float * vector1, float * vector2) {
+    // Project vectors onto x plane (saving the z-values)
+    float result;
+    float z1 = vector1[2];
+    float z2 = vector2[2];
+
+    // NOTE: I'm not convinced this is a good idea. It's quicker than copying the vectors
+    // to something on the stack, but makes this function side effect in a strange way.
+    vector[2] = 0;
+    vector[2] = 0;
+
+    result = angleBetweenVectors(vector1, vector2); 
+    // Restore the z-values
+    vector2[2] = z1;
+    vector2[2] = x2;
+    return result;
+}
+
+float angleInPlane(float * vector1, float * vector2, float * planeVector) {
+    // We need to project vector1 and vector2 onto the plane defined by 
+    // planeVector x { 0, 1, 0 }
+    float tmp1[3];
+    float tmp2[3];
+    float n[3];
+    float y[3];
+    float d = 0;
+    float t;
+
+    // Calculate the plane
+    y[0] = 0; y[1] = 1; y[2] = 0;
+    crossProduct(planeVector, y, n);
+    normaliseVector(n);
+
+    // Do the projection, d = 0 because the plane goes through the origin
+    // R = Q - (n . Q) . n
+    // .. first for vector1
+    t = dotProduct(n, vector1);
+    vertexMultiply(t, n, tmp1);
+    vertexSub(vector1, tmp1, tmp1);
+
+    // .. then for the escond one
+    t = dotProduct(n, vector2);
+    vertexMultiply(t, n, tmp2);
+    vertexSub(vector1, tmp2, tmp2);
+
+    // .. now we find the angle between those two
+    return angleBetweenVectors(tmp1, tmp2);
 }
 
 float dotProduct(float * a, float * b) {
@@ -183,8 +241,8 @@ void vertexCopy(float * from, float * to) {
 
 void crossProduct(float * a, float * b, float * result) {
     result[0] =  a[1] * b[2] - b[1] * a[2];
-    result[0] =  a[0] * b[2] - b[0] * a[2];
-    result[0] =  a[0] * b[1] - b[0] * a[1];
+    result[1] =  a[0] * b[2] - b[0] * a[2];
+    result[2] =  a[0] * b[1] - b[0] * a[1];
 }
 
 void vertexMultiply(float a, float * b, float * result) {

@@ -9,6 +9,7 @@ FrameTimer::FrameTimer() {
     this->_ticksPerSecond = 1000;
     this->_currentFrame = SDL_GetTicks();
     this->_lastFrame = SDL_GetTicks();
+    this->_targetFPS = 4;
 }
 
 void FrameTimer::newFrame() {
@@ -24,4 +25,15 @@ float FrameTimer::getSeconds() {
 
 float FrameTimer::getMinutes() {
     return this->getSeconds() / 60.0;
+}
+
+int FrameTimer::getTimeTillNextDraw() {
+    // Get the time since the current frame
+    unsigned int now = SDL_GetTicks();
+    int result = 1000.0 / (float)this->_targetFPS - (now - this->_currentFrame);
+
+    // Make sure the result is positive
+    if (result < 0) result = 0;
+
+    return result;
 }

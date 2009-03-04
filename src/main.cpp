@@ -185,7 +185,7 @@ int main(int argc, char** argv) {
         // Swap the buffers
         SDL_GL_SwapBuffers();
 
-        SDL_Delay(40);
+        SDL_Delay(FrameTimer::timer.getTimeTillNextDraw());
     }
     return 0;
 }
