@@ -170,8 +170,19 @@ float angleBetweenVectors(float * vector1, float * vector2) {
             << absVector1 << ", " << absVector2 << endl;
         return 0;
     }
+
     // Calculate angle and convert into degrees
-    return (acos(dotProduct / (absVector1 * absVector2)) * 180.0) / PI;
+    float tmp = dotProduct / (absVector1 * absVector2);
+    if (fabs(tmp) >= 1) {
+        return 0;
+    } else {
+        float result = (acos(tmp) * 180.0) / PI;
+        if (isnan(result))
+        {
+            cout << "result: " << tmp << endl;
+        }
+        return result;
+    }
 }
 
 float angleInZPlane(float * vector1, float * vector2) {
@@ -182,29 +193,49 @@ float angleInZPlane(float * vector1, float * vector2) {
 
     // NOTE: I'm not convinced this is a good idea. It's quicker than copying the vectors
     // to something on the stack, but makes this function side effect in a strange way.
-    vector[2] = 0;
-    vector[2] = 0;
+    vector1[2] = 0;
+    vector2[2] = 0;
 
     result = angleBetweenVectors(vector1, vector2); 
     // Restore the z-values
     vector2[2] = z1;
-    vector2[2] = x2;
+    vector2[2] = z2;
     return result;
 }
 
-float angleInPlane(float * vector1, float * vector2, float * planeVector) {
+float angleInPlaneZ(float * vector1, float * vector2, float * planeVector) {
+    float zVector[3];
+    zVector[0] = 0;
+    zVector[1] = 0;
+    zVector[2] = 1;
+    return angleInPlane(vector1, vector2, planeVector, zVector);
+}
+
+float angleInPlaneY(float * vector1, float * vector2, float * planeVector) {
+    float yVector[3];
+    yVector[0] = 0;
+    yVector[1] = 1;
+    yVector[2] = 0;
+    return angleInPlane(vector1, vector2, planeVector, yVector);
+}
+
+float angleInPlane(float * vector1, float * vector2, float * planeVector, float * planeVector2) {
     // We need to project vector1 and vector2 onto the plane defined by 
     // planeVector x { 0, 1, 0 }
     float tmp1[3];
     float tmp2[3];
+    float tmpn[3];
     float n[3];
-    float y[3];
-    float d = 0;
     float t;
+    float angle;
 
     // Calculate the plane
-    y[0] = 0; y[1] = 1; y[2] = 0;
-    crossProduct(planeVector, y, n);
+    crossProduct(planeVector, planeVector2, n);
+
+    // Check that the normal vector isn't 0
+    if (n[0] * n[0] + n[1] * n[1] + n[2] * n[2] == 0) {
+        return 0;
+    }
     normaliseVector(n);
 
     // Do the projection, d = 0 because the plane goes through the origin
@@ -217,10 +248,28 @@ float angleInPlane(float * vector1, float * vector2, float * planeVector) {
     // .. then for the escond one
     t = dotProduct(n, vector2);
     vertexMultiply(t, n, tmp2);
-    vertexSub(vector1, tmp2, tmp2);
+    vertexSub(vector2, tmp2, tmp2);
 
     // .. now we find the angle between those two
-    return angleBetweenVectors(tmp1, tmp2);
+    angle = angleBetweenVectors(tmp1, tmp2);
+    if (isnan(angle)) 
+    {
+        cout << "Angle is nan: " << angle << endl;
+        cout << tmp1[0] << " : " << tmp2[0] << endl;
+        return 0;
+    }
+
+    // We work out the sign on the angle by whether the cross product of the tmp1 and tmp2
+    // matches the direction of n
+    crossProduct(tmp1, tmp2, tmpn);
+    // Avoid the chance of tmp1 = tmp2
+    if (tmpn[0] * tmpn[0] + tmpn[1] * tmpn[1] + tmpn[2] * tmpn[2] != 0) {
+        normaliseVector(tmpn);
+        // Swap the sign of the angle if the normals dont' match
+        if (vertexDistance(tmpn, n) < 0.000001) angle *= -1;
+    }
+
+    return angle;
 }
 
 float dotProduct(float * a, float * b) {
@@ -273,9 +322,19 @@ float vectorLength(float * a) {
     return sqrt(a[0] * a[0] + a[1] * a[1]  + a[2] * a[2]);
 }
 
-void normaliseVector(float * a) {
+bool normaliseVector(float * a) {
     float length = vectorLength(a);
+    if (length == 0) return false;
     a[0] /= length;
     a[1] /= length;
     a[2] /= length;
+    return true;
+}
+
+void printVector(float * a) {
+    cout << "{ " << a[0] << ", " << a[1] << ", " << a[2] << "}" << endl;
+}
+
+bool vectorEquals(float * a, float * b) {
+    return a[0] == b[0] && a[1] == b[1] && a[2] == b[2];
 }

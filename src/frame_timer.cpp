@@ -1,6 +1,9 @@
 #include "frame_timer.h"
 
 #include <SDL/SDL.h>
+#include <iostream>
+
+using namespace std;
 
 FrameTimer FrameTimer::timer;
 
@@ -9,7 +12,7 @@ FrameTimer::FrameTimer() {
     this->_ticksPerSecond = 1000;
     this->_currentFrame = SDL_GetTicks();
     this->_lastFrame = SDL_GetTicks();
-    this->_targetFPS = 4;
+    this->_targetFPS = 20;
 }
 
 void FrameTimer::newFrame() {

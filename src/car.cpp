@@ -87,11 +87,12 @@ void Car::_updateLay() {
     Matrix matrix;
 
     // For each wheel find the closest point on the ground
+    // TODO: do i still need this?
+    this->_matrix.multiplyVector(this->_center, center);
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->getGroundContact(wheelPoint[i]);
         // Transform this point to world coords
         this->_matrix.multiplyVector(wheelPoint[i]);
-        this->_matrix.multiplyVector(this->_center, center);
 
         // Get the closest point on the track
         findClosestPoint(this->_track->getDofs(), this->_track->getNDofs(), 
@@ -119,6 +120,7 @@ void Car::_updateLay() {
 
     vertexSub(groundPoint[maxIndex], wheelPoint[maxIndex], ct);
     vertexAdd(ct, this->_position, this->_position);
+    vertexAdd(ct, center, center);
 
     // We also need to add this to each wheel position
     for (int i = 0; i < 4; ++i) {
@@ -176,23 +178,33 @@ void Car::_updateLay() {
     // When the car is far away from an object, some of these vectors might be 0
     vertexSub(wheelPoint[maxIndex3], groundPoint[maxIndex], os);
     vertexSub(groundPoint[maxIndex3], groundPoint[maxIndex], ot);
-    
+
     // Get the angle between these vectors in the plane in the direction of _vector
-    float angle3 = angleBetweenVectors(os, ot);
+    // .. make sure the wheel point is above
+    float angle3;
+    angle3 = -1 * angleInPlaneY(os, ot, this->_vector);
+
+    // * -1 the angle if the lower wheel is the back wheel
+    //if (maxIndex <= 1)
+    //{
+        //angle3 *= -1;
+    //}
+    
     float yAxis[3];
 
-    // TODO: Investigate why this angle is sometimes nan
+    // TODO: Investigate nan here
     if (!isnan(angle3)) {
         yAxis[0] = 0;
         yAxis[1] = 1;
         yAxis[2] = 0;
 
-        // flip the sign of the angle if ground is above the wheel
-        if (groundPoint[maxIndex3][1] > wheelPoint[maxIndex3][1]) {
-            angle3 *= -1;
-        }
-
-        cout << "Angle 3: " << angle3 << endl;
+        float xAxis[3];
+        xAxis[0] = 1;
+        xAxis[1] = 0;
+        xAxis[2] = 0;
+        
+        //if (angle3 > 5) angle3 = 5;
+        //if (angle3 < -5) angle3 = -5;
 
         // Rotate the car vector around normal between vector and y = 1
         crossProduct(this->_vector, yAxis, normal);
@@ -205,23 +217,23 @@ void Car::_updateLay() {
         vertexCopy(this->_position, oldPosition);
 
         matrix.reset();
-        matrix.translate(oldPosition[0], oldPosition[1], oldPosition[2]);
+        matrix.translate(
+                -1 * oldPosition[0],
+                -1 * oldPosition[1], 
+                -1 * oldPosition[2]);
         matrix.translate(
                 -1 * wheelPoint[maxIndex][0], 
                 -1 * wheelPoint[maxIndex][1], 
                 -1 * wheelPoint[maxIndex][2]);
 
         matrix.rotate(angle3, normal);
-        //matrix.multiplyVector(this->_position);
 
         matrix.translate(
                 wheelPoint[maxIndex][0], 
                 wheelPoint[maxIndex][1], 
                 wheelPoint[maxIndex][2]);
-        matrix.translate(
-                -1 * oldPosition[0],
-                -1 * oldPosition[1], 
-                -1 * oldPosition[2]);
+        matrix.translate(oldPosition[0], oldPosition[1], oldPosition[2]);
+        //matrix.multiplyVector(this->_position);
     }
 }
 
@@ -271,6 +283,10 @@ void Car::_updateMatrix() {
     xVector[1] = 0;
     xVector[2] = 0;
 
+    zVector[0] = 0;
+    zVector[1] = 0;
+    zVector[2] = -1;
+
     // Reset the matrix
     this->_matrix.reset();
 
@@ -287,34 +303,25 @@ void Car::_updateMatrix() {
 
 
     // Translate away from center
-    this->_matrix.translate(-1 * center[0], -1 * center[1], -1 * center[2]);
+    this->_matrix.translate(center[0], center[1], center[2]);
     
     // Adjust the pitch of the car
     float n[3];
+    angle = 90 - angleInPlaneY(yVector, this->_vector, this->_vector);
+    angle *= -1;
     crossProduct(yVector, this->_vector, n);
-    angle = 90 - angleBetweenVectors(this->_vector, yVector);
-    if (this->_vector[2] != 0) angle *= -1 * fabs(this->_vector[2]) / this->_vector[2];
-    cout << "Angle: " << angle << endl;
     this->_matrix.rotate(angle, n);
 
     // Rotate the car to point in the right direction
-    zVector[0] = 0;
-    zVector[1] = 0;
-    zVector[2] = -1;
-    angle = -1 * angleBetweenVectors(this->_vector, zVector);
-    // We need to establish the direction so we use the x-component of the vector
-    // We use the sign of _vector to direct the rotation, the angle is always
-    // 0 <= angle <= 180
-    if (this->_vector[0] != 0) {
-        this->_matrix.rotate(angle * (fabs(this->_vector[0]) / this->_vector[0]), yVector);
-    } else {
-        this->_matrix.rotate(angle, yVector);
-    }
+    // angle = -1 * angleBetweenVectors(this->_vector, zVector);
+    // what is going on here? xVector[0] gets set to 0 somehow by this point?!
+    xVector[0] = 1;
+    angle = -1 * angleInPlaneZ(this->_vector, zVector, xVector);
+    this->_matrix.rotate(angle, yVector);
 
 
-    this->_matrix.translate(center[0], center[1], center[2]);
+    this->_matrix.translate(-1 * center[0], -1 * center[1], -1 * center[2]);
 
-    //cout << "V: " << this->_vector[0] << ", " << this->_vector[1] << ", " << this->_vector[2] << endl;
 
     // Rotate the car to be parallel to ground
     this->_matrix.rotateZ(180);

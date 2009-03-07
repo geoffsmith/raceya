@@ -22,6 +22,12 @@ float angleBetweenVectors(float * vector1, float * vector2);
 // Calculate the angle between two vectors in the Z plane
 float angleInZPlane(float * vector1, float * vector2);
 
+// Calculate the angle between the two vectors in the plane defined by planeVector and the
+// Y axis
+float angleInPlaneY(float * vector1, float * vector2, float * planeVector);
+float angleInPlaneZ(float * vector1, float * vector2, float * planeVector);
+float angleInPlane(float * vector1, float * vector2, float * planeVector, float * planeVector2);
+
 float dotProduct(float * a, float * b);
 void vertexSub(float * a, float * b, float * result);
 void vertexCopy(float * from, float * to);
@@ -30,4 +36,8 @@ void vertexMultiply(float a, float * b, float * result);
 void vertexAdd(float * a, float * b, float * result);
 float vertexSquareDistance(float * a, float * b);
 float vectorLength(float * a);
-void normaliseVector(float * a);
+bool normaliseVector(float * a);
+bool vectorEquals(float * a, float * b);
+float vertexDistance(float * a, float * b);
+
+void printVector(float * a);
