@@ -20,7 +20,7 @@
 #include "world.h"
 #include "hud.h"
 #include "track.h"
-#include "frustrum_culler.h"
+#include "frustum_culler.h"
 
 using namespace std;
 
@@ -104,7 +104,7 @@ void display(void) {
 
     camera->viewTransform();
 
-    ViewFrustrumCulling::culler->refreshMatrices();
+    ViewFrustumCulling::culler->refreshMatrices();
 
     // Draw the car
     car->render();

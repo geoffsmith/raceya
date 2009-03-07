@@ -1,5 +1,5 @@
 #include "dof.h"
-#include "frustrum_culler.h"
+#include "frustum_culler.h"
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
@@ -480,7 +480,7 @@ int Dof::render() {
     for (int i = 0; i < this->_nGeobs; ++i) {
         geob = &(this->_geobs[i]);
         // Check if we need to render this geob
-        if (ViewFrustrumCulling::culler->testObject(geob->boundingBox)) {
+        if (ViewFrustumCulling::culler->testObject(geob->boundingBox)) {
             // call the previously created display list
             glCallList(geob->displayList);
             ++count;
