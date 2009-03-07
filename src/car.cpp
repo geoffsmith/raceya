@@ -33,9 +33,13 @@ Car::Car(Track * track) {
     // Set up the engine
     this->_engineRPM = 0;
     this->_engineMaxRPM = 9000;
+    this->_acceleratorPressed = false;
+    this->_acceleratorRPMSec = 500;
 
     // Set up the gears
     this->_finalDriveAxisRatio = 3.46;
+    this->_numberOfGears = 6;
+    this->_gearRatios = new float[this->_numberOfGears];
     this->_gearRatios[0] = 4.37;
     this->_gearRatios[1] = 2.71;
     this->_gearRatios[2] = 1.88;
@@ -43,6 +47,8 @@ Car::Car(Track * track) {
     this->_gearRatios[4] = 1.13;
     this->_gearRatios[5] = 0.93;
     this->_currentGear = 0;
+    this->_engineGearUpRPM = 6000;
+    this->_engineGearDownRPM = 2000;
 
     this->_vector[0] = 0;
     this->_vector[1] = 0;
@@ -71,6 +77,35 @@ void Car::_updateSteering() {
     if (fabs(this->_steeringAngle) > this->_maxSteeringAngle) {
         this->_steeringAngle = -1 * direction * this->_maxSteeringAngle;
     }
+}
+
+void Car::_updateEngine() {
+    // If the accelerator is pressed we increase the RPM be the accerelation coefficient
+    if (this->_acceleratorPressed) {
+        this->_engineRPM += this->_acceleratorRPMSec * FrameTimer::timer.getSeconds();
+    // ... otherwise we decrease the RPM
+    } else if (this->_engineRPM > 0) {
+        this->_engineRPM -= (this->_acceleratorRPMSec / 2.0) 
+            * FrameTimer::timer.getSeconds();
+        // if this is negative, clamp to 0
+        if (this->_engineRPM < 0) this->_engineRPM = 0;
+    }
+
+    // Check if we need to shift up or down a gear
+    if (this->_engineRPM >= this->_engineGearUpRPM && this->_currentGear < this->_numberOfGears - 1) {
+        ++this->_currentGear;
+        // and reset the RPM to the lower amount
+        // TODO, this should probably be more clever and match the speed
+        this->_engineRPM = this->_engineGearDownRPM + this->_acceleratorRPMSec;
+    }
+    
+    // Check if we need to shift down a gear, this will only shift down to 1 because 0 is
+    // reverse
+    if (this->_engineRPM <= this->_engineGearDownRPM && this->_currentGear > 1) {
+        --this->_currentGear;
+        this->_engineRPM = this->_engineGearUpRPM - this->_acceleratorRPMSec;
+    }
+
 }
 
 void Car::_updateLay() {
@@ -241,6 +276,9 @@ void Car::_updateComponents() {
     // Update the car's steering
     this->_updateSteering();
 
+    // Update the engine
+    this->_updateEngine();
+
     // Find out how much the engine has turned
     float engineTurns = this->_engineRPM * FrameTimer::timer.getMinutes();
     // And divide by current gear ratio
@@ -401,6 +439,8 @@ void Car::handleKeyPress(SDL_Event &event) {
                 case SDLK_RIGHT:
                     this->_currentSteering += 1;
                     break;
+                case SDLK_UP:
+                    this->_acceleratorPressed = true;
                 default:
                     break;
             }
@@ -420,6 +460,8 @@ void Car::handleKeyPress(SDL_Event &event) {
                 case SDLK_x:
                     this->_engineRPM -= 100;
                     break;
+                case SDLK_UP:
+                    this->_acceleratorPressed = false;
                 default:
                     break;
             }

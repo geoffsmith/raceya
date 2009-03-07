@@ -51,12 +51,17 @@ class Car {
         // Engine related variables
         float _engineRPM;
         float _engineMaxRPM;
+        bool _acceleratorPressed;
+        float _acceleratorRPMSec;
 
         // Gear related variables
         float _finalDriveAxisRatio;
-        float _gearRatios[6];
+        float * _gearRatios;
+        int _numberOfGears;
         int _currentGear;
         float _wheelDiameter;
+        float _engineGearUpRPM;
+        float _engineGearDownRPM;
 
         // Position
         float _position[3];
@@ -65,6 +70,8 @@ class Car {
         // Center of the car
         float _center[3];
 
+        // Update the engine variables
+        void _updateEngine();
         // Update the moving components of the car such as engine and wheels
         void _updateComponents();
         // Update the car's steering
