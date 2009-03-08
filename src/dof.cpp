@@ -456,7 +456,7 @@ void Dof::_createDisplayLists() {
             stop = min(burstStart + burstCount, geob->nIndices) - burstStart;
 
             // Draw the elements
-            glDrawElements(GL_TRIANGLES, stop, GL_UNSIGNED_SHORT, &(geob->indices[burstStart]));
+            glDrawElements(GL_TRIANGLES, burstCount, GL_UNSIGNED_SHORT, &(geob->indices[burstStart]));
 
         }
 
