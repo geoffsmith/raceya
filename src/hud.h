@@ -18,4 +18,5 @@ class Hud {
     private:
         Car * _playersCar;
         TTF_Font * _font;
+        unsigned int _texture;
 };

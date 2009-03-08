@@ -15,19 +15,41 @@ Hud::Hud(Car * playersCar) {
 }
 
 void Hud::render() {
-    SDL_Color yellow = { 1, 1, 0 };
+    SDL_Color yellow = { 255, 255, 0 };
     SDL_Surface * textSurface;
     stringstream text;
-    GLuint texture;
     float width, height;
     float x, y , z;
+    unsigned int error = glGetError();
 
     // Print out the RPM
     text << "RPM: ";
     text << this->_playersCar->getRPM();
-    textSurface = TTF_RenderText_Solid(this->_font, text.str().c_str(), yellow);
+    textSurface = TTF_RenderText_Blended(this->_font, text.str().c_str(), yellow);
     if (textSurface != NULL) {
-        //Disable lighting
+        // Flip the pixels
+        SDL_LockSurface(textSurface);
+
+        int tmp;
+        int * pixels = (int *)textSurface->pixels;
+        int width = textSurface->w;
+        int height = textSurface->h;
+        int a, b;
+        int total = height * width;
+        // lock the surface
+        for (int i = 0; i < width; ++i) {
+            for (int j = 0; j < height / 2; ++j) {
+                a = j * width + i;
+                b = (height - 1 - j) * width + i;
+                tmp = pixels[a];
+                pixels[a]  = pixels[b];
+                pixels[b] = tmp;
+            }
+        }
+        SDL_UnlockSurface(textSurface);
+
+        error = glGetError();
+
         glDisable(GL_LIGHTING);
         glPushMatrix();
         glLoadIdentity();
@@ -35,40 +57,22 @@ void Hud::render() {
         glPushMatrix();
         glLoadIdentity();
         glOrtho(0, 10, 0, 10, 0, 10);
-        glDisable(GL_DEPTH_TEST);
 
         glMatrixMode(GL_MODELVIEW);
 
-        // Now draw on to a polygon
-        glGenTextures(1, &texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glRasterPos3f(0.5, 0.5, 0);
 
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glDrawPixels(textSurface->w, textSurface->h, 
+                GL_BGRA, GL_UNSIGNED_BYTE, textSurface->pixels);
+        error = glGetError();
+        if (error) {
+            cout << "Error: " << gluErrorString(error) << endl;
+        }
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textSurface->w, textSurface->h, 0, GL_BGRA, 
-                GL_UNSIGNED_BYTE, textSurface->pixels);
-
-        width = textSurface->w / 100;
-        height = textSurface->h / 100;
-        z = 0;
-
-        glColor3f(1, 1, 1);
-        glBegin(GL_QUADS);
-        glTexCoord2d(0, 0); 
-        glVertex3d(0, 0, z);
-        glTexCoord2d(1, 0); 
-        glVertex3d(0 + width, 0, z);
-        glTexCoord2d(1, 1); 
-        glVertex3d(0 + width, 0 + height, z);
-        glTexCoord2d(0, 1); 
-        glVertex3d(0, 0 + height, z);
-        glEnd();
-
-        // Clean up
-        glDeleteTextures(1, &texture);
         SDL_FreeSurface(textSurface);
 
+
+        glEnable(GL_BLEND);
         glMatrixMode(GL_PROJECTION);
         glEnable(GL_DEPTH_TEST);
         glPopMatrix();

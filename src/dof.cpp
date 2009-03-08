@@ -455,7 +455,7 @@ void Dof::_createDisplayLists() {
                         geob->normals[index][2]);
                 glTexCoord2f(
                         geob->textureCoords[index][0], 
-                        geob->textureCoords[index][1]);
+                        -1 * geob->textureCoords[index][1]);
                 glVertex3f(
                         geob->vertices[index][0], 
                         geob->vertices[index][1], 

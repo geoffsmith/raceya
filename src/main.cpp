@@ -31,6 +31,9 @@ static Hud * hud;
 static SDL_Surface * drawContext;
 static Track * track;
 
+static int screenWidth = 1000;
+static int screenHeight = 500;
+
 void setupLighting();
 
 void init(void) {
@@ -57,7 +60,7 @@ void init(void) {
 }
 
 void setupLighting() {
-    glEnable(GL_LIGHTING);
+    //glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 }
 
@@ -83,7 +86,10 @@ void reshape(int w, int h) {
     glViewport(0, 0, (GLsizei)w, (GLsizei)h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glFrustum(-1.0, 1.0, -1.0, 1.0, 1.5, 200.0);
+    // Calculate the screen ratio
+    float height = 1.0;
+    float width = (float)w / (float)h;
+    glFrustum(-1.0 * width, width, -1.0 * height, height, 1.5, 200.0);
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -109,6 +115,7 @@ void display(void) {
     // Draw the car
     car->render();
 
+    hud->render();
     track->render();
 
     // Draw the world
@@ -159,9 +166,9 @@ int main(int argc, char** argv) {
 
     const SDL_VideoInfo *info = SDL_GetVideoInfo();
     int bpp = info->vfmt->BitsPerPixel;
-    drawContext = SDL_SetVideoMode(500, 500, bpp, SDL_OPENGL);
+    drawContext = SDL_SetVideoMode(screenWidth, screenHeight, bpp, SDL_OPENGL);
 
-    reshape(500, 500);
+    reshape(screenWidth, screenHeight);
 
     if (drawContext == 0) {
         cout << "Failed to initialise video" << endl;
