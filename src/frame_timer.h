@@ -25,6 +25,8 @@ class FrameTimer {
         // frame. Result in milliseconds.
         int getTimeTillNextDraw();
         
+        //  Get the current FPS
+        int getCurrentFPS();
 
 
     private:
@@ -32,5 +34,6 @@ class FrameTimer {
         unsigned int _lastFrame;
         unsigned int _ticksPerSecond;
         unsigned int _targetFPS;
+        unsigned int _currentFPS;
 
 };

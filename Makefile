@@ -13,8 +13,8 @@ default: $(TARGET)
 
 all: default
 
-$(TARGET): src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o frame_timer.o world.o hud.o dof.o track.o frustum_culler.o shader.o closest_point.o
-	$(CC) $(PROFILE) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o frame_timer.o world.o hud.o dof.o track.o frustum_culler.o shader.o closest_point.o
+$(TARGET): src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o frame_timer.o world.o hud.o dof.o track.o frustum_culler.o shader.o closest_point.o logger.o
+	$(CC) $(PROFILE) -Wall $(INCS) $(LIBS) -o $(TARGET) src/main.cpp obj.o matrix.o lib.o jpeg.o camera.o car.o wheel.o frame_timer.o world.o hud.o dof.o track.o frustum_culler.o shader.o closest_point.o logger.o
 
 obj.o: src/obj.h src/obj.cpp src/matrix.h src/jpeg.h
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o obj.o src/obj.cpp
@@ -60,6 +60,10 @@ shader.o: src/shader.h src/shader.cpp src/lib.h
 
 closest_point.o: src/closest_point.cpp src/closest_point.h
 	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o closest_point.o src/closest_point.cpp
+
+logger.o: src/logger.h src/logger.cpp
+	$(CC) $(OPTIONS) $(PROFILE) -Wall $(INCS) -c -o logger.o src/logger.cpp
+
 
 clean:
 	-rm -f *.o $(TARGET)

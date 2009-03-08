@@ -1,5 +1,6 @@
 #include "dof.h"
 #include "frustum_culler.h"
+#include "logger.h"
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
@@ -375,8 +376,7 @@ void Dof::_loadTexture(string name, unsigned int & texture) {
         // Free the surface
         SDL_FreeSurface(surface);
     } else {
-        cout << "With: " << name << endl;
-        cout << "Error loading texture: " << IMG_GetError() << "_" << endl;
+        Logger::debug << "Error loading texture: " << IMG_GetError() << endl;
         texture = 0;
     }
 }

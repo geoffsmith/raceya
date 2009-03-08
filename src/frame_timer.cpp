@@ -1,4 +1,5 @@
 #include "frame_timer.h"
+#include "logger.h"
 
 #include <SDL/SDL.h>
 #include <iostream>
@@ -13,12 +14,16 @@ FrameTimer::FrameTimer() {
     this->_currentFrame = SDL_GetTicks();
     this->_lastFrame = SDL_GetTicks();
     this->_targetFPS = 20;
+    this->_currentFPS = 0;
 }
 
 void FrameTimer::newFrame() {
     // Save the last frame and update the current frame
     this->_lastFrame = this->_currentFrame;
     this->_currentFrame = SDL_GetTicks();
+
+    // Calculate how many frames we are doing 
+    this->_currentFPS = this->_ticksPerSecond / (this->_currentFrame - this->_lastFrame);
 }
 
 float FrameTimer::getSeconds() {
@@ -39,4 +44,8 @@ int FrameTimer::getTimeTillNextDraw() {
     if (result < 0) result = 0;
 
     return result;
+}
+
+int FrameTimer::getCurrentFPS() {
+    return this->_currentFPS;
 }

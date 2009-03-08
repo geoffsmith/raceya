@@ -21,6 +21,7 @@
 #include "hud.h"
 #include "track.h"
 #include "frustum_culler.h"
+#include "logger.h"
 
 using namespace std;
 
@@ -78,7 +79,7 @@ void initObjects() {
     world = new World();
     
     // Create the HUD
-    hud = new Hud(car);
+    hud = new Hud(car, screenWidth, screenHeight);
 
 }
 
@@ -112,10 +113,12 @@ void display(void) {
 
     ViewFrustumCulling::culler->refreshMatrices();
 
+
     // Draw the car
     car->render();
 
     hud->render();
+
     track->render();
 
     // Draw the world
@@ -191,6 +194,9 @@ int main(int argc, char** argv) {
 
         // Swap the buffers
         SDL_GL_SwapBuffers();
+
+        // Clear log
+        Logger::maintain();
 
         SDL_Delay(FrameTimer::timer.getTimeTillNextDraw());
     }

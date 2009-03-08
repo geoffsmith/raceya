@@ -1,4 +1,5 @@
 #include "lib.h"
+#include "logger.h"
 
 #include <math.h>
 #include <iostream>
@@ -108,8 +109,7 @@ void loadTexture(string name, unsigned int & texture, bool isMipmap, unsigned in
         // Free the surface
         SDL_FreeSurface(surface);
     } else {
-        cout << "With: " << name << endl;
-        cout << "Error loading texture: " << IMG_GetError() << "_" << endl;
+        Logger::debug << "Error loading texture: " << IMG_GetError() << "_" << endl;
         texture = 0;
     }
 }
