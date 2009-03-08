@@ -1,2 +1,8 @@
 *.swp
 *.o
+Makefile
+*.log
+*.status
+.deps
+stamp-h1*
+.DS_Store
