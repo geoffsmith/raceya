@@ -94,7 +94,7 @@ void reshape(int w, int h) {
     // Calculate the screen ratio
     float height = 1.0;
     float width = (float)w / (float)h;
-    glFrustum(-1.0 * width, width, -1.0 * height, height, 1.5, 200.0);
+    glFrustum(-1.0 * width, width, -1.0 * height, height, 1.5, 50.0);
     glMatrixMode(GL_MODELVIEW);
 }
 
