@@ -338,3 +338,29 @@ void printVector(float * a) {
 bool vectorEquals(float * a, float * b) {
     return a[0] == b[0] && a[1] == b[1] && a[2] == b[2];
 }
+
+void horizontalFlipSurface(SDL_Surface * surface) {
+    // The documentation says to lock the surface, I think this is to make sure the 
+    // pointer to pixels doesnt' change. Probably OK, as there shouldn't me > 1 thread
+    // on this
+    SDL_LockSurface(surface);
+
+    // We use int as a 4 byte type, this is not that neat, should probably use char,
+    // but not sure whether memcpy is the thing to use
+    int tmp;
+    int * pixels = (int *)surface->pixels;
+    int width = surface->w;
+    int height = surface->h;
+    int a, b;
+
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height / 2; ++j) {
+            a = j * width + i;
+            b = (height - 1 - j) * width + i;
+            tmp = pixels[a];
+            pixels[a]  = pixels[b];
+            pixels[b] = tmp;
+        }
+    }
+    SDL_UnlockSurface(surface);
+}

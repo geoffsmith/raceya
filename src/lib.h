@@ -3,6 +3,7 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
+#include <SDL/SDL.h>
 #include <string>
 
 using namespace std;
@@ -41,3 +42,6 @@ bool vectorEquals(float * a, float * b);
 float vertexDistance(float * a, float * b);
 
 void printVector(float * a);
+
+// Flip a SDL_Surface horizontally
+void horizontalFlipSurface(SDL_Surface * surface);

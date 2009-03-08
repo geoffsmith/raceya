@@ -1,5 +1,8 @@
 /**
  * The heads up display. For now this will mostly have development related stuff in it.
+ *
+ * TODO:
+ *      * Get transparency working
  */
 #pragma once
 

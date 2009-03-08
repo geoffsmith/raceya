@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <OpenGL/gl.h>
+#include "lib.h"
 
 using namespace std;
 
@@ -27,26 +28,9 @@ void Hud::render() {
     text << this->_playersCar->getRPM();
     textSurface = TTF_RenderText_Blended(this->_font, text.str().c_str(), yellow);
     if (textSurface != NULL) {
-        // Flip the pixels
-        SDL_LockSurface(textSurface);
 
-        int tmp;
-        int * pixels = (int *)textSurface->pixels;
-        int width = textSurface->w;
-        int height = textSurface->h;
-        int a, b;
-        int total = height * width;
-        // lock the surface
-        for (int i = 0; i < width; ++i) {
-            for (int j = 0; j < height / 2; ++j) {
-                a = j * width + i;
-                b = (height - 1 - j) * width + i;
-                tmp = pixels[a];
-                pixels[a]  = pixels[b];
-                pixels[b] = tmp;
-            }
-        }
-        SDL_UnlockSurface(textSurface);
+        // Flip the surface
+        horizontalFlipSurface(textSurface);
 
         error = glGetError();
 
