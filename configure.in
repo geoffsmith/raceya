@@ -14,5 +14,8 @@ AM_PATH_SDL($SDL_VERSION,
 dnl Check for Boost
 BOOST_REQUIRE(1.37.0)
 
+dnl Check for OpenGL
+AX_CHECK_GL
+
 
 AC_OUTPUT(Makefile src/Makefile)
