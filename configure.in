@@ -1,0 +1,6 @@
+AC_INIT
+AM_CONFIG_HEADER(config.h)
+AM_INIT_AUTOMAKE(racya,0.01)
+AC_PROG_CC
+AC_PROG_CXX
+AC_OUTPUT(Makefile src/Makefile)
