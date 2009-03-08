@@ -551,7 +551,9 @@ void Obj::_loadTexture(string texturePath, GLuint & texture) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         // Write the texture data
-        glTexImage2D(GL_TEXTURE_2D, 0, nOfColours, surface->w, surface->h, 0, 
+        //glTexImage2D(GL_TEXTURE_2D, 0, nOfColours, surface->w, surface->h, 0, 
+        //        textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+        gluBuild2DMipmaps(GL_TEXTURE_2D, nOfColours, surface->w, surface->h,
                 textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
 
         // Free the surface

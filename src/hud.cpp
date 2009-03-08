@@ -23,7 +23,7 @@ Hud::Hud(Car * playersCar, int width, int height) {
     this->_font = TTF_OpenFont(fontPath.c_str(), 16);
 
     fontPath = "resources/VeraMono.ttf";
-    this->_monoFont = TTF_OpenFont(fontPath.c_str(), 16);
+    this->_monoFont = TTF_OpenFont(fontPath.c_str(), 10);
 }
 
 void Hud::_renderStats() {
