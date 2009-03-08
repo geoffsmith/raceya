@@ -17,12 +17,16 @@ using namespace boost;
 using namespace boost::filesystem;
 namespace fs = boost::filesystem;
 
-Dof::Dof(string filePath) {
+Dof::Dof(string filePath, int flags) {
     // 4 characters used for tokens such as DOF1 and 32 bit integers
     char buffer[5];
     int dofLength;
     this->_filePath = filePath;
+    this->_flags = flags;
     buffer[4] = NULL;
+    this->isValid = false;
+
+    this->_geobs = NULL;
     
     // Load the file
     ifstream file(this->_filePath.c_str());
@@ -68,11 +72,14 @@ Dof::Dof(string filePath) {
     
     // Calculate bounding box
     this->_calculateBoundingBox();
+
+    // If we got here it is valid
+    this->isValid = true;
 }
 
 Dof::~Dof() {
     // Delete the geobs
-    if (this->_nGeobs != 0) delete[] this->_geobs;
+    if (this->_geobs != NULL) delete[] this->_geobs;
 }
 
 void Dof::_parseMats(ifstream * file) {
@@ -466,8 +473,6 @@ void Dof::_createDisplayLists() {
 
         glEndList();
     }
-
-
 }
 
 int Dof::render() {
@@ -554,6 +559,10 @@ void Dof::_calculateBoundingBox() {
     }
 }
 
+bool Dof::isSurface() {
+    return this->_flags & DOF_SURFACE;
+}
+
 /****************************************************************************************
  * Utilities
  ***************************************************************************************/
@@ -573,10 +582,16 @@ int parseString(ifstream * file, char * buffer) {
 }
 
 
+Geob::Geob() {
+    this->indices = NULL;
+    this->vertices = NULL;
+    this->normals = NULL;
+    this->textureCoords = NULL;
+}
 Geob::~Geob() {
     // Delete the various arrays
-    if (this->nIndices != 0) delete[] this->indices;
-    if (this->nVertices != 0) delete[] this->vertices;
-    if (this->nNormals != 0) delete[] this->normals;
-    if (this->nTextureCoords != 0) delete[] this->textureCoords;
+    if (this->indices != NULL) delete[] this->indices;
+    if (this->vertices != NULL) delete[] this->vertices;
+    if (this->normals != NULL) delete[] this->normals;
+    if (this->textureCoords != NULL) delete[] this->textureCoords;
 }

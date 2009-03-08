@@ -20,8 +20,13 @@ template <class T> void parseVector(ifstream * file, T * vector, int length);
 // to load string
 int parseString(ifstream * file, char * buffer);
 
+// Define the geometry object flags
+#define DOF_COLLISION 2
+#define DOF_SURFACE 4
+
 class Geob {
     public:
+        Geob();
         ~Geob();
         int material;
         int nIndices;
@@ -73,7 +78,7 @@ class Mat {
 
 class Dof {
     public:
-        Dof(string filePath);
+        Dof(string filePath, int flags);
         ~Dof();
         int render();
 
@@ -82,6 +87,11 @@ class Dof {
 
         Geob * getGeob(unsigned int index);
         int getNGeobs();
+
+        bool isValid; 
+
+        // Return true if this is part of the track surface
+        bool isSurface();
 
     private:
         string _filePath;
@@ -93,6 +103,9 @@ class Dof {
         // Material objects
         Mat * _mats;
         int _nMats;
+
+        // Flags
+        int _flags;
 
         // Parse the geobs from the file into Geob objects. This assumes that the file
         // pointer is at the start of GOB1 and will leave the pointer at the end of GEND

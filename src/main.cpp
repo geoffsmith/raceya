@@ -22,7 +22,6 @@
 #include "car.h"
 #include "camera.h"
 #include "frame_timer.h"
-#include "world.h"
 #include "hud.h"
 #include "track.h"
 #include "frustum_culler.h"
@@ -32,7 +31,6 @@ using namespace std;
 
 static Car * car;
 static Camera * camera;
-static World * world;
 static Hud * hud;
 static SDL_Surface * drawContext;
 static Track * track;
@@ -79,9 +77,6 @@ void initObjects() {
     // Create the camera, pointing at the player's car
     camera = new Camera(car);
 
-    // Create the world model
-    world = new World();
-    
     // Create the HUD
     hud = new Hud(car, screenWidth, screenHeight);
 
@@ -94,7 +89,7 @@ void reshape(int w, int h) {
     // Calculate the screen ratio
     float height = 1.0;
     float width = (float)w / (float)h;
-    glFrustum(-1.0 * width, width, -1.0 * height, height, 1.5, 50.0);
+    glFrustum(-1.0 * width, width, -1.0 * height, height, 1.5, 200.0);
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -117,16 +112,12 @@ void display(void) {
 
     ViewFrustumCulling::culler->refreshMatrices();
 
-
     // Draw the car
     car->render();
 
     hud->render();
 
     track->render();
-
-    // Draw the world
-    //world->render();
 
     glDisable(GL_TEXTURE_2D);
 }

@@ -20,6 +20,10 @@ void findClosestPoint(Dof ** dofs, unsigned int nDofs, float * point, float * cl
     // dofs
     // TODO: only check dofs which are part of the track
     for (unsigned int dofIndex = 0; dofIndex < nDofs; ++dofIndex) {
+
+        // If this dof is not a surface we skip
+        if (!dofs[dofIndex]->isSurface()) continue;
+
         for (int geobIndex = 0; 
                 geobIndex < dofs[dofIndex]->getNGeobs(); 
                 ++geobIndex) {

@@ -13,6 +13,7 @@ class Logger {
         static stringstream debug;
         static deque<string> debugLines;
         static int size;
+        static bool outputToConsole;
 
         // Utility function to clear out old statements from the logger, should be
         // called at each frame
