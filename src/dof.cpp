@@ -354,15 +354,12 @@ void Dof::_loadTexture(string name, unsigned int & texture) {
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
 
         // Write the texture data
         if ((error = glGetError()) != 0) {
             cout << "Error before loading texture: " << gluErrorString(error) << endl;
             texture = 0;
         }
-        //glTexImage2D(GL_TEXTURE_2D, 0, nOfColours, surface->w, surface->h, 0, 
-         //       textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
 
         // TODO: check the flags for loading Mipmaps
         gluBuild2DMipmaps(GL_TEXTURE_2D,nOfColours, surface->w, surface->h, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
@@ -433,7 +430,19 @@ void Dof::_createDisplayLists() {
         glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat->specular);
         glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mat->emission);
         
-        glBegin(GL_TRIANGLES);
+        // Set up the vertex pointers
+        glEnableClientState(GL_VERTEX_ARRAY);
+        // this probably wont' work because its a pointer to pointer
+        glVertexPointer(3, GL_FLOAT, 0, geob->vertices);
+
+        // ... and the normals
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glNormalPointer(GL_FLOAT, 0, geob->normals);
+
+        // ... and the texture coords
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_FLOAT, 0, geob->textureCoords);
+
 
         for (int j = 0; j < geob->nBursts; ++j) {
             burstCount = geob->burstsCount[j] / 3;
@@ -444,27 +453,13 @@ void Dof::_createDisplayLists() {
             // going on there... 
             // It only happens with some tracks, so it might be a bug in a track 
             // generator.
-            stop = min(burstStart + burstCount, geob->nIndices);
+            stop = min(burstStart + burstCount, geob->nIndices) - burstStart;
 
-            for (int k = burstStart; k < stop; ++k) {
-                //if (k % 3 == 0) glBegin(GL_LINE_LOOP);
-                index = geob->indices[k];
-                glNormal3f(
-                        geob->normals[index][0], 
-                        geob->normals[index][1], 
-                        geob->normals[index][2]);
-                glTexCoord2f(
-                        geob->textureCoords[index][0], 
-                        -1 * geob->textureCoords[index][1]);
-                glVertex3f(
-                        geob->vertices[index][0], 
-                        geob->vertices[index][1], 
-                        geob->vertices[index][2]);
-                //if (k % 3 == 2) glEnd();
-            }
+            // Draw the elements
+            glDrawElements(GL_TRIANGLES, stop, GL_UNSIGNED_SHORT, &(geob->indices[burstStart]));
+
         }
 
-        glEnd();
 
         glEndList();
     }
