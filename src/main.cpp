@@ -3,6 +3,11 @@
  *  * Enable back face culling for speed enhancement. Need to sort out particle
  *    normals first though.
  */
+
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <SDL/SDL.h>

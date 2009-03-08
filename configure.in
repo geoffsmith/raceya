@@ -3,4 +3,16 @@ AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(racya,0.01)
 AC_PROG_CC
 AC_PROG_CXX
+
+dnl Check for SDL
+SDL_VERSION=1.2.5
+AM_PATH_SDL($SDL_VERSION,
+	    	:,
+		AC_MSG_ERROR([*** SDL version $(SDL_VERSION) not found])
+           )
+
+dnl Check for Boost
+BOOST_REQUIRE(1.37.0)
+
+
 AC_OUTPUT(Makefile src/Makefile)
