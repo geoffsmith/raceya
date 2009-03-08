@@ -6,6 +6,7 @@
  * TODO:
  *  * Be able to load more than 1 DOF from a single file
  *  * Remove _loadTexture in favour of version in lib
+ *  * Sort out the texture mapping properly, at the moment we are manyally flipping the y
  */
 #pragma once
 

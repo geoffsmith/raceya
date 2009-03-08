@@ -243,6 +243,8 @@ void Dof::_parseGeobs(ifstream * file) {
                 // Read the vertices
                 for (int j = 0; j < length; ++j) {
                     parseVector<float>(file, geob->textureCoords[j], 2);
+                    // Flip the y
+                    geob->textureCoords[j][1] *= -1;
                 }
             } else if (strcmp(token, "NORM") == 0) {
                 // These are the normals
@@ -453,10 +455,11 @@ void Dof::_createDisplayLists() {
             // going on there... 
             // It only happens with some tracks, so it might be a bug in a track 
             // generator.
-            stop = min(burstStart + burstCount, geob->nIndices) - burstStart;
+            // stop = min(burstStart + burstCount, geob->nIndices) - burstStart;
 
             // Draw the elements
-            glDrawElements(GL_TRIANGLES, burstCount, GL_UNSIGNED_SHORT, &(geob->indices[burstStart]));
+            glDrawElements(GL_TRIANGLES, burstCount, GL_UNSIGNED_SHORT, 
+                    &(geob->indices[burstStart]));
 
         }
 

@@ -47,7 +47,6 @@ void init(void) {
     glShadeModel(GL_SMOOTH);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_NORMALIZE);
 
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_POINT_SMOOTH);
@@ -66,7 +65,7 @@ void init(void) {
 }
 
 void setupLighting() {
-    //glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 }
 
