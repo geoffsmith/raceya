@@ -1,0 +1,6 @@
+You'll need the SDL, OpenGL and Boost libraries. Then:
+
+./configure
+make
+
+NOTE: Install probably doesn't work yet
