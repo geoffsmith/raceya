@@ -3,12 +3,12 @@
  */
 #pragma once
 
-#include "obj.h"
+#include "dof.h"
 #include "matrix.h"
 
 class Wheel {
     public:
-        Wheel(int position, Obj * obj);
+        Wheel(int position, Dof * dof);
         void render();
 
         // Turn the wheel around its axis
@@ -21,8 +21,8 @@ class Wheel {
         void getGroundContact(float * point);
 
     private:
-        // The obj model representing the wheel
-        Obj * _obj;
+        // The dof model representing the wheel
+        Dof * _dof;
 
         // The current rotation of the wheel
         float _rotation;

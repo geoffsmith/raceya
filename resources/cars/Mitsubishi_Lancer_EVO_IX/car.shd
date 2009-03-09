@@ -1,0 +1,858 @@
+shader_body
+{
+  layer0
+ {
+  map=fresnel.tga
+  texgen_s=sphere_map
+  texgen_t=sphere_map
+  emission=1 1 1 1
+  mipmap=0
+ }
+ layer1
+ {
+  map=$trackenvmap
+  texgen_s=reflection_map
+  texgen_t=reflection_map
+  texgen_r=reflection_map
+  emission=0.5 0.5 0.5
+  blendfunc=filter
+  shininess=24
+  specular=0.75 0.75 0.75
+  mipmap=0
+ }
+ layer2
+ {
+  map=body.tga
+  blendfunc=one src_alpha
+  shininess=24
+  specular=0.15 0.15 0.15 0.15
+  mipmap=0
+ }
+ layer3
+ {
+  map=shine.bmp
+  texgen_s=sphere_map
+  texgen_t=reflection_map
+  texgen_r=reflection_map
+  blendfunc=dst_color one 
+  shininess=24
+  specular=1 1 1 1
+  }
+}
+shader_bumpers
+{
+  layer0
+ {
+  map=fresnel.tga
+  texgen_s=sphere_map
+  texgen_t=sphere_map
+  emission=1 1 1 1
+  mipmap=0
+ }
+ layer1
+ {
+  map=$trackenvmap
+  texgen_s=reflection_map
+  texgen_t=reflection_map
+  texgen_r=reflection_map
+  emission=0.5 0.5 0.5
+  blendfunc=filter
+  shininess=24
+  specular=0.75 0.75 0.75
+  mipmap=0
+ }
+ layer2
+ {
+  map=bumpers.tga
+  blendfunc=one src_alpha
+  shininess=24
+  specular=0.15 0.15 0.15 0.15
+  mipmap=0
+ }
+ layer3
+ {
+  map=shine.bmp
+  texgen_s=sphere_map
+  texgen_t=reflection_map
+  texgen_r=reflection_map
+  blendfunc=dst_color one 
+  shininess=24
+  specular=1 1 1 1
+}
+}
+shader_thread_caliper_mag
+{
+   layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=thread_caliper_mag.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=0
+  }
+}
+shader_thread_caliper_mag2
+{
+   layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=thread_caliper_mag2.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=0
+  }
+}
+shader_thread_caliper_mag3
+{
+   layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=thread_caliper_mag3.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=0
+}
+}
+shader_seats_door_panel_floor
+{
+  layer0
+  {
+    map=seats_door panel_floor.tga
+    emission=.2 .2 .2 .2
+    mipmap=0
+  }
+}
+shader_ice
+{
+  layer0
+  {
+    map=ice.tga
+    emission=.2 .2 .2 .2
+    mipmap=0
+  }
+}
+shader_meter_gauges
+{
+  layer0
+  {
+    map=meter_gauges.tga
+    emission=.2 .2 .2 .2
+    mipmap=0
+  }
+}
+shader_wheel_text
+{
+  layer0
+  {
+    map=wheel text.tga
+    emission=.2 .2 .2 .2
+    mipmap=0
+  }
+}
+shader_sd02_xl
+{
+  layer0
+  {
+    map=sd02 XL.tga
+    emission=.2 .2 .2 .2
+    mipmap=0
+  }
+}
+shader_glass
+{
+  layer0
+ {
+  map=glass.tga
+  depthwrite=0 
+  shininess=128
+  blendfunc=src_color one_minus_src_alpha
+  mipmap=0
+ }
+ layer1
+ {
+  map=$trackenvmap
+  depthwrite=0 
+  texgen_s=reflection_map
+  texgen_t=reflection_map
+  texgen_r=reflection_map
+  blendfunc=src_alpha one_minus_src_color
+ }
+ layer2
+ {
+  map=glass.tga
+  shininess=40
+  specular=1 1 1
+  depthwrite=0 
+  blendfunc=src_color one_minus_src_alpha 
+  mipmap=0
+    }
+
+}
+shader_clearheadlights
+{
+    layer0
+    {
+        map=clearheadlights.tga
+        blendfunc=blend
+        depthwrite=1 
+    }
+    layer1
+    {
+        map=$trackenvmap
+	blendfunc=add
+        texgen_s=reflection_map
+        texgen_t=reflection_map
+        texgen_r=reflection_map
+    }
+}
+shader_plastic
+{
+    layer0
+    {
+        map=reflection.tga
+        texgen_s=sphere_map
+        texgen_t=sphere_map
+        texgen_r=sphere_map
+    }
+    layer1
+    {
+        map=plastic.tga
+	blendfunc=blend
+    }
+}
+shader_grillie {
+ 	cull=none
+ 	layer0 {
+ 		map=gril.tga
+ 		blendfunc=blend
+ 		alphafunc=greater 128
+ 	}
+ 	layer1 {
+ 		map=$trackenvmap
+ 		texgen_s=reflection_map
+ 		texgen_t=reflection_map
+ 		texgen_r=reflection_map
+ 		blendfunc=one_minus_dst_color dst_color
+ 		alphafunc=greater 128
+ 		depthwrite=0
+ 	}
+ 	layer2 {
+ 		map=gril.tga
+ 		emission= 0.3 0.3 0.3 1
+ 		blendfunc=add
+ 		alphafunc=greater 128
+ 		depthwrite=0
+ 	}
+ }
+shader_grillie 
+ 	cull=none
+ 	layer0 {
+ 		map=gril 2.tga
+ 		blendfunc=blend
+ 		alphafunc=greater 128
+ 	}
+ 	layer1 {
+ 		map=$trackenvmap
+ 		texgen_s=reflection_map
+ 		texgen_t=reflection_map
+ 		texgen_r=reflection_map
+ 		blendfunc=one_minus_dst_color dst_color
+ 		alphafunc=greater 128
+ 		depthwrite=0
+ 	}
+ 	layer2 {
+ 		map=gril 2.tga
+ 		emission= .1 .1 .1 .1
+ 		blendfunc=add
+ 		alphafunc=greater 230
+ 		depthwrite=0
+        }
+ }
+shader_lights
+{
+    layer0
+    {
+        map=lights.tga
+}
+    layer1
+{
+ map=Chrome.bmp
+ texgen_s=sphere_map
+ texgen_t=sphere_map
+ emission=1. 1. 1.
+ blendfunc=dst_alpha src_alpha
+}
+layer2
+ {
+  map=shine.bmp
+  texgen_s=sphere_map
+  texgen_t=reflection_map
+  texgen_r=reflection_map
+  blendfunc=dst_color one 
+  shininess=24
+  specular=1 1 1 1
+}
+}
+shader_breakcover
+{
+    layer0
+ {
+  map=breakcover.tga
+  depthwrite=0 
+  shininess=128
+  blendfunc=src_color one_minus_src_alpha
+  mipmap=0
+ }
+ layer1
+ {
+  map=$trackenvmap
+  depthwrite=0 
+  texgen_s=reflection_map
+  texgen_t=reflection_map
+  texgen_r=reflection_map
+  blendfunc=src_alpha one_minus_src_color
+ }
+ layer2
+ {
+  map=breakcover.tga
+  shininess=40
+  specular=1 1 1
+  depthwrite=0 
+  blendfunc=src_color one_minus_src_alpha 
+  mipmap=0
+    }
+}
+shader_spoiler
+{
+  layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=spoiler.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=0
+  }
+
+}
+shader_licht
+{
+  layer0
+  {
+    ; Real body colors
+    emission=1 1 1 1
+    map=licht.tga
+    blendfunc=src_alpha one
+  }
+}
+shader_lite
+{
+  layer0
+  {
+    ; Real body colors
+    emission=1 1 1 1
+    map=lite.tga
+    blendfunc=src_alpha one
+  }
+}
+shader_tire01
+{
+   layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=tire01.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=0
+  }
+}
+shader_trnk
+{
+  layer0
+ {
+  map=fresnel.tga
+  texgen_s=sphere_map
+  texgen_t=sphere_map
+  emission=1 1 1 1
+  mipmap=0
+ }
+ layer1
+ {
+  map=$trackenvmap
+  texgen_s=reflection_map
+  texgen_t=reflection_map
+  texgen_r=reflection_map
+  emission=0.5 0.5 0.5
+  blendfunc=filter
+  shininess=24
+  specular=0.75 0.75 0.75
+  mipmap=0
+ }
+ layer2
+ {
+  map=trnk.tga
+  blendfunc=one src_alpha
+  shininess=24
+  specular=0.15 0.15 0.15 0.15
+  mipmap=0
+ }
+ layer3
+ {
+  map=shine.bmp
+  texgen_s=sphere_map
+  texgen_t=reflection_map
+  texgen_r=reflection_map
+  blendfunc=dst_color one 
+  shininess=24
+  specular=1 1 1 1
+}
+}
+shader_muff-burn
+{
+    layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=muff-burn.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=0
+}
+}
+shader_wheel
+{
+   layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=wheel.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=1
+  }
+}
+shader_gt
+{
+  layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+     map=gt.tga
+    blendfunc=dst_alpha src_alpha
+    specular=0.0 0.0 0.0
+    ambient=0.1 0.1 0.2
+    diffuse=0.0 0.2 0.0 
+    emission=0.1 0.1 0.1 1
+    mipmap=1
+}
+ layer2
+{
+ map=Chrome.bmp
+ texgen_s=sphere_map
+ texgen_t=sphere_map
+ emission=1. 1. 1.
+ blendfunc=blend
+}
+}
+shader_rear
+{
+  layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+     map=rear.tga
+    blendfunc=dst_alpha src_alpha
+    specular=0.0 0.0 0.0
+    ambient=0.1 0.1 0.2
+    diffuse=0.0 0.2 0.0 
+    emission=0.1 0.1 0.1 1
+    mipmap=1
+}
+}
+shader_ketam
+{
+   layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=ketam.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=1
+  }
+  layer2
+{
+ map=Chrome.bmp
+ texgen_s=sphere_map
+ texgen_t=sphere_map
+ emission=1. 1. 1.
+ blendfunc=blend
+}
+}
+shader_wheel
+{
+   layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=wheel.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=1
+  }
+  layer2
+{
+ map=Cel2.tga
+ texgen_s=sphere_map
+ texgen_t=sphere_map
+ emission=1. 1. 1.
+ blendfunc=blend
+}
+}
+shader_c4
+{
+   layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=c4.tga
+    blendfunc=blend
+    mipmap=
+  }
+  layer2
+{
+ map=Chrome.bmp
+ texgen_s=sphere_map
+ texgen_t=sphere_map
+ emission=1. 1. 1.
+ blendfunc=dst_alpha src_alpha
+}
+}
+shader_rim
+{
+   layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=rim.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=1
+  }
+layer2
+{
+ map=Chrome.bmp
+ texgen_s=sphere_map
+ texgen_t=sphere_map
+ emission=1. 1. 1.
+ blendfunc=blend
+}
+}
+shader_cfex
+{
+  layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+     map=cfex.tga
+    blendfunc=dst_alpha src_alpha
+    specular=0.0 0.0 0.0
+    ambient=0.1 0.1 0.2
+    diffuse=0.0 0.2 0.0 
+    emission=0.1 0.1 0.1 1
+    mipmap=1
+}
+layer2
+{
+ map=Chrome.bmp
+ texgen_s=sphere_map
+ texgen_t=sphere_map
+ emission=1. 1. 1.
+ blendfunc=dst_alpha src_alpha
+}
+}
+shader_vip
+{
+   layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=vip.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=1
+  }
+  layer2
+{
+ map=Chrome.bmp
+ texgen_s=sphere_map
+ texgen_t=sphere_map
+ emission=1. 1. 1.
+ blendfunc=blend
+}
+}
+shader_blitz_rim
+{
+   layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=blitz_rim.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=0
+  }
+}
+shader_sp1silver
+{
+   layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=sp1silver.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=1
+  }
+  layer2
+{
+ map=Chrome.bmp
+ texgen_s=sphere_map
+ texgen_t=sphere_map
+ emission=2. 3. 4.
+ blendfunc=dst_alpha src_alpha
+}
+}
+shader_brake
+{
+ layer0
+ {
+  map=brake.tga
+  shininess=50
+  specular=0.75 0.75 0.75
+  depthwrite=1
+  emission=1 1 1 1
+  mipmap=0
+ }
+}
+shader_halo
+{
+    cull=back
+ 	layer0
+  	{
+    		map=halo.tga
+    		shininess=0
+    		specular=0 0 0 1
+    		emission=0.8 0.8 0.8 1
+    		depthwrite=0
+    		blendfunc=blend
+  	}
+}
+shader_oz
+{
+layer0
+{
+map=$trackenvmap
+texgen_s=reflection_map
+texgen_t=reflection_map
+texgen_r=reflection_map
+diffuse=0.5 0.5 0.5 
+emission=1 1 1 1
+}
+layer1
+{
+blendfunc=src_alpha one_minus_src_alpha
+shininess=50
+specular=0.4 0.4 0.4
+ambient=0.3 0.3 0.3
+diffuse=0.5 0.5 0.5 
+emission=0.5 0.5 0.5 1
+alphafunc=greater 0
+map=oz.tga
+}
+}
+shader_wheel2
+{
+layer0
+{
+map=$trackenvmap
+texgen_s=reflection_map
+texgen_t=reflection_map
+texgen_r=reflection_map
+diffuse=0.5 0.5 0.5 
+emission=1 1 1
+}
+layer1
+{
+blendfunc=src_alpha one_minus_src_alpha
+shininess=50
+specular=0.4 0.4 0.4
+ambient=0.3 0.3 0.3
+diffuse=0.5 0.5 0.5 
+emission=0.5 0.5 0.5 1
+alphafunc=greater 0
+map=wheel2.tga
+}
+}
+shader_hksmuffler
+{
+	layer0
+	{
+    		map=$trackenvmap
+    		texgen_s=reflection_map
+    		texgen_t=reflection_map
+    		texgen_r=reflection_map
+	}
+  	layer1
+  	{
+    		map=hksmuffler.tga
+		blendfunc=one src_alpha
+      		shininess=60
+      		specular=0.35 0.35 0.35 1
+  	}
+}
+shader_evomag
+{
+layer0
+ {
+  map=evomag.tga
+  ;blendfunc=dst_alpha src_alpha
+  mipmap=0
+}
+}
+shader_evod1
+{
+	layer0
+	{
+		map=evod1.bmp
+	}
+}
+shader_s15
+{
+	layer0
+	{
+		map=s15.bmp
+	}
+}
+shader_s152
+{
+	layer0
+	{
+		map=s152.bmp
+	}
+}
+shader_evomag2
+{
+ layer0
+ {
+  map=evomag2.tga
+  blendfunc=blend
+  ;blendfunc=dst_alpha src_alpha
+  mipmap=0
+ }
+}
+shader_evomag3
+{
+ layer0
+ {
+  map=evomag3.tga
+  blendfunc=blend
+  ;blendfunc=dst_alpha src_alpha
+  mipmap=0
+ }
+}
+shader_evomag4
+{
+ layer0
+ {
+  map=evomag3.tga
+  blendfunc=blend
+  ;blendfunc=dst_alpha src_alpha
+  mipmap=0
+ }
+}
+shader_legera
+{
+layer0
+ {
+  map=legera.tga
+  ;blendfunc=dst_alpha src_alpha
+  mipmap=0
+}
+}

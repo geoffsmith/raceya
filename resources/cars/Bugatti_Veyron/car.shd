@@ -1,0 +1,243 @@
+shader_body
+{
+    layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=body.tga
+    blendfunc=dst_alpha src_alpha
+    depthwrite=0 
+  }
+}
+shader_side
+{
+    layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=side.tga
+    blendfunc=dst_alpha src_alpha
+    depthwrite=0 
+  }
+}
+shader_windows
+{
+    layer0
+    {
+        map=windows.tga
+        blendfunc=dst_alpha src_alpha
+        depthwrite=1 
+    }
+    layer1
+    {
+        map=$trackenvmap
+        blendfunc=add
+        texgen_s=reflection_map
+        texgen_t=reflection_map
+        texgen_r=reflection_map
+    }
+}
+shader_brakelighs_glass_center
+{
+    layer0
+    {
+        map=brakelighs_glass_center.tga
+        blendfunc=dst_alpha src_alpha
+        depthwrite=0
+    }
+    layer1
+    {
+        map=$trackenvmap
+        blendfunc=add
+        texgen_s=reflection_map
+        texgen_t=reflection_map
+        texgen_r=reflection_map
+    }
+}
+shader_brakelighs_glass
+{
+    layer0
+    {
+        map=brakelighs_glass.tga
+        blendfunc=dst_alpha src_alpha
+        depthwrite=0
+       
+    }
+    layer1
+    {
+        map=$trackenvmap
+        blendfunc=add
+        texgen_s=reflection_map
+        texgen_t=reflection_map
+        texgen_r=reflection_map
+    }
+}
+shader_shadow
+{
+   
+    layer0
+    {
+        map=shadow.tga
+        shininess=0
+        alphafunc=lequal 32
+        blendfunc=blend
+        specular= 0.5 0.5 1
+        diffuse= 0.5 0.5 1
+        ambient=0.3 0.3 1
+        depthwrite=1
+    }
+}
+shader_chrome
+{
+    layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=chrome.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=0
+    depthwrite=0 
+  }
+}
+shader_silver
+{
+    layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+  layer1
+  {
+    map=silver.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=0
+    depthwrite=0 
+  }
+}
+shader_headlight
+{
+    layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+   layer1
+  {
+    map=headlight.tga
+    blendfunc=dst_alpha src_alpha
+    mipmap=0
+    depthwrite=0 
+  }
+}
+shader_tachometer
+{
+    layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+ layer1
+  {
+    map=tachometer.tga
+    blendfunc=dst_alpha src_alpha
+    depthwrite=0
+    emission=0.7 0.7 0.7 0.7
+  }
+}
+shader_speedometer
+{
+    layer0
+  {
+   map=$trackenvmap
+   texgen_s=reflection_map
+   texgen_t=reflection_map
+   texgen_r=reflection_map
+  }
+ layer1
+  {
+    map=speedometer.tga
+    blendfunc=dst_alpha src_alpha
+    depthwrite=0 
+    emission=1 1 1 1
+  }
+}
+shader_grille
+{
+    layer0
+    {
+        map=grille.tga
+        mitmap=0
+    }
+}
+shader_disc
+{
+    layer0
+    {
+        map=disc.tga
+    }
+}
+shader_license
+{
+    layer0
+    {
+        map=license.tga
+    }
+}
+shader_dark
+{
+    layer0
+    {
+        map=dark.tga
+    }
+}
+shader_mat
+{
+    layer0
+    {
+        map=mat.tga
+    }
+}
+shader_tires
+{
+    layer0
+    {
+        map=tires.tga
+    }
+}
+shader_interior
+{
+    layer0
+    {
+        map=interior.tga
+    }
+}
+shader_braking
+{
+    layer0
+    {
+        map=braking.tga
+	emission=1 1 1 1
+    }
+}
+}

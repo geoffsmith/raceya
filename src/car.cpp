@@ -13,16 +13,13 @@
 
 using namespace std;
 
-Car::Car(Track * track) {
-    this->_track = track;
+Car::Car() {
+    // Load the body dof
+    //this->_bodyDof = new Dof("resources/cars/Mitsubishi_Lancer_EVO_IX/body.dof", 0);
 
     this->_obj = Obj::makeObj("resources/r8/R8.obj");
     this->_modelScale = 1;
 
-    this->_wheels[0] = new Wheel(0, this->_obj);
-    this->_wheels[1] = new Wheel(1, this->_obj);
-    this->_wheels[2] = new Wheel(2, this->_obj);
-    this->_wheels[3] = new Wheel(3, this->_obj);
     this->_wheelDiameter = 0.645; // meters;
     this->_wheelsAngle = 0;
     this->_steeringAngle = 0;
@@ -303,7 +300,7 @@ void Car::_updateComponents() {
     this->_position[2] += moveForward * this->_vector[2];
 
     // Update the car's position in relation to the ground
-    this->_updateLay();
+    //this->_updateLay();
 }
 
 void Car::_updateMatrix() {
@@ -332,8 +329,9 @@ void Car::_updateMatrix() {
     this->_matrix.translate(this->_position[0], this->_position[1], this->_position[2]);
 
     Matrix centerMatrix;
-    centerMatrix.rotateZ(180);
-    centerMatrix.rotateX(90);
+    //centerMatrix.rotateZ(180);
+    //centerMatrix.rotateX(90);
+    centerMatrix.rotateY(180);
     centerMatrix.scale(this->_modelScale);
     float center[3];
 
@@ -362,8 +360,9 @@ void Car::_updateMatrix() {
 
 
     // Rotate the car to be parallel to ground
-    this->_matrix.rotateZ(180);
-    this->_matrix.rotateX(90);
+    //this->_matrix.rotateZ(180);
+    //this->_matrix.rotateX(90);
+    this->_matrix.rotateY(180);
     this->_matrix.scale(this->_modelScale);
 }
 
@@ -378,41 +377,7 @@ void Car::render() {
 
     glMultMatrixf(this->_matrix.getMatrix());
 
-    // Render the various groups in the car obj
-    this->_obj->renderGroup("LicenseF");
-    this->_obj->renderGroup("LicenseR");
-    this->_obj->renderGroup("Base");
-    this->_obj->renderGroup("BLightL");
-    this->_obj->renderGroup("BLightLG");
-    this->_obj->renderGroup("BLightR");
-    this->_obj->renderGroup("BLightRG");
-    this->_obj->renderGroup("Body");
-    this->_obj->renderGroup("BumperF");
-    this->_obj->renderGroup("BumperFB");
-    this->_obj->renderGroup("BumperR");
-    this->_obj->renderGroup("BumperRB");
-    this->_obj->renderGroup("DoorL");
-    this->_obj->renderGroup("DoorLine");
-    this->_obj->renderGroup("DoorR");
-    this->_obj->renderGroup("Driver");
-    this->_obj->renderGroup("Exhaust");
-    this->_obj->renderGroup("HiInt");
-    this->_obj->renderGroup("HLightL");
-    this->_obj->renderGroup("HLightLG");
-    this->_obj->renderGroup("HLightR");
-    this->_obj->renderGroup("HLightRG");
-    this->_obj->renderGroup("Hood");
-    this->_obj->renderGroup("Interior");
-    this->_obj->renderGroup("MirrorR");
-    this->_obj->renderGroup("MirrorL");
-    this->_obj->renderGroup("Roof");
-    this->_obj->renderGroup("Skirt");
-    this->_obj->renderGroup("WindF");
-    this->_obj->renderGroup("WindFL");
-    this->_obj->renderGroup("WindFR");
-    this->_obj->renderGroup("WindR");
-    this->_obj->renderGroup("WindRL");
-    this->_obj->renderGroup("WindRR");
+    this->_bodyDof->render();
 
     // rotate the front wheel according to the steering
     this->_wheelsAngle = this->_steeringAngle;
@@ -503,4 +468,16 @@ float * Car::getWheelPosition() {
     // transform the vertex
     this->_matrix.multiplyVector(result);
     return result;
+}
+
+void Car::setBody(Dof * dof) {
+    this->_bodyDof = dof;
+}
+
+void Car::setTrack(Track * track) {
+    this->_track = track;
+}
+
+void Car::setWheel(Dof * dof, int index) {
+    this->_wheels[index] = new Wheel(index, dof);
 }

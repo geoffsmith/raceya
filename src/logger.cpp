@@ -9,6 +9,7 @@ using namespace boost;
 using namespace boost::filesystem;
 namespace fs = boost::filesystem;
 
+stringstream Logger::warn;
 stringstream Logger::debug;
 deque<string> Logger::debugLines;
 int Logger::size = 7;

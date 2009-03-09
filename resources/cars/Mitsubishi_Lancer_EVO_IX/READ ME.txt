@@ -1,0 +1,87 @@
+Mysterio                                                               May 2006
+
+                        
+                                      RACER 2006
+
+CAR: Mitsusbishi Lancer Evolution 9 GT.RS.GSR
+*****************************************************
+
+Model version : G2
+====================
+
+Software(s)   : Anim8tor
+              : 3d max 7
+              : maya
+              : zanoza modeler 2
+              : adobe photoshop CS
+              : sound forge  
+
+``````````````````````````````````````````````````````````````````````````````````````
+
+Features      
+=========
+version(s)
+              Generation 2 
+              : rather than using my parts, i put some parts i got from SPORTLIFEGOA.COM ,NFSCARS.COM and GTAPEX.com
+                (Big thanks to their authors,and thank you for letting us share,credit goes to their original authors).
+              : bad car.ini . please make a better one.
+              : very simple textures. please make a better one.
+              : very high poly. it'll reduce your frame rate. best play in windowed
+                mode 640x480/800x600.High end pc_full screen
+              
+
+installation  : unrar the file.
+
+```````````````````````````````````````````````````````````````````````````````````
+
+: As a 3d modeller, I know that by using other's 3d elements or parts big or small, low or high poly, is against the rule.  But I only 
+  use part(s) that are free and authorised.I have big respect for modellers, and want to say thanks to other people for letting me download their 
+  precious models.
+
+: If it happens that my model doesn't fit the rule(s), please delete the part(s) in *ZMOD*, PM me, or contact me at my mail. 
+  If there are any problems, I apologise.
+
+: Anyone playing *Racer* is free to make their own bodykits, texture, or anything else.(just remember to credit me:-).
+
+: This model may NOT be converted or modded in any way to another game without my permission. (its only legal in Racer).
+
+===================================================================================
+
+special thanks to:
+==================
+           
+website(s)       : http://racer-xtreme.com
+                 : racer forum
+                 : race sim central and any other racer related sites
+                 : all blueprints related sites
+                 : SPORTLIFEGOA.COM
+                 : Nfscars.com
+                 : GTAPEX.COM
+
+people           : All of the special Racer members and fans
+                 : BIG thanks to Ruud Van Gaal for making this all happen
+                 : FSR 
+                 : Djgizmo
+                 : Endo
+                 : George
+                             
+ =======================================================================================
+a'aight guys!!..what r ya waiting for!..unrar and showoff!!
+
+
+
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+   seprico_mysterio@hotmail.com                            Fazrul*Mysterio*Azuarie
+                                                                    a.k.a
+                                                                    chuck 
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+                   this read me txt. also goes to all my models
+
+
+ THANK YOU! THANK YOU ALL!

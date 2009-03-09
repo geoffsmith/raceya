@@ -20,6 +20,7 @@
 #include <string>
 
 #include "car.h"
+#include "car_parser.h"
 #include "camera.h"
 #include "frame_timer.h"
 #include "hud.h"
@@ -72,7 +73,14 @@ void initObjects() {
     track = new Track("resources/tracks/broussailles/");
 
     // Load up a car obj
-    car = new Car(track);
+    //car = new Car(track);
+    car = parseCar("resources/cars/Mitsubishi_Lancer_EVO_IX/");
+    if (car == NULL) {
+        cout << "Car was not loaded" << endl;
+        exit(1);
+    }
+    car->setTrack(track);
+    cout << "done" << endl;
 
     // Create the camera, pointing at the player's car
     camera = new Camera(car);
@@ -101,13 +109,6 @@ void display(void) {
     glColor3f(1.0, 1.0, 1.0);
     glLoadIdentity(); // clear the matrix
 
-    // Render the HUD
-    //hud->render();
-
-    // Position the light at the camera
-    float lightPosition[] = { 0, 0, 1, 0 };
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-
     camera->viewTransform();
 
     ViewFrustumCulling::culler->refreshMatrices();
@@ -115,9 +116,15 @@ void display(void) {
     // Draw the car
     car->render();
 
+    track->render();
+
+    // Render the HUD
+    // This should really be below, but the alpha blending is messed up 
     hud->render();
 
-    track->render();
+    // Position the light at the camera
+    float lightPosition[] = { 0, 0, 1, 0 };
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
     glDisable(GL_TEXTURE_2D);
 }

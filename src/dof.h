@@ -49,7 +49,11 @@ class Geob {
 
 class Mat {
     public:
+        Mat();
         ~Mat();
+        bool isTransparent();
+
+        string name;
         float ambient[4];
         float diffuse[4];
         float specular[4];
@@ -117,6 +121,9 @@ class Dof {
 
         // Load a texture
         void _loadTexture(string name, unsigned int & texture);
+
+        // Set up the material for OpenGL
+        void _loadMaterial(Mat * mat);
 
         // This DOFs display list
         void _createDisplayLists();

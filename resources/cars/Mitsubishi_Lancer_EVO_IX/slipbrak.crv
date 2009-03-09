@@ -1,0 +1,42 @@
+curve
+{
+  xname=Braking slip ratio (Calspan, negated!)
+  yname=Normalized braking force (N)
+  xsteps=10
+  ysteps=10
+  xmin=0
+  ymin=0
+  xmax=1
+  ymax=1
+  points=6
+  point0
+  {
+    x=-0.002500
+    y=-0.002500
+  }
+  point1
+  {
+    x=0.114000
+    y=0.870500
+  }
+  point2
+  {
+    x=0.136500
+    y=0.964000
+  }
+  point3
+  {
+    x=0.175000
+    y=1.000000
+  }
+  point4
+  {
+    x=0.262500
+    y=0.985000
+  }
+  point5
+  {
+    x=0.999000
+    y=0.735000
+  }
+}

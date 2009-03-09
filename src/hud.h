@@ -30,7 +30,7 @@ class Hud {
         // Render the debug console
         void _renderConsole();
 
-        void _renderText(string text, float x, float y, TTF_Font * font);
+        void _renderText(string text, float x, float y, float lineHeight, TTF_Font * font);
 
         // Screen width and height
         int _width;

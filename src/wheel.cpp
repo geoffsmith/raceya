@@ -1,19 +1,17 @@
 #include "wheel.h"
 
-Wheel::Wheel(int position, Obj * obj) {
-    this->_obj = obj;
+Wheel::Wheel(int position, Dof * dof) {
+    this->_dof = dof;
     this->_rotation = 0;
     this->_position = position;
     this->_wheelAngle = 0;
 
     // Get the central vertex for the wheel
-    vector<GLfloat> vector;
     switch (this->_position) {
         case 0:
-            vector = this->_obj->getVertex(13197);
-            this->_wheelCenter[0] = vector[0];
-            this->_wheelCenter[1] = vector[1];
-            this->_wheelCenter[2] = vector[2];
+            this->_wheelCenter[0] = 0.953;
+            this->_wheelCenter[1] = 1.434;
+            this->_wheelCenter[2] = 0.342;
             break;
         case 1:
             this->_wheelCenter[0] = 0.953;
@@ -35,6 +33,8 @@ Wheel::Wheel(int position, Obj * obj) {
 }
 
 void Wheel::render() {
+    this->_dof->render();
+    return;
     glPushMatrix();
     float normal[3];
     float scale = 0.235 / 2;
@@ -66,20 +66,7 @@ void Wheel::render() {
             -1 * (this->_wheelCenter[2] + normal[2]));
 
     // Render the caliper before we rotate the wheel but after we rotate for steering
-    switch (this->_position) {
-        case 0:
-            this->_obj->renderGroup("CaliperRR");
-            break;
-        case 1:
-            this->_obj->renderGroup("CaliperRL");
-            break;
-        case 2:
-            this->_obj->renderGroup("CaliperFR");
-            break;
-        case 3:
-            this->_obj->renderGroup("CaliperFL");
-            break;
-    }
+    this->_dof->render();
 
     glTranslatef(this->_wheelCenter[0] + normal[0], 
             this->_wheelCenter[1] + normal[1], 
@@ -96,6 +83,7 @@ void Wheel::render() {
             -1 * (this->_wheelCenter[1] + normal[1]), 
             -1 * (this->_wheelCenter[2] + normal[2]));
 
+    /* 
     switch (this->_position) {
         case 0:
             this->_obj->renderGroup("RotorRR");
@@ -114,6 +102,7 @@ void Wheel::render() {
             this->_obj->renderGroup("TireFL");
             break;
     }
+    */
 
     glPopMatrix();
 }

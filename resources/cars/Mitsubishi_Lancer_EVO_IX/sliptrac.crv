@@ -1,0 +1,66 @@
+curve
+{
+  xname=Tractional slip ratio(Calspan)
+  yname=Normalized traction force (N)
+  xsteps=20
+  ysteps=20
+  xmin=0
+  ymin=0
+  xmax=3
+  ymax=1
+  points=9
+  point0
+  {
+    x=0.000000
+    y=0.000000
+    type=0
+  }
+  point1
+  {
+    x=0.180000
+    y=0.982500
+    type=0
+  }
+  point2
+  {
+    x=0.232500
+    y=1.000000
+    type=0
+  }
+  point3
+  {
+    x=0.337500
+    y=0.987500
+    type=0
+  }
+  point4
+  {
+    x=0.480000
+    y=0.870000
+    type=0
+  }
+  point5
+  {
+    x=0.615000
+    y=0.755000
+    type=0
+  }
+  point6
+  {
+    x=0.817500
+    y=0.660000
+    type=0
+  }
+  point7
+  {
+    x=1.065000
+    y=0.625000
+    type=0
+  }
+  point8
+  {
+    x=3.007500
+    y=0.580000
+    type=0
+  }
+}

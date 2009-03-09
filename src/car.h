@@ -11,10 +11,13 @@
 #include "obj.h"
 #include "wheel.h"
 #include "track.h"
+#include "dof.h"
+
+class Dof;
 
 class Car {
     public:
-        Car(Track * track);
+        Car();
         void render();
 
         // Handle key presses
@@ -26,6 +29,11 @@ class Car {
         float getRPM();
 
         float * getWheelPosition();
+
+        // Setters
+        void setBody(Dof * dof);
+        void setTrack(Track * track);
+        void setWheel(Dof * dof, int index);
 
     private:
         Obj * _obj;
@@ -87,4 +95,6 @@ class Car {
 
         // the car's transformation matrix
         Matrix _matrix;
+
+        Dof * _bodyDof;
 };

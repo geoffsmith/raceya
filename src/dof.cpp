@@ -123,7 +123,10 @@ void Dof::_parseMats(ifstream * file) {
 
             if (strcmp(token, "MHDR") == 0) {
                 // The header just contains a string, skip this for now TODO
-                file->seekg(length, ios::cur);
+                //file->seekg(length, ios::cur);
+                parseString(file, fileString);
+                parseString(file, fileString);
+                mat->name = fileString;
             } else if (strcmp(token, "MCOL") == 0) {
                 // Contains the various material colors
                 parseVector<float>(file, mat->ambient, 4);
@@ -147,7 +150,7 @@ void Dof::_parseMats(ifstream * file) {
                         mat->shaders[j] = shader;
                     } else {
                         this->_loadTexture(fileString, mat->textures[j]);
-                        mat->shaders[j] = NULL;
+                        mat->shaders[j] = 0;
                     }
 
                 }
@@ -390,6 +393,7 @@ void Dof::_loadTexture(string name, unsigned int & texture) {
 void Dof::_createDisplayLists() {
     Geob * geob;
     Mat * mat;
+    Mat * previousMat = NULL;
     unsigned short index;
     int burstCount, burstStart;
     int stop;
@@ -398,47 +402,24 @@ void Dof::_createDisplayLists() {
 
     for (int i = 0; i < this->_nGeobs; ++i) {
         geob = &(this->_geobs[i]);
-        mat = &(this->_mats[geob->material]);
 
         // Create a new display list
         geob->displayList = glGenLists(1);
         glNewList(geob->displayList, GL_COMPILE);
 
-        // Set the defaults
-        glDisable(GL_ALPHA_TEST);
-
-        if (this->isTransparent()) {
-            glEnable(GL_BLEND);
+        if (geob->material < this->_nMats) {
+            mat = &(this->_mats[geob->material]);
         } else {
-            glDisable(GL_BLEND);
+            Logger::warn << "Error loading material, skipping..." << endl;
+            continue;
         }
 
-        if (mat->nTextures > 0 && mat->textures[0]) {
-            error = glGetError();
-            glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, mat->textures[0]);
-            if ((error = glGetError()) != 0) {
-                cout << "Error binding textre: " << gluErrorString(error) << endl;
-            }
-            
-            // See if there is an alpha function to be set
-            if (mat->shaders[0]) {
-                if (mat->shaders[0]->alphaFuncSet) {
-                    glEnable(GL_ALPHA_TEST);
-                    glAlphaFunc(GL_EQUAL, mat->shaders[0]->alphaFunc);
-                    //glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
-                }
-            }
-
-        } else {
-            glDisable(GL_TEXTURE_2D);
+        // Only load material if its different to last one 
+        if (previousMat == NULL || previousMat != mat) {
+            this->_loadMaterial(mat);
+            previousMat = mat;
         }
 
-        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat->ambient);
-        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat->diffuse);
-        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat->specular);
-        glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mat->emission);
-        
         // Set up the vertex pointers
         glEnableClientState(GL_VERTEX_ARRAY);
         // this probably wont' work because its a pointer to pointer
@@ -452,41 +433,103 @@ void Dof::_createDisplayLists() {
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glTexCoordPointer(2, GL_FLOAT, 0, geob->textureCoords);
 
-
         for (int j = 0; j < geob->nBursts; ++j) {
             burstCount = geob->burstsCount[j] / 3;
             burstStart = geob->burstStarts[j] / 3;
+
+            // NOTE: I would have expected the burst material to be valid here, but it 
+            // doesn't seem to work. Not sure what it's for...
 
             // Some files have fewer indices than bursts, which is really odd.
             // Racer's source doesn't handle this case, something really odd is 
             // going on there... 
             // It only happens with some tracks, so it might be a bug in a track 
             // generator.
-            // stop = min(burstStart + burstCount, geob->nIndices) - burstStart;
+            stop = min(burstStart + burstCount, geob->nIndices) - burstStart;
+
+            // Do some sanity checks
+            if (burstStart > geob->nIndices) {
+                cout << "Error start past indices" << endl;
+                continue;
+            }
 
             // Draw the elements
-            glDrawElements(GL_TRIANGLES, burstCount, GL_UNSIGNED_SHORT, 
+            glDrawElements(GL_TRIANGLES, stop, GL_UNSIGNED_SHORT, 
                     &(geob->indices[burstStart]));
-
         }
-
-
         glEndList();
     }
+}
+
+void Dof::_loadMaterial(Mat * mat) {
+    // Set the defaults
+    glDisable(GL_ALPHA_TEST);
+
+    // Check if this material has a shader
+    if (mat->blendMode > 0 || 
+       (mat->nTextures > 0 && mat->shaders[0] != NULL && mat->shaders[0]->blend)) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    } else {
+        glDisable(GL_BLEND);
+    }
+
+    if (mat->nTextures > 0 && mat->textures[0]) {
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, mat->textures[0]);
+        
+        // See if there is an alpha function to be set
+        if (mat->shaders != NULL && mat->shaders[0]) {
+            if (mat->shaders[0]->alphaFuncSet) {
+                glEnable(GL_ALPHA_TEST);
+                glAlphaFunc(GL_EQUAL, mat->shaders[0]->alphaFunc);
+                //glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
+            }
+        }
+    } else {
+        glDisable(GL_TEXTURE_2D);
+    }
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat->ambient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat->diffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat->specular);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mat->emission);
 }
 
 int Dof::render() {
     int count = 0;
     Geob * geob;
+    Mat * mat;
 
     this->_calculateBoundingBox();
+
+    // First we render the non-transparent geobs
     for (int i = 0; i < this->_nGeobs; ++i) {
         geob = &(this->_geobs[i]);
-        // Check if we need to render this geob
-        if (ViewFrustumCulling::culler->testObject(geob->boundingBox)) {
-            // call the previously created display list
-            glCallList(geob->displayList);
-            ++count;
+        mat = &(this->_mats[geob->material]);
+
+        if (!mat->isTransparent()) {
+            // Check if we need to render this geob
+            if (ViewFrustumCulling::culler->testObject(geob->boundingBox)) {
+                // call the previously created display list
+                glCallList(geob->displayList);
+                ++count;
+            }
+        }
+    }
+
+    // .. Now we render the transparent geobs
+    for (int i = 0; i < this->_nGeobs; ++i) {
+        geob = &(this->_geobs[i]);
+        mat = &(this->_mats[geob->material]);
+
+        if (mat->isTransparent()) {
+            // Check if we need to render this geob
+            if (ViewFrustumCulling::culler->testObject(geob->boundingBox)) {
+                // call the previously created display list
+                glCallList(geob->displayList);
+                ++count;
+            }
         }
     }
     return count;
@@ -495,21 +538,15 @@ int Dof::render() {
 bool Dof::isTransparent() {
     Mat * mat;
     Geob * geob;
-    bool result = false;
     for (int i = 0; i < this->_nGeobs; ++i) {
         geob = &(this->_geobs[i]);
         mat = &(this->_mats[geob->material]);
-        if (mat->blendMode > 0) {
-            result = true;
-        }
-        // Check if this material has a shader
-        if (mat->shaders[0] && mat->shaders[0]->blend) {
-            result = true;
-        }
 
-        if (result) break;
+        if (mat->isTransparent()) {
+            return true;
+        }
     }
-    return result;
+    return false;
 }
 
 Geob * Dof::getGeob(unsigned int index) {
@@ -594,4 +631,20 @@ Geob::~Geob() {
     if (this->vertices != NULL) delete[] this->vertices;
     if (this->normals != NULL) delete[] this->normals;
     if (this->textureCoords != NULL) delete[] this->textureCoords;
+}
+
+Mat::Mat() {
+    this->shaders = NULL;
+}
+
+bool Mat::isTransparent() {
+    if (this->blendMode > 0) {
+        return true;
+    }
+    // Check if this material has a shader
+    if (this->nTextures > 0 && this->shaders[0] != NULL && this->shaders[0]->blend) {
+        return true;
+    }
+
+    return false;
 }

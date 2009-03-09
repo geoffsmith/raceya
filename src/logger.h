@@ -1,5 +1,8 @@
 /**
  * A simple logging utility that will pump text into the onscreen console
+ *
+ * TODO:
+ *  * Turn on warnings
  */
 #pragma once
 
@@ -11,6 +14,7 @@ using namespace std;
 class Logger {
     public:
         static stringstream debug;
+        static stringstream warn;
         static deque<string> debugLines;
         static int size;
         static bool outputToConsole;
