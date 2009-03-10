@@ -33,9 +33,13 @@ Wheel::Wheel(int position, Dof * dof) {
 }
 
 void Wheel::render() {
-    this->_dof->render();
-    return;
     glPushMatrix();
+
+    glTranslatef(this->_wheelCenter[0], this->_wheelCenter[1], this->_wheelCenter[2]);
+
+    this->_dof->render(true);
+
+    /*
     float normal[3];
     float scale = 0.235 / 2;
 
@@ -52,8 +56,10 @@ void Wheel::render() {
     normal[0] *= -1 * scale;
     normal[1] *= scale;
     normal[2] *= scale;
+    */
 
 
+    /*
     glTranslatef(this->_wheelCenter[0] + normal[0], 
             this->_wheelCenter[1] + normal[1], 
             this->_wheelCenter[2] + normal[2]);
@@ -82,6 +88,7 @@ void Wheel::render() {
     glTranslatef(-1 * (this->_wheelCenter[0] + normal[0]), 
             -1 * (this->_wheelCenter[1] + normal[1]), 
             -1 * (this->_wheelCenter[2] + normal[2]));
+            */
 
     /* 
     switch (this->_position) {
@@ -141,4 +148,10 @@ void Wheel::getGroundContact(float * point) {
             point[2] = 0.0;
             break;
     }
+}
+
+void Wheel::setCenter(float * center) {
+    this->_wheelCenter[0] = center[0];
+    this->_wheelCenter[1] = center[1];
+    this->_wheelCenter[2] = center[2];
 }

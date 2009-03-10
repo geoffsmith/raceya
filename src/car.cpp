@@ -110,12 +110,8 @@ void Car::_updateLay() {
     float groundPoint[4][3];
     // Vector from center to target position
     float ct[3];
-    // vector from center to current position
-    float cp[3];
-    float angle;
     float normal[3];
     float center[3];
-    float distance;
     Matrix matrix;
 
     // For each wheel find the closest point on the ground
@@ -141,8 +137,8 @@ void Car::_updateLay() {
     }
 
     // Move the car to the highest point
-    int maxIndex;
-    float maxY;
+    int maxIndex = 0;
+    float maxY = 0;
     for (int i = 0; i < 4; ++i) {
         if (i == 0 || maxY < groundPoint[i][1]) {
             maxIndex = i;
@@ -377,7 +373,7 @@ void Car::render() {
 
     glMultMatrixf(this->_matrix.getMatrix());
 
-    this->_bodyDof->render();
+    this->_bodyDof->render(true);
 
     // rotate the front wheel according to the steering
     this->_wheelsAngle = this->_steeringAngle;
@@ -478,6 +474,6 @@ void Car::setTrack(Track * track) {
     this->_track = track;
 }
 
-void Car::setWheel(Dof * dof, int index) {
-    this->_wheels[index] = new Wheel(index, dof);
+void Car::setWheel(Wheel * wheel, int index) {
+    this->_wheels[index] = wheel;
 }

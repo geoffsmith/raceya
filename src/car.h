@@ -33,7 +33,7 @@ class Car {
         // Setters
         void setBody(Dof * dof);
         void setTrack(Track * track);
-        void setWheel(Dof * dof, int index);
+        void setWheel(Wheel * wheel, int index);
 
     private:
         Obj * _obj;

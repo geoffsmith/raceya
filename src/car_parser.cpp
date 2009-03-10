@@ -1,5 +1,6 @@
 #include "car_parser.h"
 #include "logger.h"
+#include "lib.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -50,16 +51,47 @@ Car * parseCar(string carPathString) {
     Logger::debug << "done loading the car" << endl;
 
     // Load the wheels
+    Wheel * wheel;
     stringstream s;
     string p;
+    float center[3];
     for (int i = 0; i < 4; ++i) {
         s << "/wheel" << i << "/model/file";
         if (inis.count(s.str()) > 0) {
             p = (carPath / inis[s.str()]).string();
             dof = new Dof(p, 0);
-            car->setWheel(dof, i);
+            wheel = new Wheel(i, dof);
+            car->setWheel(wheel, i);
         }
         s.str("");
+
+        // Try and get the center of the wheel from the suspension
+        s << "/susp" << i << "/x";
+        center[0] = atof(inis[s.str()].c_str());
+        s.str("");
+
+        s << "/susp" << i << "/y";
+        center[1] = atof(inis[s.str()].c_str());
+        s.str("");
+
+        s << "/susp" << i << "/z";
+        center[2] = atof(inis[s.str()].c_str());
+        s.str("");
+
+        // Add the roll center
+        s << "/susp" << i << "/roll_center/x";
+        center[0] += atof(inis[s.str()].c_str());
+        s.str("");
+
+        s << "/susp" << i << "/roll_center/y";
+        center[1] += atof(inis[s.str()].c_str());
+        s.str("");
+
+        s << "/susp" << i << "/roll_center/z";
+        center[2] += atof(inis[s.str()].c_str());
+        s.str("");
+
+        wheel->setCenter(center);
     }
 
     return car;

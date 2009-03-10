@@ -84,7 +84,9 @@ class Dof {
     public:
         Dof(string filePath, int flags);
         ~Dof();
-        int render();
+
+        // Render the dof
+        int render(bool overrideFrustrumTest = false);
 
         // Return true if one of the materials is transparent
         bool isTransparent();

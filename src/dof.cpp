@@ -496,7 +496,7 @@ void Dof::_loadMaterial(Mat * mat) {
     glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mat->emission);
 }
 
-int Dof::render() {
+int Dof::render(bool overrideFrustrumTest) {
     int count = 0;
     Geob * geob;
     Mat * mat;
@@ -510,7 +510,8 @@ int Dof::render() {
 
         if (!mat->isTransparent()) {
             // Check if we need to render this geob
-            if (ViewFrustumCulling::culler->testObject(geob->boundingBox)) {
+            if (overrideFrustrumTest || 
+                    ViewFrustumCulling::culler->testObject(geob->boundingBox)) {
                 // call the previously created display list
                 glCallList(geob->displayList);
                 ++count;

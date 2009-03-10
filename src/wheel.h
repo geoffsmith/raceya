@@ -20,6 +20,8 @@ class Wheel {
         // Get the point at which the wheel touches the ground
         void getGroundContact(float * point);
 
+        void setCenter(float * center);
+
     private:
         // The dof model representing the wheel
         Dof * _dof;
