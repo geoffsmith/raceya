@@ -17,11 +17,12 @@ using namespace boost;
 using namespace boost::filesystem;
 namespace fs = boost::filesystem;
 
-Dof::Dof(string filePath, int flags) {
+Dof::Dof(string filePath, int flags, bool perGeobDisplayList) {
     // 4 characters used for tokens such as DOF1 and 32 bit integers
     char buffer[5];
     int dofLength;
     this->_filePath = filePath;
+    this->_perGeobDisplayList = perGeobDisplayList;
     this->_flags = flags;
     buffer[4] = NULL;
     this->isValid = false;
@@ -352,7 +353,6 @@ void Dof::_loadTexture(string name, unsigned int & texture) {
         // Bind the texture object
         glBindTexture(GL_TEXTURE_2D, texture);
 
-
         glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
         glPixelStorei(GL_UNPACK_SKIP_ROWS,0);
         glPixelStorei(GL_UNPACK_SKIP_PIXELS,0);
@@ -393,87 +393,143 @@ void Dof::_loadTexture(string name, unsigned int & texture) {
 void Dof::_createDisplayLists() {
     Geob * geob;
     Mat * mat;
-    Mat * previousMat = NULL;
+    Mat * previousMat;
+
+    // If we are creating a display list for each geob...
+    if (this->_perGeobDisplayList) {
+        for (int i = 0; i < this->_nGeobs; ++i) {
+            geob = &(this->_geobs[i]);
+
+            // Create a new display list
+            geob->displayList = glGenLists(1);
+            glNewList(geob->displayList, GL_COMPILE_AND_EXECUTE);
+
+            this->_initialiseMaterials();
+
+            previousMat = NULL;
+            this->_renderGeob(geob, previousMat);
+
+            glEndList();
+        }
+    // Otherwise we just do one: First non-transparent, then transparent
+    } else {
+        // Create a new display list
+        this->_displayList = glGenLists(1);
+        glNewList(this->_displayList, GL_COMPILE_AND_EXECUTE);
+
+        this->_initialiseMaterials();
+
+        // Non-transparent pass
+        for (int i = 0; i < this->_nGeobs; ++i) {
+            geob = &(this->_geobs[i]);
+            mat = &(this->_mats[geob->material]);
+            if (!mat->isTransparent()) {
+                this->_renderGeob(geob, previousMat);
+            }
+        }
+
+        // Transparent pass
+        for (int i = 0; i < this->_nGeobs; ++i) {
+            geob = &(this->_geobs[i]);
+            mat = &(this->_mats[geob->material]);
+            if (mat->isTransparent()) {
+                this->_renderGeob(geob, previousMat);
+            }
+        }
+
+        glEndList();
+    }
+
+}
+
+void Dof::_renderGeob(Geob * geob, Mat * & previousMat) {
+    Mat * mat;
     int burstCount, burstStart;
     int stop;
 
-    for (int i = 0; i < this->_nGeobs; ++i) {
-        geob = &(this->_geobs[i]);
+    if (geob->material < this->_nMats) {
+        mat = &(this->_mats[geob->material]);
+    } else {
+        Logger::warn << "Error loading material, skipping..." << endl;
+        return;
+    }
 
-        // Create a new display list
-        geob->displayList = glGenLists(1);
-        glNewList(geob->displayList, GL_COMPILE);
+    // Only load material if its different to last one 
+    //if (previousMat == NULL || previousMat != mat) {
+        this->_loadMaterial(mat);
+        previousMat = mat;
+    //}
 
-        if (geob->material < this->_nMats) {
-            mat = &(this->_mats[geob->material]);
-        } else {
-            Logger::warn << "Error loading material, skipping..." << endl;
+    // Set up the vertex pointers
+    glEnableClientState(GL_VERTEX_ARRAY);
+    // this probably wont' work because its a pointer to pointer
+    glVertexPointer(3, GL_FLOAT, 0, geob->vertices);
+
+    // ... and the normals
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glNormalPointer(GL_FLOAT, 0, geob->normals);
+
+    // ... and the texture coords
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(2, GL_FLOAT, 0, geob->textureCoords);
+
+    for (int j = 0; j < geob->nBursts; ++j) {
+        burstCount = geob->burstsCount[j] / 3;
+        burstStart = geob->burstStarts[j] / 3;
+
+        // NOTE: I would have expected the burst material to be valid here, but it 
+        // doesn't seem to work. Not sure what it's for...
+
+        // Some files have fewer indices than bursts, which is really odd.
+        // Racer's source doesn't handle this case, something really odd is 
+        // going on there... 
+        // It only happens with some tracks, so it might be a bug in a track 
+        // generator.
+        stop = min(burstStart + burstCount, geob->nIndices) - burstStart;
+
+        // Do some sanity checks
+        if (burstStart > geob->nIndices) {
+            cout << "Error start past indices" << endl;
             continue;
         }
 
-        // Only load material if its different to last one 
-        if (previousMat == NULL || previousMat != mat) {
-            this->_loadMaterial(mat);
-            previousMat = mat;
-        }
-
-        // Set up the vertex pointers
-        glEnableClientState(GL_VERTEX_ARRAY);
-        // this probably wont' work because its a pointer to pointer
-        glVertexPointer(3, GL_FLOAT, 0, geob->vertices);
-
-        // ... and the normals
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(GL_FLOAT, 0, geob->normals);
-
-        // ... and the texture coords
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(2, GL_FLOAT, 0, geob->textureCoords);
-
-        for (int j = 0; j < geob->nBursts; ++j) {
-            burstCount = geob->burstsCount[j] / 3;
-            burstStart = geob->burstStarts[j] / 3;
-
-            // NOTE: I would have expected the burst material to be valid here, but it 
-            // doesn't seem to work. Not sure what it's for...
-
-            // Some files have fewer indices than bursts, which is really odd.
-            // Racer's source doesn't handle this case, something really odd is 
-            // going on there... 
-            // It only happens with some tracks, so it might be a bug in a track 
-            // generator.
-            stop = min(burstStart + burstCount, geob->nIndices) - burstStart;
-
-            // Do some sanity checks
-            if (burstStart > geob->nIndices) {
-                cout << "Error start past indices" << endl;
-                continue;
-            }
-
-            // Draw the elements
-            glDrawElements(GL_TRIANGLES, stop, GL_UNSIGNED_SHORT, 
-                    &(geob->indices[burstStart]));
-        }
-        glEndList();
+        // Draw the elements
+        glDrawElements(GL_TRIANGLES, stop, GL_UNSIGNED_SHORT, 
+                &(geob->indices[burstStart]));
     }
 }
 
-void Dof::_loadMaterial(Mat * mat) {
-    // Set the defaults
+void Dof::_initialiseMaterials() {
+    // Set the state for a display list
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_ALPHA_TEST);
+}
+
+void Dof::_loadMaterial(Mat * mat) {
+    int params;
+
+    // Set the defaults
+    if (glIsEnabled(GL_ALPHA_TEST) == GL_TRUE) glDisable(GL_ALPHA_TEST);
 
     // Check if this material has a shader
     if (mat->blendMode > 0 || 
        (mat->nTextures > 0 && mat->shaders[0] != NULL && mat->shaders[0]->blend)) {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        if (glIsEnabled(GL_BLEND) == GL_FALSE) glEnable(GL_BLEND);
     } else {
-        glDisable(GL_BLEND);
+        if (glIsEnabled(GL_BLEND) == GL_TRUE) glDisable(GL_BLEND);
     }
 
     if (mat->nTextures > 0 && mat->textures[0]) {
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, mat->textures[0]);
+        if (glIsEnabled(GL_TEXTURE_2D) == GL_FALSE) {
+            glEnable(GL_TEXTURE_2D);
+        }
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &(params));
+        if (params != mat->textures[0]) {
+            glBindTexture(GL_TEXTURE_2D, mat->textures[0]);
+        }
         
         // See if there is an alpha function to be set
         if (mat->shaders != NULL && mat->shaders[0]) {
@@ -484,12 +540,37 @@ void Dof::_loadMaterial(Mat * mat) {
             }
         }
     } else {
-        glDisable(GL_TEXTURE_2D);
+        if (glIsEnabled(GL_TEXTURE_2D) == GL_TRUE) glDisable(GL_TEXTURE_2D);
     }
 
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat->ambient);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat->diffuse);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat->specular);
+    float color[4];
+    glGetMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, color);
+    if (
+            color[0] == mat->ambient[0] &&
+            color[1] == mat->ambient[1] &&
+            color[2] == mat->ambient[2] &&
+            color[3] == mat->ambient[3] ) {
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat->ambient);
+    }
+
+    // Check if we need to change the diffuse material
+    glGetMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
+    if (
+            color[0] == mat->diffuse[0] &&
+            color[1] == mat->diffuse[1] &&
+            color[2] == mat->diffuse[2] &&
+            color[3] == mat->diffuse[3] ) {
+        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat->diffuse);
+    }
+
+    glGetMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, color);
+    if (
+            color[0] == mat->specular[0] &&
+            color[1] == mat->specular[1] &&
+            color[2] == mat->specular[2] &&
+            color[3] == mat->specular[3] ) {
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat->specular);
+    }
     glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, mat->emission);
 }
 
@@ -500,36 +581,41 @@ int Dof::render(bool overrideFrustrumTest) {
 
     this->_calculateBoundingBox();
 
-    // First we render the non-transparent geobs
-    for (int i = 0; i < this->_nGeobs; ++i) {
-        geob = &(this->_geobs[i]);
-        mat = &(this->_mats[geob->material]);
+    if (this->_perGeobDisplayList) {
+        // First we render the non-transparent geobs
+        for (int i = 0; i < this->_nGeobs; ++i) {
+            geob = &(this->_geobs[i]);
+            mat = &(this->_mats[geob->material]);
 
-        if (!mat->isTransparent()) {
-            // Check if we need to render this geob
-            if (overrideFrustrumTest || 
-                    ViewFrustumCulling::culler->testObject(geob->boundingBox)) {
-                // call the previously created display list
-                glCallList(geob->displayList);
-                ++count;
+            if (!mat->isTransparent()) {
+                // Check if we need to render this geob
+                if (overrideFrustrumTest || 
+                        ViewFrustumCulling::culler->testObject(geob->boundingBox)) {
+                    // call the previously created display list
+                    glCallList(geob->displayList);
+                    ++count;
+                }
             }
         }
-    }
 
-    // .. Now we render the transparent geobs
-    for (int i = 0; i < this->_nGeobs; ++i) {
-        geob = &(this->_geobs[i]);
-        mat = &(this->_mats[geob->material]);
+        // .. Now we render the transparent geobs
+        for (int i = 0; i < this->_nGeobs; ++i) {
+            geob = &(this->_geobs[i]);
+            mat = &(this->_mats[geob->material]);
 
-        if (mat->isTransparent()) {
-            // Check if we need to render this geob
-            if (overrideFrustrumTest ||
-                    ViewFrustumCulling::culler->testObject(geob->boundingBox)) {
-                // call the previously created display list
-                glCallList(geob->displayList);
-                ++count;
+            if (mat->isTransparent()) {
+                // Check if we need to render this geob
+                if (overrideFrustrumTest ||
+                        ViewFrustumCulling::culler->testObject(geob->boundingBox)) {
+                    // call the previously created display list
+                    glCallList(geob->displayList);
+                    ++count;
+                }
             }
         }
+    } else {
+        glCallList(this->_displayList);
+        ++count;
     }
     return count;
 }

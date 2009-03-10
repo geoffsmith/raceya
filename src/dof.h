@@ -82,7 +82,7 @@ class Mat {
 
 class Dof {
     public:
-        Dof(string filePath, int flags);
+        Dof(string filePath, int flags, bool perGeobDisplayList = true);
         ~Dof();
 
         // Render the dof
@@ -110,6 +110,12 @@ class Dof {
         Mat * _mats;
         int _nMats;
 
+        // Some objects are small enough that all the geobs can be drawn in two display
+        // lists, one for transparent and one for non-transparent. This also lets us
+        // optimise the OpenGL state changes.
+        bool _perGeobDisplayList;
+        unsigned int _displayList;
+
         // Flags
         int _flags;
 
@@ -129,6 +135,10 @@ class Dof {
 
         // This DOFs display list
         void _createDisplayLists();
+        // Render a geob, will only change material if previous Mat != the current one
+        void _renderGeob(Geob * geob, Mat * & previousMat = NULL);
+        // Initialise a material so that displaylist is atomic
+        void _initialiseMaterials();
 
         // The bounding box for the dof
         void _calculateBoundingBox();

@@ -48,7 +48,7 @@ Car * parseCar(string carPathString) {
     // Load the car body
     Logger::debug << "Loading the car..." << endl;
     if (inis.count("/body/model/file") > 0) {
-        dof = new Dof((carPath / inis["/body/model/file"]).string(), 0);
+        dof = new Dof((carPath / inis["/body/model/file"]).string(), 0, false);
         car->setBody(dof);
     }
     Logger::debug << "done loading the car" << endl;
@@ -73,7 +73,7 @@ Car * parseCar(string carPathString) {
         s << "/wheel" << i << "/model/file";
         if (inis.count(s.str()) > 0) {
             p = (carPath / inis[s.str()]).string();
-            dof = new Dof(p, 0);
+            dof = new Dof(p, 0, false);
             wheel = new Wheel(i, dof);
             car->setWheel(wheel, i);
         }
@@ -83,7 +83,7 @@ Car * parseCar(string carPathString) {
         s << "/wheel" << i << "/model_brake/file";
         if (inis.count(s.str()) > 0) {
             p = (carPath / inis[s.str()]).string();
-            dof = new Dof(p, 0);
+            dof = new Dof(p, 0, false);
             wheel->setBrakeDof(dof);
         }
         s.str("");
