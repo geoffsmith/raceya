@@ -127,6 +127,7 @@ void Dof::_parseMats(ifstream * file) {
                 parseString(file, fileString);
                 parseString(file, fileString);
                 mat->name = fileString;
+                Logger::debug << "Name: " << mat->name << endl;
             } else if (strcmp(token, "MCOL") == 0) {
                 // Contains the various material colors
                 parseVector<float>(file, mat->ambient, 4);
