@@ -38,6 +38,9 @@ void Wheel::render() {
 
     glTranslatef(this->_wheelCenter[0], this->_wheelCenter[1], this->_wheelCenter[2]);
 
+    // Rotate the wheel left / right
+    glRotatef(this->_wheelAngle, 0, 0, -1);
+
     // Render the brake if there is one
     if (this->_brakeDof != NULL) this->_brakeDof->render(true);
 
