@@ -7,30 +7,24 @@ Wheel::Wheel(int position, Dof * dof) {
     this->_position = position;
     this->_wheelAngle = 0;
 
-    // Get the central vertex for the wheel
-    switch (this->_position) {
-        case 0:
-            this->_wheelCenter[0] = 0.953;
-            this->_wheelCenter[1] = 1.434;
-            this->_wheelCenter[2] = 0.342;
-            break;
-        case 1:
-            this->_wheelCenter[0] = 0.953;
-            this->_wheelCenter[1] = 1.434;
-            this->_wheelCenter[2] = 0.342;
-            break;
-        case 2:
-            this->_wheelCenter[0] = -0.934;
-            this->_wheelCenter[1] = -1.217;
-            this->_wheelCenter[2] = 0.342;
-            break;
-        case 3:
-            this->_wheelCenter[0] = 0.939;
-            this->_wheelCenter[1] = -1.217;
-            this->_wheelCenter[2] = 0.342;
-            break;
-    }
+    // Calculate the lowest point for the wheel
+    Geob * geob;
+    for (int geobIndex = 0; geobIndex < this->_dof->getNGeobs(); ++geobIndex) {
+        geob = &(this->_dof->getGeob(geobIndex));
+        // Get the lowest vertex
+        for (int i = 0; i < geob->nVertices; ++i) {
+            // If this is the first vertex, we set it regardless
+            if (geobIndex == 0 && i == 0) {
+                vertexCopy(geob->vertices[i], this->_groundContact);
+                continue;
+            }
 
+            // Otherwise we check to see if it is lower
+            if (geob->vertices[i][1] < this->_groundContact[1]) {
+                vertexCopy(geob->vertices[i], this->_groundContact);
+            }
+        }
+    }
 }
 
 void Wheel::render() {
@@ -41,86 +35,14 @@ void Wheel::render() {
     // Rotate the wheel left / right
     glRotatef(this->_wheelAngle, 0, -1, 0);
 
-    // Render the brake if there is one
+    // Render the brake if there is one, this happens before we rotat the wheel but after
+    // steering
     if (this->_brakeDof != NULL) this->_brakeDof->render(true);
 
     // Rotate the wheel around the axis
     glRotatef(this->_rotation, 1, 0, 0);
 
     this->_dof->render(true);
-
-
-    /*
-    float normal[3];
-    float scale = 0.235 / 2;
-
-    // The left and right wheels have slightly different normals, which affects the rotations
-    if (this->_position == 0 || this->_position == 2) {
-        normal[0] = -1;
-    } else {
-        normal[0] = 1;
-    }
-    normal[1] = 0;
-    normal[2] = 0.017;
-    
-    // Scale the normal down to be half the width of the tyre
-    normal[0] *= -1 * scale;
-    normal[1] *= scale;
-    normal[2] *= scale;
-    */
-
-
-    /*
-    glTranslatef(this->_wheelCenter[0] + normal[0], 
-            this->_wheelCenter[1] + normal[1], 
-            this->_wheelCenter[2] + normal[2]);
-
-    // Rotate the wheel to the left or right
-    glRotatef(this->_wheelAngle, 0, 0, -1);
-
-    glTranslatef(-1 * (this->_wheelCenter[0] + normal[0]), 
-            -1 * (this->_wheelCenter[1] + normal[1]), 
-            -1 * (this->_wheelCenter[2] + normal[2]));
-
-    // Render the caliper before we rotate the wheel but after we rotate for steering
-    this->_dof->render();
-
-    glTranslatef(this->_wheelCenter[0] + normal[0], 
-            this->_wheelCenter[1] + normal[1], 
-            this->_wheelCenter[2] + normal[2]);
-
-    // Rotate the wheel around the axis
-    if (this->_position == 0 || this->_position == 2) {
-        glRotatef(this->_rotation, normal[0], normal[1], normal[2]);
-    } else {
-        glRotatef(this->_rotation, -1 * normal[0], normal[1], normal[2]);
-    }
-
-    glTranslatef(-1 * (this->_wheelCenter[0] + normal[0]), 
-            -1 * (this->_wheelCenter[1] + normal[1]), 
-            -1 * (this->_wheelCenter[2] + normal[2]));
-            */
-
-    /* 
-    switch (this->_position) {
-        case 0:
-            this->_obj->renderGroup("RotorRR");
-            this->_obj->renderGroup("TireRR");
-            break;
-        case 1:
-            this->_obj->renderGroup("RotorRL");
-            this->_obj->renderGroup("TireRL");
-            break;
-        case 2:
-            this->_obj->renderGroup("RotorFR");
-            this->_obj->renderGroup("TireFR");
-            break;
-        case 3:
-            this->_obj->renderGroup("RotorFL");
-            this->_obj->renderGroup("TireFL");
-            break;
-    }
-    */
 
     glPopMatrix();
 }
@@ -137,28 +59,7 @@ void Wheel::setAngle(float angle) {
 void Wheel::getGroundContact(float * point) {
     // This is actually static, even though the wheel turns, just depends on
     // the wheel we want
-    switch (this->_position) {
-        case 0:
-            point[0] = -0.928;
-            point[1] = 1.47;
-            point[2] = 0.0;
-            break;
-        case 1:
-            point[0] = 0.928;
-            point[1] = 1.399;
-            point[2] = 0.0;
-            break;
-        case 2:
-            point[0] = -0.914;
-            point[1] = -1.181;
-            point[2] = 0.0;
-            break;
-        case 3:
-            point[0] = 0.914;
-            point[1] = -1.252;
-            point[2] = 0.0;
-            break;
-    }
+    vertexCopy(this->_groundContact, point);
 }
 
 void Wheel::setCenter(float * center) {

@@ -38,6 +38,9 @@ class Wheel {
         // The position of the center of the wheel - for rotating around
         float _wheelCenter[3];
 
+        // Lowest point of the wheel
+        float _groundContact[3];
+
         // The angle of the wheel deviating from front facing
         float _wheelAngle;
 
