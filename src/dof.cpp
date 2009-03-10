@@ -122,12 +122,11 @@ void Dof::_parseMats(ifstream * file) {
             }
 
             if (strcmp(token, "MHDR") == 0) {
-                // The header just contains a string, skip this for now TODO
-                //file->seekg(length, ios::cur);
-                parseString(file, fileString);
+                // Get the material name
                 parseString(file, fileString);
                 mat->name = fileString;
-                Logger::debug << "Name: " << mat->name << endl;
+                // Ignore the material class
+                parseString(file, fileString);
             } else if (strcmp(token, "MCOL") == 0) {
                 // Contains the various material colors
                 parseVector<float>(file, mat->ambient, 4);
@@ -395,11 +394,8 @@ void Dof::_createDisplayLists() {
     Geob * geob;
     Mat * mat;
     Mat * previousMat = NULL;
-    unsigned short index;
     int burstCount, burstStart;
     int stop;
-    unsigned int error;
-
 
     for (int i = 0; i < this->_nGeobs; ++i) {
         geob = &(this->_geobs[i]);
@@ -527,7 +523,8 @@ int Dof::render(bool overrideFrustrumTest) {
 
         if (mat->isTransparent()) {
             // Check if we need to render this geob
-            if (ViewFrustumCulling::culler->testObject(geob->boundingBox)) {
+            if (overrideFrustrumTest ||
+                    ViewFrustumCulling::culler->testObject(geob->boundingBox)) {
                 // call the previously created display list
                 glCallList(geob->displayList);
                 ++count;

@@ -21,10 +21,13 @@ class Wheel {
         void getGroundContact(float * point);
 
         void setCenter(float * center);
+        void setBrakeDof(Dof * dof);
 
     private:
         // The dof model representing the wheel
         Dof * _dof;
+        // ... and representing the brake
+        Dof * _brakeDof;
 
         // The current rotation of the wheel
         float _rotation;

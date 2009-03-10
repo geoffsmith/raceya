@@ -2,6 +2,7 @@
 
 Wheel::Wheel(int position, Dof * dof) {
     this->_dof = dof;
+    this->_brakeDof = NULL;
     this->_rotation = 0;
     this->_position = position;
     this->_wheelAngle = 0;
@@ -37,7 +38,14 @@ void Wheel::render() {
 
     glTranslatef(this->_wheelCenter[0], this->_wheelCenter[1], this->_wheelCenter[2]);
 
+    // Render the brake if there is one
+    if (this->_brakeDof != NULL) this->_brakeDof->render(true);
+
+    // Rotate the wheel around the axis
+    glRotatef(this->_rotation, 1, 0, 0);
+
     this->_dof->render(true);
+
 
     /*
     float normal[3];
@@ -154,4 +162,8 @@ void Wheel::setCenter(float * center) {
     this->_wheelCenter[0] = center[0];
     this->_wheelCenter[1] = center[1];
     this->_wheelCenter[2] = center[2];
+}
+
+void Wheel::setBrakeDof(Dof * dof) {
+    this->_brakeDof = dof;
 }

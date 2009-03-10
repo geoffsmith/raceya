@@ -65,6 +65,15 @@ Car * parseCar(string carPathString) {
         }
         s.str("");
 
+        // Load the brake dof
+        s << "/wheel" << i << "/model_brake/file";
+        if (inis.count(s.str()) > 0) {
+            p = (carPath / inis[s.str()]).string();
+            dof = new Dof(p, 0);
+            wheel->setBrakeDof(dof);
+        }
+        s.str("");
+
         // Try and get the center of the wheel from the suspension
         s << "/susp" << i << "/x";
         center[0] = atof(inis[s.str()].c_str());
