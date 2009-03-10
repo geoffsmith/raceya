@@ -34,6 +34,7 @@ class Car {
         void setBody(Dof * dof);
         void setTrack(Track * track);
         void setWheel(Wheel * wheel, int index);
+        void setCenter(float * center);
 
     private:
         Obj * _obj;
@@ -88,10 +89,6 @@ class Car {
         void _updateLay();
         // Update hte transformation matrix
         void _updateMatrix();
-
-        // Calculate the center of the car, which is the middle of the bounding
-        // box
-        void _calculateCenter();
 
         // the car's transformation matrix
         Matrix _matrix;

@@ -41,6 +41,9 @@ Car * parseCar(string carPathString) {
     // Now we have the ini settings, we can load the actual car
     Dof * dof;
     Car * car = new Car();
+    string tmp;
+    vector<string> parts;
+    float center[3];
 
     // Load the car body
     Logger::debug << "Loading the car..." << endl;
@@ -49,12 +52,23 @@ Car * parseCar(string carPathString) {
         car->setBody(dof);
     }
     Logger::debug << "done loading the car" << endl;
+    
+    // Load the car center of gravity
+    if (inis.count("/aero/body/center") > 0) {
+        tmp = inis["/aero/body/center"];
+        split(parts, tmp, is_any_of(" "));
+        center[0] = atof(parts[0].c_str());
+        center[1] = atof(parts[1].c_str());
+        center[2] = atof(parts[2].c_str());
+        cout << "Center: " << endl;
+        printVector(center);
+        car->setCenter(center);
+    } 
 
     // Load the wheels
     Wheel * wheel;
     stringstream s;
     string p;
-    float center[3];
     for (int i = 0; i < 4; ++i) {
         s << "/wheel" << i << "/model/file";
         if (inis.count(s.str()) > 0) {

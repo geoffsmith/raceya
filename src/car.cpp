@@ -50,9 +50,6 @@ Car::Car() {
     this->_vector[0] = 0;
     this->_vector[1] = 0;
     this->_vector[2] = -1;
-
-    // Calculate the center of the object
-    this->_calculateCenter();
 }
 
 void Car::_updateSteering() {
@@ -296,7 +293,7 @@ void Car::_updateComponents() {
     this->_position[2] += moveForward * this->_vector[2];
 
     // Update the car's position in relation to the ground
-    //this->_updateLay();
+    this->_updateLay();
 }
 
 void Car::_updateMatrix() {
@@ -432,19 +429,6 @@ void Car::handleKeyPress(SDL_Event &event) {
     }
 }
 
-void Car::_calculateCenter() {
-    float bounds[6];
-    Matrix matrix;
-
-    // Find the bounds
-    this->_obj->calculateBounds(&matrix, bounds);
-
-    // And calculate the center
-    this->_center[0] = (bounds[0] + bounds[1]) / 2.0;
-    this->_center[1] = (bounds[2] + bounds[3]) / 2.0;
-    this->_center[2] = (bounds[4] + bounds[5]) / 2.0;
-}
-
 /*******************************************************************************
  * Getters / setters
  ******************************************************************************/
@@ -476,4 +460,8 @@ void Car::setTrack(Track * track) {
 
 void Car::setWheel(Wheel * wheel, int index) {
     this->_wheels[index] = wheel;
+}
+
+void Car::setCenter(float * center) {
+    vertexCopy(center, this->_center);
 }
