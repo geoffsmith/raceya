@@ -10,6 +10,13 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 
+struct HUDTexture {
+    unsigned int texture;
+    int width;
+    int height;
+    string text;
+};
+
 class Hud {
     public:
         // Most of the data for the HUD will come from the player's car
@@ -23,6 +30,7 @@ class Hud {
         TTF_Font * _font;
         TTF_Font * _monoFont;
         unsigned int _texture;
+        map<string, HUDTexture * > _textures;
 
         // Render the various stats
         void _renderStats();
@@ -30,9 +38,8 @@ class Hud {
         // Render the debug console
         void _renderConsole();
 
-        void _renderText(string text, float x, float y, float lineHeight, TTF_Font * font);
+        void _renderText(string text, float x, float y, TTF_Font * font, string textureKey);
 
-        // Screen width and height
         int _width;
         int _height;
 };
