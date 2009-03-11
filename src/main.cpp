@@ -171,7 +171,7 @@ int main(int argc, char** argv) {
 
     const SDL_VideoInfo *info = SDL_GetVideoInfo();
     int bpp = info->vfmt->BitsPerPixel;
-    drawContext = SDL_SetVideoMode(screenWidth, screenHeight, bpp, SDL_OPENGL);
+    drawContext = SDL_SetVideoMode(screenWidth, screenHeight, bpp, SDL_OPENGL | SDL_HWSURFACE | SDL_DOUBLEBUF);
 
     reshape(screenWidth, screenHeight);
 

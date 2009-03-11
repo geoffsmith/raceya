@@ -89,9 +89,6 @@ void Hud::_renderText(string text, float x, float y, TTF_Font * font, string tex
         SDL_Surface * textSurface = TTF_RenderText_Blended(font, text.c_str(), yellow);
         if (textSurface != NULL) {
 
-            // Flip the surface
-            horizontalFlipSurface(textSurface);
-
             // Bind the texture object
             glBindTexture(GL_TEXTURE_2D, texture->texture);
 
@@ -139,16 +136,16 @@ void Hud::_renderText(string text, float x, float y, TTF_Font * font, string tex
     glTranslatef(translateX, translateY, -1.5);
 
     glBegin(GL_QUADS);
-    glTexCoord2f(0, 0);
+    glTexCoord2f(0, 1);
     glVertex3f(0, 0, 0);
 
-    glTexCoord2f(1, 0);
+    glTexCoord2f(1, 1);
     glVertex3f(lineX, 0, 0);
 
-    glTexCoord2f(1, 1);
+    glTexCoord2f(1, 0);
     glVertex3f(lineX, lineY, 0);
 
-    glTexCoord2f(0, 1);
+    glTexCoord2f(0, 0);
     glVertex3f(0, lineY, 0);
 
     glEnd();
