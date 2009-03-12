@@ -43,6 +43,11 @@ void Hud::_renderStats() {
     fpsText << "FPS: ";
     fpsText << FrameTimer::timer.getCurrentFPS();
     this->_renderText(fpsText.str(), 10, this->_height - 50 - skip, this->_font, "fps");
+
+    fpsText.str("");
+    fpsText << "Average FPS: ";
+    fpsText << FrameTimer::timer.getAverageFPS();
+    this->_renderText(fpsText.str(), 10, this->_height - 50 - skip * 2, this->_font, "afps");
 }
 
 void Hud::_renderConsole() {
@@ -62,6 +67,7 @@ void Hud::render() {
     // Only set the state once
     glDisable(GL_LIGHTING);
     glEnable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glMatrixMode(GL_MODELVIEW);
 

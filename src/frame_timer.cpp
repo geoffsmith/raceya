@@ -24,6 +24,12 @@ void FrameTimer::newFrame() {
 
     // Calculate how many frames we are doing 
     this->_currentFPS = this->_ticksPerSecond / (this->_currentFrame - this->_lastFrame);
+
+    // Add this to the history
+    this->_fpsHistory.push_back(this->_currentFPS);
+    if (this->_fpsHistory.size() > 10) {
+        this->_fpsHistory.pop_front();
+    }
 }
 
 float FrameTimer::getSeconds() {
@@ -48,4 +54,18 @@ int FrameTimer::getTimeTillNextDraw() {
 
 int FrameTimer::getCurrentFPS() {
     return this->_currentFPS;
+}
+
+int FrameTimer::getAverageFPS() {
+    int sum = 0;
+    int count = 0;
+    for (list<unsigned int>::iterator it = this->_fpsHistory.begin(); it != this->_fpsHistory.end(); ++it) {
+        sum += *it;
+        ++count;
+    }
+    if (count == 0) return 0;
+    else {
+        return sum / count;
+    }
+     
 }

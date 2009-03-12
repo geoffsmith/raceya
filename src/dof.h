@@ -24,6 +24,19 @@ int parseString(ifstream * file, char * buffer);
 #define DOF_COLLISION 2
 #define DOF_SURFACE 4
 
+class Dof;
+
+struct OpenGLState {
+    bool alphaTest;
+    bool blend;
+    bool texture2d;
+    float ambient[4];
+    float diffuse[4];
+    float specular[4];
+    float emission[4];
+    unsigned int texture;
+};
+
 class Geob {
     public:
         Geob();
@@ -45,6 +58,11 @@ class Geob {
         // * VCOL
         unsigned int displayList;
         float boundingBox[6];
+        unsigned int vao;
+        Dof * dof;
+
+        // Generate the vao
+        void Geob::generateVAO();
 };
 
 class Mat {
@@ -94,10 +112,16 @@ class Dof {
         Geob * getGeob(unsigned int index);
         int getNGeobs();
 
+        Mat * getMats();
+        int getNMats();
+
         bool isValid; 
 
         // Return true if this is part of the track surface
         bool isSurface();
+
+        // Set up the material for OpenGL
+        void loadMaterial(Mat * mat);
 
     private:
         string _filePath;
@@ -130,8 +154,6 @@ class Dof {
         // Load a texture
         void _loadTexture(string name, unsigned int & texture);
 
-        // Set up the material for OpenGL
-        void _loadMaterial(Mat * mat);
 
         // This DOFs display list
         void _createDisplayLists();
@@ -142,5 +164,8 @@ class Dof {
 
         // The bounding box for the dof
         void _calculateBoundingBox();
+
+        // Keep track of the opengl state manually
+        OpenGLState _renderState;
 };
 

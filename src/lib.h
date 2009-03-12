@@ -11,6 +11,7 @@ using namespace std;
 void loadTexture(string name, unsigned int & texture, bool isMipmap = false, unsigned int wrapT = GL_REPEAT);
 void read_obj(const char *filename, GLfloat (*vertices)[3], GLfloat (*textures)[2], GLfloat (*normals)[3]);
 
+void printError();
 
 /******************************************************************************
  * OpenGL vector math helpers
@@ -40,6 +41,8 @@ float vectorLength(float * a);
 bool normaliseVector(float * a);
 bool vectorEquals(float * a, float * b);
 float vertexDistance(float * a, float * b);
+bool colorEquals4(float * a, float * b);
+bool colorCopy4(float * from, float * to);
 
 void printVector(float * a);
 

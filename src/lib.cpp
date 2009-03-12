@@ -339,6 +339,17 @@ bool vectorEquals(float * a, float * b) {
     return a[0] == b[0] && a[1] == b[1] && a[2] == b[2];
 }
 
+bool colorEquals4(float * a, float * b) {
+    return a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && b[3] == a[3];
+}
+
+bool colorCopy4(float * from, float * to) {
+    to[0] = from[0];
+    to[1] = from[1];
+    to[2] = from[2];
+    to[3] = from[3];
+}
+
 void horizontalFlipSurface(SDL_Surface * surface) {
     // The documentation says to lock the surface, I think this is to make sure the 
     // pointer to pixels doesnt' change. Probably OK, as there shouldn't me > 1 thread
@@ -363,4 +374,11 @@ void horizontalFlipSurface(SDL_Surface * surface) {
         }
     }
     SDL_UnlockSurface(surface);
+}
+
+void printError() {
+    unsigned int error = glGetError();
+    if (error != GL_NO_ERROR) {
+        cout << "OpenGL error: " << gluErrorString(error) << endl;
+    }
 }

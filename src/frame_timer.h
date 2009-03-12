@@ -4,6 +4,10 @@
  */
 #pragma once
 
+#include <list>
+
+using namespace std;
+
 class FrameTimer {
     public:
         // The constructor queries the timer to set up the ticks per seconds
@@ -27,6 +31,7 @@ class FrameTimer {
         
         //  Get the current FPS
         int getCurrentFPS();
+        int getAverageFPS();
 
 
     private:
@@ -35,5 +40,6 @@ class FrameTimer {
         unsigned int _ticksPerSecond;
         unsigned int _targetFPS;
         unsigned int _currentFPS;
+        list<unsigned int> _fpsHistory;
 
 };

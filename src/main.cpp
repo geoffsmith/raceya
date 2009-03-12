@@ -36,31 +36,53 @@ static Hud * hud;
 static SDL_Surface * drawContext;
 static Track * track;
 
-static int screenWidth = 1000;
-static int screenHeight = 500;
+static int screenWidth = 800;
+static int screenHeight = 600;
 
 void setupLighting();
 
 void init(void) {
     glClearColor(0.0, 0.0, 0.0, 0.0);
-    glShadeModel(GL_SMOOTH);
+    //glShadeModel(GL_SMOOTH);
+    glShadeModel(GL_FLAT);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
 
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_POINT_SMOOTH);
-    glEnable(GL_POLYGON_SMOOTH);
+    glDisable(GL_DITHER);
+
+    //glEnable(GL_LINE_SMOOTH);
+    //glEnable(GL_POINT_SMOOTH);
+    //glEnable(GL_POLYGON_SMOOTH);
     glLineWidth(1.5);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+    glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
+    glHint(GL_TEXTURE_COMPRESSION_HINT, GL_FASTEST);
+    glHint(GL_GENERATE_MIPMAP_HINT, GL_FASTEST);
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
     setupLighting();
 
     srand(clock());
+
+    // Check extensions
+    /*
+    char *extensions = (char *)glGetString(GL_EXTENSIONS);
+    
+    // Check for GL_ARB_point_sprite
+    cout << extensions << endl;
+    if (strstr(extensions, "GL_EXT_cull_vertex") != NULL) {
+        cout << "GL_EXT_cull_vertex available" << endl;
+    } else {
+        cout << "GL_EXT_cull_vertex not available" << endl;
+    }
+    */
 }
 
 void setupLighting() {
@@ -103,8 +125,7 @@ void reshape(int w, int h) {
 
 void display(void) {
     // Render the scene
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    glEnable(GL_TEXTURE_2D);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glColor3f(1.0, 1.0, 1.0);
     glLoadIdentity(); // clear the matrix
@@ -125,8 +146,6 @@ void display(void) {
     // Position the light at the camera
     float lightPosition[] = { 0, 0, 1, 0 };
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-
-    glDisable(GL_TEXTURE_2D);
 }
 
 void handleKeyboard() {
@@ -171,7 +190,8 @@ int main(int argc, char** argv) {
 
     const SDL_VideoInfo *info = SDL_GetVideoInfo();
     int bpp = info->vfmt->BitsPerPixel;
-    drawContext = SDL_SetVideoMode(screenWidth, screenHeight, bpp, SDL_OPENGL | SDL_HWSURFACE | SDL_DOUBLEBUF);
+    //drawContext = SDL_SetVideoMode(screenWidth, screenHeight, bpp, SDL_OPENGL | SDL_HWSURFACE | SDL_DOUBLEBUF);
+    drawContext = SDL_SetVideoMode(screenWidth, screenHeight, bpp, SDL_OPENGL);
 
     reshape(screenWidth, screenHeight);
 
