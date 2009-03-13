@@ -53,7 +53,7 @@ void init(void) {
     //glEnable(GL_LINE_SMOOTH);
     //glEnable(GL_POINT_SMOOTH);
     //glEnable(GL_POLYGON_SMOOTH);
-    glLineWidth(1.5);
+    //glLineWidth(1.5);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -71,18 +71,17 @@ void init(void) {
 
     srand(clock());
 
-    // Check extensions
-    /*
+}
+
+void checkExtensions() {
     char *extensions = (char *)glGetString(GL_EXTENSIONS);
     
     // Check for GL_ARB_point_sprite
     cout << extensions << endl;
-    if (strstr(extensions, "GL_EXT_cull_vertex") != NULL) {
-        cout << "GL_EXT_cull_vertex available" << endl;
-    } else {
-        cout << "GL_EXT_cull_vertex not available" << endl;
+    if (strstr(extensions, "GL_ARB_pixel_buffer_object") == NULL) {
+        cout << "GL_ARB_pixel_buffer_object not available" << endl;
+        exit(1);
     }
-    */
 }
 
 void setupLighting() {
@@ -119,7 +118,7 @@ void reshape(int w, int h) {
     // Calculate the screen ratio
     float height = 1.0;
     float width = (float)w / (float)h;
-    glFrustum(-1.0 * width, width, -1.0 * height, height, 1.5, 200.0);
+    glFrustum(-1.0 * width, width, -1.0 * height, height, 1.5, 150.0);
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -199,6 +198,9 @@ int main(int argc, char** argv) {
         cout << "Failed to initialise video" << endl;
         exit(1);
     }
+
+    // Check that we have all the extensions we need
+    checkExtensions();
 
     init();
     initObjects();

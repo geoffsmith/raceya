@@ -59,6 +59,10 @@ class Geob {
         unsigned int displayList;
         float boundingBox[6];
         unsigned int vao;
+        unsigned int vertexVBO;
+        unsigned int normalVBO;
+        unsigned int textureVBO;
+        unsigned int indexVBO;
         Dof * dof;
 
         // Generate the vao
@@ -90,6 +94,7 @@ class Mat {
 
         int nTextures;
         unsigned int * textures;
+        unsigned int * pbos;
         // Pointer to some shaders, this array will be the same size as textures
         // but may have NULL entries
         Shader ** shaders;
@@ -152,7 +157,7 @@ class Dof {
         void _parseMats(ifstream * file);
 
         // Load a texture
-        void _loadTexture(string name, unsigned int & texture);
+        void _loadTexture(string name, unsigned int & texture, unsigned int & pbo);
 
 
         // This DOFs display list

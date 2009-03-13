@@ -142,6 +142,7 @@ void Dof::_parseMats(ifstream * file) {
                 // Load the textures
                 file->read((char *)&(mat->nTextures), sizeof(int));
                 mat->textures = new unsigned int[mat->nTextures];
+                mat->pbos = new unsigned int[mat->nTextures];
                 mat->shaders = new Shader *[mat->nTextures];
 
                 for (int j = 0; j < mat->nTextures; ++j) {
@@ -152,8 +153,9 @@ void Dof::_parseMats(ifstream * file) {
                     if (shader != NULL) {
                         mat->textures[j] = shader->textureMap;
                         mat->shaders[j] = shader;
+                        mat->pbos[j] = NULL;
                     } else {
-                        this->_loadTexture(fileString, mat->textures[j]);
+                        this->_loadTexture(fileString, mat->textures[j], mat->pbos[j]);
                         mat->shaders[j] = 0;
                     }
 
@@ -305,7 +307,7 @@ void Dof::_parseGeobs(ifstream * file) {
     }
 }
 
-void Dof::_loadTexture(string name, unsigned int & texture) {
+void Dof::_loadTexture(string name, unsigned int & texture, unsigned int & pbo) {
     // Try and load the image
     SDL_Surface * surface;
     SDL_Surface * alphaSurface;
@@ -357,6 +359,7 @@ void Dof::_loadTexture(string name, unsigned int & texture) {
         // Bind the texture object
         glBindTexture(GL_TEXTURE_2D, texture);
 
+
         /*
            glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
         glPixelStorei(GL_UNPACK_SKIP_ROWS,0);
@@ -386,7 +389,26 @@ void Dof::_loadTexture(string name, unsigned int & texture) {
         }
 
         // TODO: check the flags for loading Mipmaps
-        gluBuild2DMipmaps(GL_TEXTURE_2D,nOfColours, surface->w, surface->h, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+        //gluBuild2DMipmaps(GL_TEXTURE_2D,nOfColours, surface->w, surface->h, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+        //gluBuild2DMipmaps(GL_TEXTURE_2D, nOfColours, surface->w, surface->h, textureFormat, GL_UNSIGNED_BYTE, NULL);
+
+        // bind to pbo
+        glGenBuffersARB(1, &pbo);
+        glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pbo);
+        glBufferData(GL_PIXEL_UNPACK_BUFFER_ARB, surface->w * surface->h * 4, NULL, GL_STATIC_DRAW);
+        void * buffer = glMapBuffer(GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY);
+        memcpy(buffer, surface->pixels, surface->w * surface->h * 4);
+        glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER_ARB);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, nOfColours, surface->w, surface->h, 
+                0, textureFormat, GL_UNSIGNED_BYTE, NULL);
+
+        if ((error = glGetError()) != 0) {
+            cout << " 2 Error loading texture into OpenGL: " << gluErrorString(error) << endl;
+            texture = 0;
+        }
+
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, textureFormat, GL_UNSIGNED_BYTE, NULL);
 
         if ((error = glGetError()) != 0) {
             cout << "Error loading texture into OpenGL: " << gluErrorString(error) << endl;
@@ -394,8 +416,10 @@ void Dof::_loadTexture(string name, unsigned int & texture) {
         }
 
 
+
         // Free the surface
         SDL_FreeSurface(surface);
+        glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
     } else {
         Logger::debug << "Error loading texture: " << IMG_GetError() << endl;
         texture = 0;
@@ -417,7 +441,18 @@ void Dof::_renderGeob(Geob * geob, Mat * & previousMat) {
     this->loadMaterial(mat);
 
     // Bind to VAO
-    glBindVertexArrayAPPLE(geob->vao);
+    //glBindVertexArrayAPPLE(geob->vao);
+    glBindBuffer(GL_ARRAY_BUFFER, geob->vertexVBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geob->indexVBO);
+    glVertexPointer(3, GL_FLOAT, 0, (GLvoid*)((char*)NULL));
+    glNormalPointer(GL_FLOAT, 0, 
+            (GLvoid*)((char*)NULL + geob->nVertices * 3 * sizeof(float)));
+    glTexCoordPointer(2, GL_FLOAT, 0, 
+            (GLvoid*)((char*)NULL + geob->nVertices * 3 * sizeof(float) + geob->nNormals * 3 * sizeof(float)));
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
 
     for (int j = 0; j < geob->nBursts; ++j) {
         burstCount = geob->burstsCount[j] / 3;
@@ -441,9 +476,11 @@ void Dof::_renderGeob(Geob * geob, Mat * & previousMat) {
 
         // Draw the elements
         //glLockArraysEXT(0, geob->nVertices);
-        glDrawElements(GL_TRIANGLES, stop, GL_UNSIGNED_SHORT, 
-                &(geob->indices[burstStart]));
+        //glDrawElements(GL_TRIANGLES, stop, GL_UNSIGNED_SHORT, 
+                //&(geob->indices[burstStart]));
         //glUnlockArraysEXT();
+        glDrawElements(GL_TRIANGLES, stop, GL_UNSIGNED_SHORT, 
+                (GLvoid*)((char *)(0)));
     }
 }
 
@@ -492,7 +529,9 @@ void Dof::loadMaterial(Mat * mat) {
             this->_renderState.texture2d = true;
         }
         if (this->_renderState.texture != mat->textures[0]) {
-            glBindTexture(GL_TEXTURE_2D, mat->textures[0]);
+            //glBindTexture(GL_TEXTURE_2D, mat->textures[0]);
+            cout << "Loading PBO: " << mat->pbos[0] << endl;
+            glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, mat->pbos[0]);
             this->_renderState.texture = mat->textures[0];
         }
         
@@ -508,6 +547,7 @@ void Dof::loadMaterial(Mat * mat) {
     } else {
         if (this->_renderState.texture2d) {
             glDisable(GL_TEXTURE_2D);
+            glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
             this->_renderState.texture2d = false;
         }
     }
@@ -690,13 +730,35 @@ void Geob::generateVAO() {
         return;
     }
 
-    this->dof->loadMaterial(mat);
+    //this->dof->loadMaterial(mat);
 
     // SEt up the VAO
-    glGenVertexArraysAPPLE(1, &(this->vao));
-    glBindVertexArrayAPPLE(this->vao);
+    //glGenVertexArraysAPPLE(1, &(this->vao));
+    //glBindVertexArrayAPPLE(this->vao);
+    glGenBuffers(1, &(this->vertexVBO));
+    glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
+    const GLsizeiptr vSize = this->nVertices * 3 * sizeof(float);
+    const GLsizeiptr nSize = this->nNormals * 3 * sizeof(float);
+    const GLsizeiptr tSize = this->nTextureCoords * 2 * sizeof(float);
+    glBufferData(GL_ARRAY_BUFFER, vSize + nSize + tSize, NULL, GL_STATIC_DRAW);
+
+    // Copy the data
+    /*GLvoid * buffer = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+    memcpy(buffer, this->vertices, vSize);
+    buffer = (GLvoid *)((char *)buffer + vSize);
+    memcpy(buffer, this->normals, nSize);
+    glUnmapBuffer(GL_ARRAY_BUFFER);
+    */
+    glBufferSubData(GL_ARRAY_BUFFER, 0, vSize, this->vertices);
+    glBufferSubData(GL_ARRAY_BUFFER, vSize, nSize, this->normals);
+    glBufferSubData(GL_ARRAY_BUFFER, vSize + nSize, tSize, this->textureCoords);
+
+    glGenBuffers(1, &(this->indexVBO));
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->indexVBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->nIndices * sizeof(unsigned short), this->indices, GL_STATIC_DRAW);
 
     // Set up the vertex pointers
+    /*
     glEnableClientState(GL_VERTEX_ARRAY);
     // this probably wont' work because its a pointer to pointer
     glVertexPointer(3, GL_FLOAT, 0, this->vertices);
@@ -715,6 +777,7 @@ void Geob::generateVAO() {
 
     // clear out vertex state
     glBindVertexArrayAPPLE(0);
+    */
 }
 
 Mat::Mat() {
