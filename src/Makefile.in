@@ -56,7 +56,7 @@ am_raceya_OBJECTS = raceya-camera.$(OBJEXT) raceya-car.$(OBJEXT) \
 	raceya-main.$(OBJEXT) raceya-matrix.$(OBJEXT) \
 	raceya-shader.$(OBJEXT) raceya-track.$(OBJEXT) \
 	raceya-wheel.$(OBJEXT) raceya-car_parser.$(OBJEXT) \
-	raceya-texture.$(OBJEXT)
+	raceya-texture.$(OBJEXT) raceya-ini.$(OBJEXT)
 raceya_OBJECTS = $(am_raceya_OBJECTS)
 raceya_DEPENDENCIES =
 raceya_LINK = $(CXXLD) $(raceya_CXXFLAGS) $(CXXFLAGS) \
@@ -188,7 +188,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-raceya_SOURCES = camera.cpp car.cpp closest_point.cpp dof.cpp frame_timer.cpp frustum_culler.cpp hud.cpp jpeg.cpp lib.cpp logger.cpp main.cpp matrix.cpp shader.cpp track.cpp wheel.cpp camera.h car.h closest_point.h dof.h frame_timer.h frustum_culler.h hud.h jpeg.h lib.h logger.h main.h matrix.h shader.h track.h wheel.h car_parser.h car_parser.cpp texture.h texture.cpp
+raceya_SOURCES = camera.cpp car.cpp closest_point.cpp dof.cpp frame_timer.cpp frustum_culler.cpp hud.cpp jpeg.cpp lib.cpp logger.cpp main.cpp matrix.cpp shader.cpp track.cpp wheel.cpp camera.h car.h closest_point.h dof.h frame_timer.h frustum_culler.h hud.h jpeg.h lib.h logger.h main.h matrix.h shader.h track.h wheel.h car_parser.h car_parser.cpp texture.h texture.cpp ini.h ini.cpp
 raceya_LDADD = -lglut -lGLU -lGL -lSDL -lSDLmain -lSDL_ttf -lSDL_mixer -lSDL_image -ljpeg -lboost_filesystem-mt -lboost_system-mt -lftgl -lfreetype 
 raceya_LDFLAGS = -framework Cocoa $(SDL_LIBS) $(GL_LIBS)
 raceya_CXXFLAGS = $(SDL_CFLAGS) $(BOOST_CPPFLAGS) $(GL_CFLAGS) -Wall
@@ -266,6 +266,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-frame_timer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-frustum_culler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-hud.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-ini.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-jpeg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-lib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-logger.Po@am__quote@
@@ -527,6 +528,20 @@ raceya-texture.obj: texture.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='texture.cpp' object='raceya-texture.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-texture.obj `if test -f 'texture.cpp'; then $(CYGPATH_W) 'texture.cpp'; else $(CYGPATH_W) '$(srcdir)/texture.cpp'; fi`
+
+raceya-ini.o: ini.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -MT raceya-ini.o -MD -MP -MF $(DEPDIR)/raceya-ini.Tpo -c -o raceya-ini.o `test -f 'ini.cpp' || echo '$(srcdir)/'`ini.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/raceya-ini.Tpo $(DEPDIR)/raceya-ini.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ini.cpp' object='raceya-ini.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-ini.o `test -f 'ini.cpp' || echo '$(srcdir)/'`ini.cpp
+
+raceya-ini.obj: ini.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -MT raceya-ini.obj -MD -MP -MF $(DEPDIR)/raceya-ini.Tpo -c -o raceya-ini.obj `if test -f 'ini.cpp'; then $(CYGPATH_W) 'ini.cpp'; else $(CYGPATH_W) '$(srcdir)/ini.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/raceya-ini.Tpo $(DEPDIR)/raceya-ini.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ini.cpp' object='raceya-ini.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-ini.obj `if test -f 'ini.cpp'; then $(CYGPATH_W) 'ini.cpp'; else $(CYGPATH_W) '$(srcdir)/ini.cpp'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
