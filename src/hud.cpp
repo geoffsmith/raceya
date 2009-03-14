@@ -139,7 +139,7 @@ void Hud::_renderText(string text, float x, float y, TTF_Font * font, string tex
     glPushMatrix();
     glLoadIdentity();
 
-    glTranslatef(translateX, translateY, -1.5);
+    glTranslatef(translateX, translateY, -1.6);
 
     glBegin(GL_QUADS);
     glTexCoord2f(0, 1);

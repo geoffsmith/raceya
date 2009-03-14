@@ -140,7 +140,7 @@ void display(void) {
     track->render();
 
     // Render the HUD
-    // This should really be below, but the alpha blending is messed up 
+    // Alpha blending is still messed up here. Not sure why, 
     hud->render();
 
     // Position the light at the camera
