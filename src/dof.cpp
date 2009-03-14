@@ -151,8 +151,7 @@ void Dof::_parseMats(ifstream * file) {
                     // Check if there is a shader for this file
                     shader = Shader::getShader(fileString);
                     if (shader != NULL) {
-                        // TODO
-                        //mat->textures[j]->texture = shader->textureMap;
+                        mat->textures[j] = shader->texture;
                         mat->shaders[j] = shader;
                     } else {
                         textureName = (texturePath / fileString).string();
@@ -637,28 +636,6 @@ void Geob::generateVAO() {
     glGenBuffers(1, &(this->indexVBO));
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->indexVBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->nIndices * sizeof(unsigned short), this->indices, GL_STATIC_DRAW);
-
-    // Set up the vertex pointers
-    /*
-    glEnableClientState(GL_VERTEX_ARRAY);
-    // this probably wont' work because its a pointer to pointer
-    glVertexPointer(3, GL_FLOAT, 0, this->vertices);
-
-    // ... and the normals
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glNormalPointer(GL_FLOAT, 0, this->normals);
-
-    // ... and the texture coords
-    if (glIsEnabled(GL_TEXTURE_2D) == GL_TRUE) {
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(2, GL_FLOAT, 0, this->textureCoords);
-    } else {
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    }
-
-    // clear out vertex state
-    glBindVertexArrayAPPLE(0);
-    */
 }
 
 Mat::Mat() {

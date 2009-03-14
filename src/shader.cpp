@@ -19,11 +19,12 @@ Shader::Shader() {
     this->texEnv = NULL;
     // TODO: find out if enabled mipmap is actually the default
     this->isMipmap = true;
-    this->textureMap = 0;
+    //this->textureMap = 0;
     this->wrapT = GL_REPEAT;
     this->alphaFunc = 0;
     this->alphaFuncSet = false;
     this->blend = false;
+    this->texture = NULL;
 }
 
 void Shader::parseShaderFile(string shaderPath) {
@@ -58,9 +59,10 @@ void Shader::parseShaderFile(string shaderPath) {
         if (starts_with(line, "shader_")) {
             // First we load the textureMap now that we have everything
             if (shader != NULL && shader->textureMapPath.size() > 0) {
-                loadTexture(shader->textureMapPath, 
-                        shader->textureMap, 
-                        shader->isMipmap);
+                shader->texture = Texture::getOrMakeTexture(shader->textureMapPath);
+                //loadTexture(shader->textureMapPath, 
+                        //shader->textureMap, 
+                        //shader->isMipmap);
             }
 
             // Parse out the shader's name

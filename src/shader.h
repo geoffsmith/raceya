@@ -13,6 +13,7 @@
 
 #include <string>
 #include <map>
+#include "texture.h"
 
 using namespace std;
 
@@ -24,7 +25,8 @@ class Shader {
         // Texture stuff
         unsigned int texEnv;
         bool isMipmap;
-        unsigned int textureMap;
+        //unsigned int textureMap;
+        Texture * texture;
         string textureMapPath;
         unsigned int wrapT;
 

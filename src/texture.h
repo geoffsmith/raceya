@@ -1,6 +1,9 @@
 /**
  * Class representing a texture. Each instance contains link to GLuint texture object
  * and there is a static map for looking up existing textures
+ *
+ * TODO:
+ * 	* Add mipmap selection - shader
  */
 #pragma once
 

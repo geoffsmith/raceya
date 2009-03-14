@@ -74,14 +74,15 @@ void init(void) {
 }
 
 void checkExtensions() {
-    char *extensions = (char *)glGetString(GL_EXTENSIONS);
+    char * extensions = (char *)glGetString(GL_EXTENSIONS);
+
+    // Not using any extensions at the moment
     
     // Check for GL_ARB_point_sprite
-    cout << extensions << endl;
-    if (strstr(extensions, "GL_ARB_pixel_buffer_object") == NULL) {
-        cout << "GL_ARB_pixel_buffer_object not available" << endl;
-        exit(1);
-    }
+    //if (strstr(extensions, "GL_ARB_pixel_buffer_object") == NULL) {
+        //cout << "GL_ARB_pixel_buffer_object not available" << endl;
+        //exit(1);
+    //}
 }
 
 void setupLighting() {
@@ -136,7 +137,7 @@ void display(void) {
     // Draw the car
     car->render();
 
-    //track->render();
+    track->render();
 
     // Render the HUD
     // This should really be below, but the alpha blending is messed up 
