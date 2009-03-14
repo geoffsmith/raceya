@@ -59,10 +59,8 @@ void Shader::parseShaderFile(string shaderPath) {
         if (starts_with(line, "shader_")) {
             // First we load the textureMap now that we have everything
             if (shader != NULL && shader->textureMapPath.size() > 0) {
-                shader->texture = Texture::getOrMakeTexture(shader->textureMapPath);
-                //loadTexture(shader->textureMapPath, 
-                        //shader->textureMap, 
-                        //shader->isMipmap);
+                shader->texture = Texture::getOrMakeTexture(shader->textureMapPath, 
+                        shader->isMipmap);
             }
 
             // Parse out the shader's name

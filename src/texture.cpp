@@ -5,8 +5,9 @@
 
 map<string, Texture * > Texture::textures;
 
-Texture::Texture(string name) {
+Texture::Texture(string name, bool isMipmap) {
     this->name = name;
+    this->isMipmap = isMipmap;
     this->_loadTexture(name);
 }
 
@@ -77,17 +78,24 @@ void Texture::_loadTexture(string name) {
 
         // Write the texture data
         if ((error = glGetError()) != 0) {
-            Logger::warn << "Error before loading texture: " << gluErrorString(error) << endl;
-            texture = 0;
+            Logger::warn << "Error before loading texture: " << 
+                gluErrorString(error) << endl;
+            this->texture = 0;
         }
 
         // TODO: check the flags for loading Mipmaps
-        gluBuild2DMipmaps(GL_TEXTURE_2D, nOfColours, surface->w, surface->h, 
-                textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+        if (this->isMipmap) {
+            gluBuild2DMipmaps(GL_TEXTURE_2D, nOfColours, surface->w, surface->h, 
+                    textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+        } else {
+            glTexImage2D(GL_TEXTURE_2D, 0, nOfColours, surface->w, surface->h, 
+                    0, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
+        }
 
         if ((error = glGetError()) != 0) {
-            Logger::warn << " 2 Error loading texture into OpenGL: " << gluErrorString(error) << endl;
-            texture = 0;
+            Logger::warn << "Error loading texture into OpenGL: " << 
+                gluErrorString(error) << endl;
+            this->texture = 0;
         }
 
         // Set up the texture
@@ -104,7 +112,7 @@ void Texture::_loadTexture(string name) {
     }
 }
 
-Texture * Texture::getOrMakeTexture(string name) {
+Texture * Texture::getOrMakeTexture(string name, bool isMipmap) {
     Texture * texture;
 
 	// Check if we have already loaded this name
@@ -112,7 +120,7 @@ Texture * Texture::getOrMakeTexture(string name) {
         texture = Texture::textures[name];
     // Otherwise we need to create a new one
     } else {
-        texture = new Texture(name);
+        texture = new Texture(name, isMipmap);
         Texture::textures[name] = texture;
     }
 

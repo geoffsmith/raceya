@@ -3,7 +3,7 @@
  * and there is a static map for looking up existing textures
  *
  * TODO:
- * 	* Add mipmap selection - shader
+ * 	* Get min / mag etc from settings
  */
 #pragma once
 
@@ -22,16 +22,17 @@ class Texture {
         int width;
         int height;
         unsigned int texture;
+	bool isMipmap;
 	string name;
 
-	Texture(string name);
+	Texture(string name, bool isMipmap);
 
 	// Keep track of all the textures loaded, so we don't load them multiple times
         static map<string, Texture * > textures;
 
 	// Check Texture::textures for a texture matching this name, if one is found
 	// return it, otherwise create one and save to textures
-	static Texture * getOrMakeTexture(string name);
+	static Texture * getOrMakeTexture(string name, bool isMipmap=true);
 
     private:
 	// Load a texture into a texture object
