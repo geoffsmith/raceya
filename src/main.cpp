@@ -136,7 +136,7 @@ void display(void) {
     // Draw the car
     car->render();
 
-    track->render();
+    //track->render();
 
     // Render the HUD
     // This should really be below, but the alpha blending is messed up 

@@ -10,8 +10,11 @@
  */
 #pragma once
 
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
 #include <string>
 #include "shader.h"
+#include "texture.h"
 
 using namespace std;
 
@@ -93,8 +96,7 @@ class Mat {
         int blendMode;
 
         int nTextures;
-        unsigned int * textures;
-        unsigned int * pbos;
+        Texture ** textures;
         // Pointer to some shaders, this array will be the same size as textures
         // but may have NULL entries
         Shader ** shaders;
@@ -157,8 +159,7 @@ class Dof {
         void _parseMats(ifstream * file);
 
         // Load a texture
-        void _loadTexture(string name, unsigned int & texture, unsigned int & pbo);
-
+        void _loadTexture(string name, Texture * texture);
 
         // This DOFs display list
         void _createDisplayLists();

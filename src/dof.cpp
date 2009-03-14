@@ -5,8 +5,6 @@
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <boost/filesystem.hpp>
@@ -94,6 +92,9 @@ void Dof::_parseMats(ifstream * file) {
     char fileString[255];
     int fileStringLength;
     token[4] = NULL;
+    path texturePath(this->_filePath);
+    texturePath.remove_filename();
+    string textureName;
 
     // Read the MAT0 chunk length
     file->read((char *)&length, sizeof(int));
@@ -141,8 +142,7 @@ void Dof::_parseMats(ifstream * file) {
             } else if (strcmp(token, "MTEX") == 0) {
                 // Load the textures
                 file->read((char *)&(mat->nTextures), sizeof(int));
-                mat->textures = new unsigned int[mat->nTextures];
-                mat->pbos = new unsigned int[mat->nTextures];
+                mat->textures = new Texture *[mat->nTextures];
                 mat->shaders = new Shader *[mat->nTextures];
 
                 for (int j = 0; j < mat->nTextures; ++j) {
@@ -151,11 +151,12 @@ void Dof::_parseMats(ifstream * file) {
                     // Check if there is a shader for this file
                     shader = Shader::getShader(fileString);
                     if (shader != NULL) {
-                        mat->textures[j] = shader->textureMap;
+                        // TODO
+                        //mat->textures[j]->texture = shader->textureMap;
                         mat->shaders[j] = shader;
-                        mat->pbos[j] = NULL;
                     } else {
-                        this->_loadTexture(fileString, mat->textures[j], mat->pbos[j]);
+                        textureName = (texturePath / fileString).string();
+                        mat->textures[j] = Texture::getOrMakeTexture(textureName);
                         mat->shaders[j] = 0;
                     }
 
@@ -307,125 +308,6 @@ void Dof::_parseGeobs(ifstream * file) {
     }
 }
 
-void Dof::_loadTexture(string name, unsigned int & texture, unsigned int & pbo) {
-    // Try and load the image
-    SDL_Surface * surface;
-    SDL_Surface * alphaSurface;
-    int nOfColours;
-    GLenum textureFormat = 0;
-    path texturePath(this->_filePath);
-    unsigned int error = glGetError();
-    
-    texturePath.remove_filename();
-    texturePath = texturePath / name;
-    
-    if ((surface = IMG_Load(texturePath.string().c_str()))) {
-        SDL_SetColorKey(surface, SDL_SRCCOLORKEY, SDL_MapRGB(surface->format, 255, 0, 255));
-        alphaSurface = SDL_DisplayFormatAlpha(surface);
-
-        SDL_FreeSurface(surface);
-        surface = alphaSurface;
-
-        // Check that width and height are powers of 2
-        if ((surface->w & (surface->w - 1)) != 0 ) {
-            cout << "Warning: width not power of 2 " << name << endl;
-            SDL_FreeSurface(surface);
-            return;
-        }
-        if ((surface->h & (surface->h -1)) != 0) {
-            cout << "Warning: height not power of 2 " << name << endl;
-            SDL_FreeSurface(surface);
-            return;
-        }
-
-        // Get the number of channels in the SDL surface
-        nOfColours = surface->format->BytesPerPixel;
-        if (nOfColours == 4) {
-            if (surface->format->Rmask == 0x000000ff) {
-                textureFormat = GL_RGBA;
-            } else {
-                textureFormat = GL_BGRA;
-            }
-        } else if (nOfColours == 3) {
-            if (surface->format->Rmask == 0x000000ff) {
-                textureFormat = GL_RGB;
-            } else {
-                textureFormat = GL_BGR;
-            }
-        }
-        // Have opengl generate a texture object
-        glGenTextures(1, &texture);
-
-        // Bind the texture object
-        glBindTexture(GL_TEXTURE_2D, texture);
-
-
-        /*
-           glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
-        glPixelStorei(GL_UNPACK_SKIP_ROWS,0);
-        glPixelStorei(GL_UNPACK_SKIP_PIXELS,0);
-        */
-
-        // mix color with texture
-        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-        //glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-
-        // Set the texture's stretching properties
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        // Prioritize this (the car)
-        if (!this->_perGeobDisplayList) {
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_PRIORITY, 1);
-        }
-
-        // Write the texture data
-        if ((error = glGetError()) != 0) {
-            cout << "Error before loading texture: " << gluErrorString(error) << endl;
-            texture = 0;
-        }
-
-        // TODO: check the flags for loading Mipmaps
-        //gluBuild2DMipmaps(GL_TEXTURE_2D,nOfColours, surface->w, surface->h, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
-        //gluBuild2DMipmaps(GL_TEXTURE_2D, nOfColours, surface->w, surface->h, textureFormat, GL_UNSIGNED_BYTE, NULL);
-
-        // bind to pbo
-        glGenBuffersARB(1, &pbo);
-        glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pbo);
-        glBufferData(GL_PIXEL_UNPACK_BUFFER_ARB, surface->w * surface->h * 4, NULL, GL_STATIC_DRAW);
-        void * buffer = glMapBuffer(GL_PIXEL_UNPACK_BUFFER_ARB, GL_WRITE_ONLY);
-        memcpy(buffer, surface->pixels, surface->w * surface->h * 4);
-        glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER_ARB);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, nOfColours, surface->w, surface->h, 
-                0, textureFormat, GL_UNSIGNED_BYTE, NULL);
-
-        if ((error = glGetError()) != 0) {
-            cout << " 2 Error loading texture into OpenGL: " << gluErrorString(error) << endl;
-            texture = 0;
-        }
-
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, textureFormat, GL_UNSIGNED_BYTE, NULL);
-
-        if ((error = glGetError()) != 0) {
-            cout << "Error loading texture into OpenGL: " << gluErrorString(error) << endl;
-            texture = 0;
-        }
-
-
-
-        // Free the surface
-        SDL_FreeSurface(surface);
-        glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
-    } else {
-        Logger::debug << "Error loading texture: " << IMG_GetError() << endl;
-        texture = 0;
-    }
-}
-
 void Dof::_renderGeob(Geob * geob, Mat * & previousMat) {
     Mat * mat;
     int burstCount, burstStart;
@@ -523,16 +405,15 @@ void Dof::loadMaterial(Mat * mat) {
         }
     }
 
-    if (mat->nTextures > 0 && mat->textures[0]) {
+    if (mat->nTextures > 0 && mat->textures[0]->texture) {
         if (!this->_renderState.texture2d) {
             glEnable(GL_TEXTURE_2D);
             this->_renderState.texture2d = true;
         }
-        if (this->_renderState.texture != mat->textures[0]) {
-            //glBindTexture(GL_TEXTURE_2D, mat->textures[0]);
-            cout << "Loading PBO: " << mat->pbos[0] << endl;
-            glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, mat->pbos[0]);
-            this->_renderState.texture = mat->textures[0];
+        if (this->_renderState.texture != mat->textures[0]->texture) {
+            Texture * texture = mat->textures[0];
+            glBindTexture(GL_TEXTURE_2D, texture->texture);
+            this->_renderState.texture = texture->texture;
         }
         
         // See if there is an alpha function to be set
