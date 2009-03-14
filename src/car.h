@@ -8,7 +8,6 @@
 #pragma once
 
 #include <SDL/SDL.h>
-#include "obj.h"
 #include "wheel.h"
 #include "track.h"
 #include "dof.h"
@@ -37,7 +36,6 @@ class Car {
         void setCenter(float * center);
 
     private:
-        Obj * _obj;
         Wheel * _wheels[4];
 
         // Needs a reference to the track to do collision detection

@@ -14,10 +14,6 @@
 using namespace std;
 
 Car::Car() {
-    // Load the body dof
-    //this->_bodyDof = new Dof("resources/cars/Mitsubishi_Lancer_EVO_IX/body.dof", 0);
-
-    this->_obj = Obj::makeObj("resources/r8/R8.obj");
     this->_modelScale = 1;
 
     this->_wheelDiameter = 0.645; // meters;

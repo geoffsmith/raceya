@@ -54,9 +54,8 @@ am_raceya_OBJECTS = raceya-camera.$(OBJEXT) raceya-car.$(OBJEXT) \
 	raceya-hud.$(OBJEXT) raceya-jpeg.$(OBJEXT) \
 	raceya-lib.$(OBJEXT) raceya-logger.$(OBJEXT) \
 	raceya-main.$(OBJEXT) raceya-matrix.$(OBJEXT) \
-	raceya-obj.$(OBJEXT) raceya-shader.$(OBJEXT) \
-	raceya-track.$(OBJEXT) raceya-wheel.$(OBJEXT) \
-	raceya-world.$(OBJEXT) raceya-car_parser.$(OBJEXT) \
+	raceya-shader.$(OBJEXT) raceya-track.$(OBJEXT) \
+	raceya-wheel.$(OBJEXT) raceya-car_parser.$(OBJEXT) \
 	raceya-texture.$(OBJEXT)
 raceya_OBJECTS = $(am_raceya_OBJECTS)
 raceya_DEPENDENCIES =
@@ -189,7 +188,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-raceya_SOURCES = camera.cpp car.cpp closest_point.cpp dof.cpp frame_timer.cpp frustum_culler.cpp hud.cpp jpeg.cpp lib.cpp logger.cpp main.cpp matrix.cpp obj.cpp shader.cpp track.cpp wheel.cpp world.cpp camera.h car.h closest_point.h dof.h frame_timer.h frustum_culler.h hud.h jpeg.h lib.h logger.h main.h matrix.h obj.h shader.h track.h wheel.h world.h car_parser.h car_parser.cpp texture.h texture.cpp
+raceya_SOURCES = camera.cpp car.cpp closest_point.cpp dof.cpp frame_timer.cpp frustum_culler.cpp hud.cpp jpeg.cpp lib.cpp logger.cpp main.cpp matrix.cpp shader.cpp track.cpp wheel.cpp camera.h car.h closest_point.h dof.h frame_timer.h frustum_culler.h hud.h jpeg.h lib.h logger.h main.h matrix.h shader.h track.h wheel.h car_parser.h car_parser.cpp texture.h texture.cpp
 raceya_LDADD = -lglut -lGLU -lGL -lSDL -lSDLmain -lSDL_ttf -lSDL_mixer -lSDL_image -ljpeg -lboost_filesystem-mt -lboost_system-mt -lftgl -lfreetype 
 raceya_LDFLAGS = -framework Cocoa $(SDL_LIBS) $(GL_LIBS)
 raceya_CXXFLAGS = $(SDL_CFLAGS) $(BOOST_CPPFLAGS) $(GL_CFLAGS) -Wall
@@ -272,12 +271,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-logger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-matrix.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-obj.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-shader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-texture.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-track.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-wheel.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-world.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -461,20 +458,6 @@ raceya-matrix.obj: matrix.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-matrix.obj `if test -f 'matrix.cpp'; then $(CYGPATH_W) 'matrix.cpp'; else $(CYGPATH_W) '$(srcdir)/matrix.cpp'; fi`
 
-raceya-obj.o: obj.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -MT raceya-obj.o -MD -MP -MF $(DEPDIR)/raceya-obj.Tpo -c -o raceya-obj.o `test -f 'obj.cpp' || echo '$(srcdir)/'`obj.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/raceya-obj.Tpo $(DEPDIR)/raceya-obj.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='obj.cpp' object='raceya-obj.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-obj.o `test -f 'obj.cpp' || echo '$(srcdir)/'`obj.cpp
-
-raceya-obj.obj: obj.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -MT raceya-obj.obj -MD -MP -MF $(DEPDIR)/raceya-obj.Tpo -c -o raceya-obj.obj `if test -f 'obj.cpp'; then $(CYGPATH_W) 'obj.cpp'; else $(CYGPATH_W) '$(srcdir)/obj.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/raceya-obj.Tpo $(DEPDIR)/raceya-obj.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='obj.cpp' object='raceya-obj.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-obj.obj `if test -f 'obj.cpp'; then $(CYGPATH_W) 'obj.cpp'; else $(CYGPATH_W) '$(srcdir)/obj.cpp'; fi`
-
 raceya-shader.o: shader.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -MT raceya-shader.o -MD -MP -MF $(DEPDIR)/raceya-shader.Tpo -c -o raceya-shader.o `test -f 'shader.cpp' || echo '$(srcdir)/'`shader.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/raceya-shader.Tpo $(DEPDIR)/raceya-shader.Po
@@ -516,20 +499,6 @@ raceya-wheel.obj: wheel.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='wheel.cpp' object='raceya-wheel.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-wheel.obj `if test -f 'wheel.cpp'; then $(CYGPATH_W) 'wheel.cpp'; else $(CYGPATH_W) '$(srcdir)/wheel.cpp'; fi`
-
-raceya-world.o: world.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -MT raceya-world.o -MD -MP -MF $(DEPDIR)/raceya-world.Tpo -c -o raceya-world.o `test -f 'world.cpp' || echo '$(srcdir)/'`world.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/raceya-world.Tpo $(DEPDIR)/raceya-world.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='world.cpp' object='raceya-world.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-world.o `test -f 'world.cpp' || echo '$(srcdir)/'`world.cpp
-
-raceya-world.obj: world.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -MT raceya-world.obj -MD -MP -MF $(DEPDIR)/raceya-world.Tpo -c -o raceya-world.obj `if test -f 'world.cpp'; then $(CYGPATH_W) 'world.cpp'; else $(CYGPATH_W) '$(srcdir)/world.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/raceya-world.Tpo $(DEPDIR)/raceya-world.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='world.cpp' object='raceya-world.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-world.obj `if test -f 'world.cpp'; then $(CYGPATH_W) 'world.cpp'; else $(CYGPATH_W) '$(srcdir)/world.cpp'; fi`
 
 raceya-car_parser.o: car_parser.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -MT raceya-car_parser.o -MD -MP -MF $(DEPDIR)/raceya-car_parser.Tpo -c -o raceya-car_parser.o `test -f 'car_parser.cpp' || echo '$(srcdir)/'`car_parser.cpp
