@@ -54,13 +54,13 @@ void Shader::parseShaderFile(string shaderPath) {
             shader->isSky = true;
         }
 
-
         // Load the shader layers
         Shader::_parseLayers(*it, ini, *shader);
     }
 }
 
 void Shader::_parseLayers(string iniPath, Ini & ini, Shader & shader) {
+    vector<string> parts;
     list<string> matches;
     list<string>::iterator it;
     ShaderLayer * layer;
@@ -94,6 +94,34 @@ void Shader::_parseLayers(string iniPath, Ini & ini, Shader & shader) {
                     layer->isMipmap);
         }
 
+        // Get the culling value if there is one
+        value = ini[iniPath + "/" + *it + "/cull"];
+        if (value == "front") {
+            layer->culling = 2;
+        } else if (value == "back") {
+            layer->culling = 1;
+        }
+
+        // See if there is some alpha function
+        value = ini[iniPath + "/" + *it + "/alphafunc"];
+        if (!value.empty()) {
+            split(parts, value, is_any_of(" "));
+            if (parts[0] == "never") layer->alphaFunction = 0;
+            else if (parts[0] == "always") layer->alphaFunction = 1;
+            else if (parts[0] == "none") layer->alphaFunction = 1;
+            else if (parts[0] == "less") layer->alphaFunction = 2;
+            else if (parts[0] == "lequal") layer->alphaFunction = 3;
+            else if (parts[0] == "equal") layer->alphaFunction = 4;
+            else if (parts[0] == "gequal") layer->alphaFunction = 5;
+            else if (parts[0] == "greater") layer->alphaFunction = 6;
+            else if (parts[0] == "notequal") layer->alphaFunction = 7;
+
+            // Save the value if there is one
+            if (parts.size() > 1) {
+                layer->alphaValue = atoi(parts[1].c_str());
+            }
+        }
+
         ++index;
     }
 }
@@ -125,4 +153,11 @@ Shader * Shader::getShader(string name) {
  *****************************************************************************/
 ShaderLayer::ShaderLayer() {
     this->isMipmap = true;
+
+    // Default culling to none
+    this->culling = 0;
+
+    // Default alpha function is none
+    this->alphaFunction = 1;
+    this->alphaValue = 0;
 }

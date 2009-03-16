@@ -1,7 +1,4 @@
 /**
- * TODO:
- *  * Enable back face culling for speed enhancement. Need to sort out particle
- *    normals first though.
  */
 
 #if HAVE_CONFIG_H

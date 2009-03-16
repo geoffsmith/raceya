@@ -42,8 +42,6 @@ Car * parseCar(string carPathString) {
         center[0] = atof(parts[0].c_str());
         center[1] = atof(parts[1].c_str());
         center[2] = atof(parts[2].c_str());
-        cout << "Center: " << endl;
-        printVector(center);
         car->setCenter(center);
     } 
 

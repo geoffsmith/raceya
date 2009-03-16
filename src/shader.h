@@ -25,7 +25,18 @@ class ShaderLayer {
         ShaderLayer();
         Texture * texture;
         string textureMapPath;
+
+        // True if this shader's textures should be mipmap'd
         bool isMipmap;
+
+        // 0: no culling (default), 1: back, 2: front
+        int culling;
+
+        // Alpha blending function and value
+        // 0: never, 1: always / none, 2: less [value], 3: lequal [value],
+        // 4: equal [value], 5: gequal [value], 6: greater [value], 7: notequal [value]
+        int alphaFunction;
+        int alphaValue;
 };
 
 class Shader {

@@ -2,6 +2,7 @@
 #include "frustum_culler.h"
 #include "logger.h"
 #include "lib.h"
+
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
@@ -86,7 +87,6 @@ Dof::~Dof() {
 
 void Dof::_parseMats(ifstream * file) {
     Mat * mat;
-    Shader * shader;
     int length;
     char token[5];
     char fileString[255];
@@ -354,25 +354,27 @@ void Dof::_renderGeob(Geob * geob, Mat * & previousMat) {
         }
 
         // Draw the elements
-        //glLockArraysEXT(0, geob->nVertices);
-        //glDrawElements(GL_TRIANGLES, stop, GL_UNSIGNED_SHORT, 
-                //&(geob->indices[burstStart]));
-        //glUnlockArraysEXT();
         glDrawElements(GL_TRIANGLES, stop, GL_UNSIGNED_SHORT, 
                 (GLvoid*)((char *)(0)));
     }
 }
 
-void Dof::_initialiseMaterials() {
-}
-
 void Dof::loadMaterial(Mat * mat) {
-    // Set the defaults
     if (OpenGLState::global.alphaTest) {
         glDisable(GL_ALPHA_TEST);
         this->_renderState.alphaTest = false;
 
     }
+
+    if (mat->shader != NULL) {
+        // Set up culling
+        OpenGLState::global.setCulling(mat->shader->layers[0]->culling);
+
+        // Set up the alpha function
+        OpenGLState::global.setAlpha(mat->shader->layers[0]->alphaFunction, 
+                mat->shader->layers[0]->alphaValue);
+    }
+
 
     // Check if this material has a shader
     if (mat->blendMode > 0 || 
@@ -454,8 +456,6 @@ int Dof::render(bool overrideFrustrumTest) {
     Mat * mat;
     Mat * previousMat = NULL;
     Shader * shader;
-
-    this->_initialiseMaterials();
 
     // First we render the sky
     for (int i = 0; i < this->_nGeobs; ++i) {
@@ -631,11 +631,7 @@ void Geob::generateVAO() {
         return;
     }
 
-    //this->dof->loadMaterial(mat);
-
     // SEt up the VAO
-    //glGenVertexArraysAPPLE(1, &(this->vao));
-    //glBindVertexArrayAPPLE(this->vao);
     glGenBuffers(1, &(this->vertexVBO));
     glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
     const GLsizeiptr vSize = this->nVertices * 3 * sizeof(float);
@@ -684,24 +680,3 @@ bool Mat::isTransparent() {
 /******************************************************************************
  * Reset the OpenGL state
  *****************************************************************************/
-OpenGLState OpenGLState::global;
-
-void OpenGLState::reset() {
-    // Set the state for a display list
-    glDisable(GL_TEXTURE_2D);
-    this->texture2d = false;
-
-    glDisable(GL_BLEND);
-    this->blend = false;
-
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    this->texture = 0;
-
-    glDisable(GL_ALPHA_TEST);
-    this->alphaTest = false;
-
-    glEnable(GL_DEPTH_TEST);
-    this->depthTest = true;
-}

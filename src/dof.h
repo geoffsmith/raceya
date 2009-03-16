@@ -10,11 +10,13 @@
  */
 #pragma once
 
+#include "shader.h"
+#include "texture.h"
+#include "opengl_state.h"
+
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <string>
-#include "shader.h"
-#include "texture.h"
 
 using namespace std;
 
@@ -29,22 +31,6 @@ int parseString(ifstream * file, char * buffer);
 
 class Dof;
 
-struct OpenGLState {
-    bool alphaTest;
-    bool blend;
-    bool texture2d;
-    bool depthTest;
-    float ambient[4];
-    float diffuse[4];
-    float specular[4];
-    float emission[4];
-    unsigned int texture;
-
-    // A global openGL state
-    static OpenGLState global;
-
-    void reset();
-};
 
 class Geob {
     public:
@@ -174,8 +160,6 @@ class Dof {
         void _createDisplayLists();
         // Render a geob, will only change material if previous Mat != the current one
         void _renderGeob(Geob * geob, Mat * & previousMat = NULL);
-        // Initialise a material so that displaylist is atomic
-        void _initialiseMaterials();
 
         // The bounding box for the dof
         void _calculateBoundingBox();
