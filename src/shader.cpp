@@ -101,17 +101,22 @@ void Shader::_parseLayers(string iniPath, Ini & ini, Shader & shader) {
 Shader * Shader::getShader(string name) {
     map<string, Shader * >::iterator it;
     vector<string> parts;
+    string tmp;
     // Strip the file type from the file name
     trim(name);
+    to_lower(name);
     split(parts, name, is_any_of("."));
 
     // Check if we have this shader
     for (it = Shader::_shaders.begin(); it != Shader::_shaders.end(); ++it) {
-        if (ends_with(it->first, parts[0])) {
+        // Strip the "shader_ part out"
+        tmp = it->first.substr(7);
+        if (tmp == parts[0]) {
             return Shader::_shaders[it->first];
         }
     }
 
+    cout << "Shader NOT found: " << name << endl;
     return NULL;
 }
 

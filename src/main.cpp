@@ -93,6 +93,7 @@ void setupLighting() {
 void initObjects() {
     // Load a track
     track = new Track("resources/tracks/Monaco_AM/");
+    //track = new Track("resources/tracks/broussailles/");
 
     // Load up a car obj
     //car = new Car(track);
@@ -102,7 +103,6 @@ void initObjects() {
         exit(1);
     }
     car->setTrack(track);
-    cout << "done" << endl;
 
     // Create the camera, pointing at the player's car
     camera = new Camera(car);
@@ -133,6 +133,9 @@ void display(void) {
     camera->viewTransform();
 
     ViewFrustumCulling::culler->refreshMatrices();
+
+    // Reset the openGL state
+    OpenGLState::global.reset();
 
     // Draw the car
     car->render();

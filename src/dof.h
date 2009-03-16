@@ -39,6 +39,11 @@ struct OpenGLState {
     float specular[4];
     float emission[4];
     unsigned int texture;
+
+    // A global openGL state
+    static OpenGLState global;
+
+    void reset();
 };
 
 class Geob {
@@ -101,10 +106,9 @@ class Mat {
 
         int nTextures;
         Texture ** textures;
-        // Pointer to some shaders, this array will be the same size as textures
-        // but may have NULL entries
+
+        // This material's shader
         Shader * shader;
-        Shader ** shaders;
 
         Geob * getGeob(int index);
         int getNGeobs();

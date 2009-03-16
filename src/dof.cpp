@@ -133,11 +133,8 @@ void Dof::_parseMats(ifstream * file) {
                 // Ignore the material class
                 parseString(file, fileString);
 
-                // Now that we have the name, we can check a shader
+                // Try and get the shader
                 mat->shader = Shader::getShader(mat->name);
-                if (mat->shader != NULL)
-                    cout << "For " << mat->name << ", shader: " << mat->shader << ", issky: " << mat->shader->isSky << endl;
-
             } else if (strcmp(token, "MCOL") == 0) {
                 // Contains the various material colors
                 parseVector<float>(file, mat->ambient, 4);
@@ -149,19 +146,15 @@ void Dof::_parseMats(ifstream * file) {
                 // Load the textures
                 file->read((char *)&(mat->nTextures), sizeof(int));
                 mat->textures = new Texture *[mat->nTextures];
-                mat->shaders = new Shader *[mat->nTextures];
 
                 for (int j = 0; j < mat->nTextures; ++j) {
                     fileStringLength = parseString(file, fileString);
 
-                    shader = Shader::getShader(fileString);
-                    if (shader != NULL) {
-                        mat->textures[j] = shader->layers[0]->texture;
-                        mat->shaders[j] = shader;
+                    if (mat->shader != NULL) {
+                        mat->textures[j] = mat->shader->layers[0]->texture;
                     } else {
                         textureName = (texturePath / fileString).string();
                         mat->textures[j] = Texture::getOrMakeTexture(textureName);
-                        mat->shaders[j] = NULL;
                     }
 
                 }
@@ -371,120 +364,87 @@ void Dof::_renderGeob(Geob * geob, Mat * & previousMat) {
 }
 
 void Dof::_initialiseMaterials() {
-    // Set the state for a display list
-    glDisable(GL_TEXTURE_2D);
-    this->_renderState.texture2d = false;
-
-    glDisable(GL_BLEND);
-    this->_renderState.blend = false;
-
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    this->_renderState.texture = 0;
-
-    glDisable(GL_ALPHA_TEST);
-    this->_renderState.alphaTest = false;
-
-    glEnable(GL_DEPTH_TEST);
-    this->_renderState.depthTest = true;
 }
 
 void Dof::loadMaterial(Mat * mat) {
     // Set the defaults
-    if (this->_renderState.alphaTest) {
+    if (OpenGLState::global.alphaTest) {
         glDisable(GL_ALPHA_TEST);
         this->_renderState.alphaTest = false;
 
     }
 
-    // We turn off depth test for sky rendering
-    /*
-       if (mat->nTextures && mat->shaders[0] != NULL && mat->shaders[0]->isSky) {
-        if (this->_renderState.depthTest) {
-            glDisable(GL_DEPTH_TEST);
-            this->_renderState.depthTest = false;
-        }
-    } else {
-        if (!this->_renderState.depthTest) {
-            glEnable(GL_DEPTH_TEST);
-            this->_renderState.depthTest = true;
-        }
-    }
-    */
-
     // Check if this material has a shader
     if (mat->blendMode > 0 || 
-       (mat->nTextures > 0 && mat->shaders[0] != NULL && mat->shaders[0]->blend)) {
-        if (!this->_renderState.blend) {
+       (mat->nTextures > 0 && mat->shader != NULL && mat->shader->blend)) {
+        if (!OpenGLState::global.blend) {
             glEnable(GL_BLEND);
-            this->_renderState.blend = true;
+            OpenGLState::global.blend = true;
         }
     } else {
-        if (this->_renderState.blend) {
+        if (OpenGLState::global.blend) {
             glDisable(GL_BLEND);
-            this->_renderState.blend = false;
+            OpenGLState::global.blend = false;
         }
     }
 
     if (mat->shader != NULL && mat->shader->layers[0]->texture != NULL) { 
-        if (!this->_renderState.texture2d) {
+        if (!OpenGLState::global.texture2d) {
             glEnable(GL_TEXTURE_2D);
-            this->_renderState.texture2d = true;
+            OpenGLState::global.texture2d = true;
         }
         Texture * texture = mat->shader->layers[0]->texture;
-        if (this->_renderState.texture != texture->texture) {
+        if (OpenGLState::global.texture != texture->texture) {
             glBindTexture(GL_TEXTURE_2D, texture->texture);
-            this->_renderState.texture = texture->texture;
+            OpenGLState::global.texture = texture->texture;
         }
     } else if (mat->nTextures > 0 && mat->textures[0]->texture) {
-        if (!this->_renderState.texture2d) {
+        if (!OpenGLState::global.texture2d) {
             glEnable(GL_TEXTURE_2D);
-            this->_renderState.texture2d = true;
+            OpenGLState::global.texture2d = true;
         }
-        if (this->_renderState.texture != mat->textures[0]->texture) {
+        if (OpenGLState::global.texture != mat->textures[0]->texture) {
             Texture * texture = mat->textures[0];
             glBindTexture(GL_TEXTURE_2D, texture->texture);
-            this->_renderState.texture = texture->texture;
+            OpenGLState::global.texture = texture->texture;
         }
         
         // See if there is an alpha function to be set
-        if (mat->shaders != NULL && mat->shaders[0]) {
-            if (mat->shaders[0]->alphaFuncSet) {
+        if (mat->shader != NULL) {
+            if (mat->shader->alphaFuncSet) {
                 glEnable(GL_ALPHA_TEST);
                 //glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
-                this->_renderState.alphaTest = true;
-                glAlphaFunc(GL_EQUAL, mat->shaders[0]->alphaFunc);
+                OpenGLState::global.alphaTest = true;
+                glAlphaFunc(GL_EQUAL, mat->shader->alphaFunc);
             }
         }
     } else {
-        if (this->_renderState.texture2d) {
+        if (OpenGLState::global.texture2d) {
             glDisable(GL_TEXTURE_2D);
-            glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
-            this->_renderState.texture2d = false;
+            OpenGLState::global.texture2d = false;
         }
     }
 
-    if (colorEquals4(this->_renderState.ambient, mat->ambient)) {
+    if (colorEquals4(OpenGLState::global.ambient, mat->ambient)) {
         glMaterialfv(GL_FRONT, GL_AMBIENT, mat->ambient);
-        colorCopy4(mat->ambient, this->_renderState.ambient);
+        colorCopy4(mat->ambient, OpenGLState::global.ambient);
 
     }
 
     // Check if we need to change the diffuse material
-    if (colorEquals4(this->_renderState.diffuse, mat->diffuse)) {
+    if (colorEquals4(OpenGLState::global.diffuse, mat->diffuse)) {
         glMaterialfv(GL_FRONT, GL_DIFFUSE, mat->diffuse);
-        colorCopy4(mat->diffuse, this->_renderState.diffuse);
+        colorCopy4(mat->diffuse, OpenGLState::global.diffuse);
     }
 
-    if (colorEquals4(this->_renderState.specular, mat->specular)) {
+    if (colorEquals4(OpenGLState::global.specular, mat->specular)) {
         glMaterialfv(GL_FRONT, GL_SPECULAR, mat->specular);
-        colorCopy4(mat->specular, this->_renderState.specular);
+        colorCopy4(mat->specular, OpenGLState::global.specular);
     }
 
-    if (colorEquals4(this->_renderState.emission, mat->emission)) {
+    if (colorEquals4(OpenGLState::global.emission, mat->emission)) {
         glMaterialfv(GL_FRONT, GL_EMISSION, mat->emission);
-        colorCopy4(mat->emission, this->_renderState.emission);
+        colorCopy4(mat->emission, OpenGLState::global.emission);
     }
 }
 
@@ -701,12 +661,12 @@ void Geob::generateVAO() {
 
 Shader * Geob::getShader() {
     Mat * mat = &(dof->getMats()[this->material]);
-    if (mat->nTextures > 0 && mat->shaders[0] != NULL) return mat->shaders[0];
+    if (mat->nTextures > 0 && mat->shader != NULL) return mat->shader;
     else return NULL;
 }
 
 Mat::Mat() {
-    this->shaders = NULL;
+    this->shader = NULL;
 }
 
 bool Mat::isTransparent() {
@@ -714,9 +674,34 @@ bool Mat::isTransparent() {
         return true;
     }
     // Check if this material has a shader
-    if (this->nTextures > 0 && this->shaders[0] != NULL && this->shaders[0]->blend) {
+    if (this->nTextures > 0 && this->shader != NULL && this->shader->blend) {
         return true;
     }
 
     return false;
+}
+
+/******************************************************************************
+ * Reset the OpenGL state
+ *****************************************************************************/
+OpenGLState OpenGLState::global;
+
+void OpenGLState::reset() {
+    // Set the state for a display list
+    glDisable(GL_TEXTURE_2D);
+    this->texture2d = false;
+
+    glDisable(GL_BLEND);
+    this->blend = false;
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    this->texture = 0;
+
+    glDisable(GL_ALPHA_TEST);
+    this->alphaTest = false;
+
+    glEnable(GL_DEPTH_TEST);
+    this->depthTest = true;
 }
