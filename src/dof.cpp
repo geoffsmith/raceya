@@ -495,8 +495,6 @@ int Dof::render(bool overrideFrustrumTest) {
     Mat * previousMat = NULL;
     Shader * shader;
 
-    //this->_calculateBoundingBox();
-
     this->_initialiseMaterials();
 
     // First we render the sky
@@ -514,7 +512,7 @@ int Dof::render(bool overrideFrustrumTest) {
             int h = 600;
             float height = 1.0;
             float width = (float)w / (float)h;
-            glFrustum(-1.0 * width, width, -1.0 * height, height, 1.5, 10000000.0);
+            glFrustum(-1.0 * width, width, -1.0 * height, height, 1.5, 100000.0);
             glMatrixMode(GL_MODELVIEW);
             glPushMatrix();
 
