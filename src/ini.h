@@ -29,6 +29,16 @@ class Ini {
         // Return the value for that key
         string operator[](string key);
 
+        // Query the data. Basically does a starts_with on each key in data and returns
+        // a set of paths that match, but only at that path token length. i.e.
+        // if query = /tracks/track would return /tracks/track0 and /tracks/track1 but not
+        // /tracks/track0/file
+        void query(string query, list<string> & results);
+
+        // Similar to query, but returns only the top level token rather than the full
+        // path
+        void queryTokens(string query, list<string> & results);
+
     private:
         // Parse an ini file into the data structure
         void _parseFile();

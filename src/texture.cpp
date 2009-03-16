@@ -107,7 +107,7 @@ void Texture::_loadTexture(string name) {
         // Free the surface
         SDL_FreeSurface(surface);
     } else {
-        Logger::debug << "Error loading texture: " << IMG_GetError() << endl;
+        Logger::debug << "Error loading texture (" << name << "): " << IMG_GetError() << endl;
         texture = 0;
     }
 }

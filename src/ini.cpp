@@ -5,6 +5,8 @@
 #include <boost/algorithm/string.hpp>
 #include <fstream>
 #include <list>
+#include <vector>
+#include <iostream>
 
 using namespace std;
 using namespace boost;
@@ -24,7 +26,42 @@ string Ini::operator[](string key) {
     if (this->hasKey(key)) {
         return this->data[key];
     } else {
-        return NULL;
+        return "";
+    }
+}
+
+void Ini::query(string query, list<string> & results) {
+    string tmp;
+    vector<string> parts;
+    // For this we need to check each key. It's not very efficient, but this is only
+    // used during a loading sequence, so it should be ok for now.
+    map<string, string>::iterator it;
+    for (it = this->data.begin(); it != this->data.end(); ++it) {
+        if (starts_with(it->first, query)) {
+            // Get the path including query until the next /
+            tmp = it->first.substr(query.size());
+            split(parts, tmp, is_any_of("/"));
+
+            results.push_back(query + parts[0]);
+        }
+    }
+
+    // Remove any duplicates
+    results.unique();
+}
+
+void Ini::queryTokens(string query, list<string> & results) {
+    list<string> tmp;
+    list<string>::iterator it;
+    vector<string> parts;
+
+    // First do a normal query, then strip out the query part of the path
+    this->query(query, tmp);
+
+    // Now strip out everything except the last part of query
+    for (it = tmp.begin(); it != tmp.end(); ++it) {
+        split(parts, *it, is_any_of("/"));
+        results.push_back(parts[parts.size() - 1]);
     }
 }
 

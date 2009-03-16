@@ -64,8 +64,8 @@ void init(void) {
     glHint(GL_TEXTURE_COMPRESSION_HINT, GL_FASTEST);
     glHint(GL_GENERATE_MIPMAP_HINT, GL_FASTEST);
 
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
 
     setupLighting();
 
@@ -92,7 +92,7 @@ void setupLighting() {
 
 void initObjects() {
     // Load a track
-    track = new Track("resources/tracks/broussailles/");
+    track = new Track("resources/tracks/Monaco_AM/");
 
     // Load up a car obj
     //car = new Car(track);

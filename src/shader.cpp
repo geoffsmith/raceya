@@ -17,106 +17,107 @@ map<string, Shader *> Shader::_shaders;
 
 Shader::Shader() {
     this->texEnv = NULL;
-    // TODO: find out if enabled mipmap is actually the default
-    this->isMipmap = true;
-    //this->textureMap = 0;
     this->wrapT = GL_REPEAT;
     this->alphaFunc = 0;
     this->alphaFuncSet = false;
     this->blend = false;
     this->texture = NULL;
+
+    // By default a shader is not sky
+    this->isSky = false;
 }
 
 void Shader::parseShaderFile(string shaderPath) {
-    string line;
+    list<string> matches;
+    list<string>::iterator it;
+    Ini ini(shaderPath);
     string name;
+    string value;
     vector<string> parts;
-    Shader * shader = NULL;
-    path shaderDirectory;
+    Shader * shader;
 
-    shaderDirectory = shaderPath;
-    shaderDirectory.remove_filename();
+    // Go through each shader object
+    ini.query("/", matches);
+    for (it = matches.begin(); it != matches.end(); ++it) {
+        // Parse out the shader's name
+        split(parts, *it, is_any_of("/"));
+        name = parts[1];
+        trim(name);
 
-    // Check the file exists
-    if (!exists(shaderPath)) {
-        cout << "File doesn't exist: " << shaderPath << endl;
-    }
+        // Create a new shader
+        shader = new Shader();
+        Shader::_shaders[name] = shader;
 
-    // Read the file
-    ifstream file(shaderPath.c_str());
-    if (!file.is_open()) {
-        cout << "Couldn't open file: " << shaderPath << endl;
-    }
-
-    while (!file.eof()) {
-        getline(file, line);
-        trim(line);
-
-        // If the line starts with a ;, ignore
-        if (line[0] == ';') continue;
-
-        // Check if this is a shader, in which case we create a new shader
-        if (starts_with(line, "shader_")) {
-            // First we load the textureMap now that we have everything
-            if (shader != NULL && shader->textureMapPath.size() > 0) {
-                shader->texture = Texture::getOrMakeTexture(shader->textureMapPath, 
-                        shader->isMipmap);
-            }
-
-            // Parse out the shader's name
-            split(parts, line, is_any_of("_"));
-            name = parts[1];
-
-            shader = new Shader();
-            Shader::_shaders[name] = shader;
-            continue;
+        // Check if this shader is sky
+        value = ini[*it + "/sky"];
+        if (!value.empty() && value == "1") {
+            shader->isSky = true;
         }
 
-        // If we dont have a shader here, we need to skip the line
-        if (shader == NULL) continue;
 
-        if (starts_with(line, "texenv")) {
-            // set the texenv on this shader
-            split(parts, line, is_any_of("="));
-            if (parts[1] == "replace") {
-                shader->texEnv = GL_REPLACE;
-            }
-        } else if (starts_with(line, "map")) {
-            // Load a texture map
-            split(parts, line, is_any_of("="));
-            shader->textureMapPath = (shaderDirectory / parts[1]).string();
-        } else if (starts_with(line, "mipmap")) {
-            split(parts, line, is_any_of("="));
-            if (parts[1] == "1") {
-                shader->isMipmap = true;
-            }
-        } else if (starts_with(line, "wrap_t")) {
-            // Set the texture wrapping in the T direction
-            split(parts, line, is_any_of("="));
-            if (parts[1] == "clamp_to_edge") {
-                shader->wrapT = GL_CLAMP_TO_EDGE;
-            }
-        } else if (starts_with(line, "alphafunc")) {
-            split(parts, line, is_any_of(" "));
-            shader->alphaFunc = atoi(parts[1].c_str());
-            shader->alphaFuncSet = true;
-        } else if (starts_with(line, "blendfunc")) {
-            // NOTE: This is oversimplified from the spec,but seems to be the only use
-            shader->blend = true;
+        // Load the shader layers
+        Shader::_parseLayers(*it, ini, *shader);
+    }
+}
+
+void Shader::_parseLayers(string iniPath, Ini & ini, Shader & shader) {
+    list<string> matches;
+    list<string>::iterator it;
+    ShaderLayer * layer;
+    int index = 0;
+    string value;
+
+    // Get the path of the shader ini file
+    path iniFilePath(ini.path);
+    iniFilePath.remove_filename();
+
+    ini.queryTokens(iniPath + "/layer", matches);
+
+    // Now we know how many layers this shader has
+    shader.nLayers = matches.size();
+    shader.layers = new ShaderLayer *[shader.nLayers];
+
+    for (it = matches.begin(); it != matches.end(); ++it) {
+        layer = new ShaderLayer();
+        shader.layers[index] = layer;
+
+        //  Attempt to load the mipmap setting for this layer
+        value = ini[iniPath + "/" + *it + "/mipmap"];
+        if (!value.empty() && value == "0") {
+            layer->isMipmap = false;
         }
+
+        // Check for a texture on this layer
+        value = ini[iniPath + "/" + *it + "/map"];
+        if (!value.empty()) {
+            layer->texture = Texture::getOrMakeTexture((iniFilePath / value).string(), 
+                    layer->isMipmap);
+        }
+
+        ++index;
     }
 }
 
 Shader * Shader::getShader(string name) {
+    map<string, Shader * >::iterator it;
     vector<string> parts;
     // Strip the file type from the file name
     trim(name);
     split(parts, name, is_any_of("."));
 
     // Check if we have this shader
-    if (Shader::_shaders.count(parts[0]) == 1) {
-        return Shader::_shaders[parts[0]];
-    } else {
-        return NULL;
+    for (it = Shader::_shaders.begin(); it != Shader::_shaders.end(); ++it) {
+        if (ends_with(it->first, parts[0])) {
+            return Shader::_shaders[it->first];
+        }
     }
+
+    return NULL;
+}
+
+/******************************************************************************
+ * ShaderLayer stuff
+ *****************************************************************************/
+ShaderLayer::ShaderLayer() {
+    this->isMipmap = true;
 }

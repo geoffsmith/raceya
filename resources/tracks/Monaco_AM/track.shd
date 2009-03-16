@@ -1,0 +1,2408 @@
+shader_himmel03
+{
+  sky=1
+  fog=0
+  layer0
+  {
+    texenv=replace
+    map=himmel03.jpg
+    cull=back
+    depthfunc=always
+    depthwrite=0
+  }
+}
+shader_textured_material_bkca
+{
+  layer0
+  {
+    map=bkca.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bkcb
+{
+  layer0
+  {
+    map=bkcb.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bkcc
+{
+  layer0
+  {
+    map=bkcc.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bkcd
+{
+  layer0
+  {
+    map=bkcd.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bkce
+{
+  layer0
+  {
+    map=bkce.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bkcf
+{
+  layer0
+  {
+    map=bkcf.bmp
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bkcg
+{
+  layer0
+  {
+    map=bkcg.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bkch
+{
+  layer0
+  {
+    map=bkch.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bkcj
+{
+  layer0
+  {
+    map=bkcj.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bkck
+{
+  layer0
+  {
+    map=bkck.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bkfd
+{
+  layer0
+  {
+    map=bkfd.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bkfc
+{
+  layer0
+  {
+    map=bkfc.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bkfb
+{
+  layer0
+  {
+    map=bkfb.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bkfa
+{
+  layer0
+  {
+    map=bkfa.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100 
+  }
+}
+shader_textured_material_bkdb
+{
+  layer0
+  {
+    map=bkdb.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bkda
+{
+  layer0
+  {
+    map=bkda.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_stonet
+{
+  layer0
+  {
+    map=stone.bmp
+    ;mipmap=0
+   
+  }
+}
+shader_textured_material_bkd
+{
+  layer0
+  {
+    map=bkd.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_rmbld
+{
+  layer0
+  {
+    map=rmbld.bmp
+  }
+}
+shader_textured_material_logomblot
+{
+  layer0
+  {
+    map=logomblo.bmp
+  }
+}
+shader_textured_material_linea
+{
+  layer0
+  {
+    map=linea.bmp
+  }
+}
+shader_textured_material_logogault
+{
+  layer0
+  {
+    map=logogaul.bmp
+
+  }
+}
+shader_textured_material_logofostt
+{
+  layer0
+  {
+    map=logofost.bmp
+  }
+}
+shader_textured_material_logohlxat
+{
+  layer0
+  {
+    map=logohlxa.bmp
+  }
+}
+shader_textured_material_logomagt
+{
+  layer0
+  {
+    map=logomag.bmp
+  }
+}
+shader_textured_material_fncea
+{
+  layer0
+  {
+    map=fncea.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_logopastt
+{
+  layer0
+  {
+    map=logopast.bmp
+  }
+}
+shader_textured_material_metla
+{
+  layer0
+  {
+    map=metla.bmp
+  }
+}
+shader_textured_material_boxa
+{
+  layer0
+  {
+    map=boxa.bmp
+  }
+}
+shader_textured_material_logofstnt
+{
+  layer0
+  {
+    map=logofstn.bmp
+  }
+}
+shader_textured_material_logobrdgt
+{
+  layer0
+  {
+    map=logobrdg.bmp
+  }
+}
+shader_textured_material_logozepat
+{
+  layer0
+  {
+    map=logozepa.bmp
+  }
+}
+shader_textured_material_logogalat
+{
+  layer0
+  {
+    map=logogala.bmp
+  }
+}
+shader_textured_material_logomgpat
+{
+  layer0
+  {
+    map=logomgpa.bmp
+  }
+}
+shader_textured_material_logohsbct
+{
+  layer0
+  {
+    map=logohsbc.bmp
+  }
+}
+shader_textured_material_mcghm
+{
+  layer0
+  {
+    map=mcghm.bmp
+  }
+}
+shader_textured_material_roadb
+{
+  layer0
+  {
+    map=roadb.bmp
+    specular=0.05 0.05 0.05
+    shinines=0
+  }
+}
+shader_textured_material_bldgjb
+{
+  layer0
+  {
+    map=bldgjb.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgja
+{
+  layer0
+  {
+    map=bldgja.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgjc
+{
+  layer0
+  {
+    map=bldgjc.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_wndwa
+{
+  layer0
+  {
+    map=wndwa.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgtb
+{
+  layer0
+  {
+    map=bldgtb.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgzo
+{
+  layer0
+  {
+    map=bldgzo.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgzd
+{
+  layer0
+  {
+    map=bldgzd.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgvd
+{
+  layer0
+  {
+    map=bldgvd.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bldgvc
+{
+  layer0
+  {
+    map=bldgvc.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bldgvb
+{
+  layer0
+  {
+    map=bldgvb.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgvj
+{
+  layer0
+  {
+    map=bldgvj.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgmb
+{
+  layer0
+  {
+    map=bldgmb.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_cwalat
+{
+  layer0
+  {
+    map=cwala.bmp
+  }
+}
+shader_textured_material_bldgml
+{
+  layer0
+  {
+    map=bldgml.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgeat
+{
+  layer0
+  {
+    map=bldgea.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_grdrat
+{
+  layer0
+  {
+    map=grdra.bmp
+  }
+}
+shader_textured_material_bldghb
+{
+  layer0
+  {
+    map=bldghb.bmp
+  }
+}
+shader_textured_material_bldgve
+{
+  layer0
+  {
+    map=bldgve.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgvf
+{
+  layer0
+  {
+    map=bldgvf.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgvh
+{
+  layer0
+  {
+    map=bldgvh.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_fncef
+{
+  layer0
+  {
+    map=fncef.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_grasat
+{
+  layer0
+  {
+    map=grasa.bmp
+  }
+}
+shader_textured_material_cwalct
+{
+  layer0
+  {
+    map=cwalc.bmp
+  }
+}
+shader_textured_material_bldgvu
+{
+  layer0
+  {
+    map=bldgvu.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgfet
+{
+  layer0
+  {
+    map=bldgfe.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgmk
+{
+  layer0
+  {
+    map=bldgmk.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgab
+{
+  layer0
+  {
+    map=bldgab.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgvtt
+{
+  layer0
+  {
+    map=bldgvt.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgvot
+{
+  layer0
+  {
+    map=bldgvo.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgvl
+{
+  layer0
+  {
+    map=bldgvl.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgvm
+{
+  layer0
+  {
+    map=bldgvm.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgvp
+{
+  layer0
+  {
+    map=bldgvp.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgwc
+{
+  layer0
+  {
+    map=bldgwc.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgwb
+{
+  layer0
+  {
+    map=bldgwb.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgje
+{
+  layer0
+  {
+    map=bldgje.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgaa
+{
+  layer0
+  {
+    map=bldgaa.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldghm
+{
+  layer0
+  {
+    map=bldghm.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_cmwalat
+{
+  layer0
+  {
+    map=cmwala.bmp
+  }
+}
+shader_textured_material_mcghe
+{
+  layer0
+  {
+    map=mcghe.bmp
+  }
+}
+shader_textured_material_fncec
+{
+  layer0
+  {
+    map=fncec.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_bldgpd
+{
+  layer0
+  {
+    map=bldgpd.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgjd
+{
+  layer0
+  {
+    map=bldgjd.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bldgme
+{
+  layer0
+  {
+    map=bldgme.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgmd
+{
+  layer0
+  {
+    map=bldgmd.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgmc
+{
+  layer0
+  {
+    map=bldgmc.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgmf
+{
+  layer0
+  {
+    map=bldgmf.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgmg
+{
+  layer0
+  {
+    map=bldgmg.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgnb
+{
+  layer0
+  {
+    map=bldgnb.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldghq
+{
+  layer0
+  {
+    map=bldghq.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgkd
+{
+  layer0
+  {
+    map=bldgkd.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgkb
+{
+  layer0
+  {
+    map=bldgkb.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgkc
+{
+  layer0
+  {
+    map=bldgkc.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgka
+{
+  layer0
+  {
+    map=bldgka.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_logocanot
+{
+  layer0
+  {
+    map=logocano.bmp
+  }
+}
+shader_textured_material_trlra
+{
+  layer0
+  {
+    map=trlra.bmp
+  }
+}
+shader_textured_material_trlrb
+{
+  layer0
+  {
+    map=trlrb.bmp
+  }
+}
+shader_textured_material_bldgqb
+{
+  layer0
+  {
+    map=bldgqb.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgqh
+{
+  layer0
+  {
+    map=bldgqh.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgqj
+{
+  layer0
+  {
+    map=bldgqj.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgqm
+{
+  layer0
+  {
+    map=bldgqm.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgqf
+{
+  layer0
+  {
+    map=bldgqf.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgqe
+{
+  layer0
+  {
+    map=bldgqe.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgtf
+{
+  layer0
+  {
+    map=bldgtf.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgqd
+{
+  layer0
+  {
+    map=bldgqd.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgqg
+{
+  layer0
+  {
+    map=bldgqg.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_roadat
+{
+  layer0
+  {
+    map=roada.bmp
+    specular=0.05 0.05 0.05
+    shinines=0
+  }
+}
+shader_textured_material_bldgqa
+{
+  layer0
+  {
+    map=bldgqa.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_logosema
+{
+  layer0
+  {
+    map=logosema.bmp
+  }
+}
+shader_textured_material_bldgpat
+{
+  layer0
+  {
+    map=bldgpa.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_brdge
+{
+  layer0
+  {
+    map=brdge.bmp
+  }
+}
+shader_textured_material_bldguh
+{
+  layer0
+  {
+    map=bldguh.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgug
+{
+  layer0
+  {
+    map=bldgug.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgud
+{
+  layer0
+  {
+    map=bldgud.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgua
+{
+  layer0
+  {
+    map=bldgua.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldguf
+{
+  layer0
+  {
+    map=bldguf.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgue
+{
+  layer0
+  {
+    map=bldgue.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgub
+{
+  layer0
+  {
+    map=bldgub.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldguc
+{
+  layer0
+  {
+    map=bldguc.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldghj
+{
+  layer0
+  {
+    map=bldguj.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldguk
+{
+  layer0
+  {
+    map=bldguk.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldghe
+{
+  layer0
+  {
+    map=bldghe.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldguo
+{
+  layer0
+  {
+    map=bldguo.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgupt
+{
+  layer0
+  {
+    map=bldgup.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgum
+{
+  layer0
+  {
+    map=bldgum.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgun
+{
+  layer0
+  {
+    map=bldgun.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgunt
+{
+  layer0
+  {
+    map=bldgunt.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bldgb
+{
+  layer0
+  {
+    map=bldgb.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgbb
+{
+  layer0
+  {
+    map=bldgbb.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgba
+{
+  layer0
+  {
+    map=bldgba.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgda
+{
+  layer0
+  {
+    map=bldgda.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgd
+{
+  layer0
+  {
+    map=bldgd.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgdc
+{
+  layer0
+  {
+    map=bldgdc.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_awngucb
+{
+  layer0
+  {
+    map=awngucb.bmp
+  }
+}
+shader_textured_material_bldgag
+{
+  layer0
+  {
+    map=bldgag.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_mcghb
+{
+  layer0
+  {
+    map=mcghb.bmp
+  }
+}
+shader_textured_material_signc
+{
+  layer0
+  {
+    map=signc.bmp
+  }
+}
+shader_textured_material_signb
+{
+  layer0
+  {
+    map=signb.bmp
+  }
+}
+shader_textured_material_signa
+{
+  layer0
+  {
+    map=signa.bmp
+  }
+}
+shader_textured_material_tyrestrpt
+{
+  layer0
+  {
+    map=tyrestrp.bmp
+  }
+}
+shader_textured_material_postb
+{
+  layer0
+  {
+    map=postb.bmp
+  }
+}
+shader_textured_material_bldgygt
+{
+  layer0
+  {
+    map=bldgyg.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgyj
+{
+  layer0
+  {
+    map=bldgyj.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgzh
+{
+  layer0
+  {
+    map=bldgzh.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgzk
+{
+  layer0
+  {
+    map=bldgzk.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgyk
+{
+  layer0
+  {
+    map=bldgyk.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgzs
+{
+  layer0
+  {
+    map=bldgzs.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bldgzy
+{
+  layer0
+  {
+    map=bldgzy.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgzv
+{
+  layer0
+  {
+    map=bldgzv.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgva
+{
+  layer0
+  {
+    map=bldgva.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_posta
+{
+  layer0
+  {
+    map=posta.bmp
+  }
+}
+shader_textured_material_bldgtr
+{
+  layer0
+  {
+    map=bldgtr.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgvqt
+{
+  layer0
+  {
+    map=bldgvq.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_signn
+{
+  layer0
+  {
+    map=signn.bmp
+  }
+}
+shader_textured_material_lineb
+{
+  layer0
+  {
+    map=lineb.bmp
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_bldghv
+{
+  layer0
+  {
+    map=bldghv.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_umba
+{
+  layer0
+  {
+    map=umba.bmp
+  }
+}
+shader_textured_material_bldghu
+{
+  layer0
+  {
+    map=bldghu.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_boat1b
+{
+  layer0
+  {
+    map=boat1b.bmp
+  }
+}
+shader_textured_material_boat1c
+{
+  layer0
+  {
+    map=boat1c.bmp
+  }
+}
+shader_textured_material_boat1a
+{
+  layer0
+  {
+    map=boat1a.bmp
+  }
+}
+shader_textured_material_wirewood
+{
+  layer0
+  {
+    map=wirewood.bmp
+  }
+}
+shader_textured_material_boat2b
+{
+  layer0
+  {
+    map=boat2b.bmp
+  }
+}
+shader_textured_material_boat2c
+{
+  layer0
+  {
+    map=boat2c.bmp
+  }
+}
+shader_textured_material_boat2a
+{
+  layer0
+  {
+    map=boat2a.bmp
+  }
+}
+shader_textured_material_boat3a
+{
+  layer0
+  {
+    map=boat3a.bmp
+  }
+}
+shader_textured_material_boat3e
+{
+  layer0
+  {
+    map=boat3e.bmp
+  }
+}
+shader_textured_material_boat3d
+{
+  layer0
+  {
+    map=boat3d.bmp
+  }
+}
+shader_textured_material_boat3c
+{
+  layer0
+  {
+    map=boat3c.bmp
+  }
+}
+shader_textured_material_boat3b
+{
+  layer0
+  {
+    map=boat3b.bmp
+  }
+}
+shader_textured_material_boat4a
+{
+  layer0
+  {
+    map=boat4a.bmp
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_boatsa
+{
+  layer0
+  {
+    map=boatsa.bmp
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_boatsb
+{
+  layer0
+  {
+    map=boatsb.bmp
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_brdgf
+{
+  layer0
+  {
+    map=brdgf.bmp
+  }
+}
+shader_textured_material_treee
+{
+  layer0
+  {
+    map=treee.bmp
+    ;texenv=modulate
+  alphafunc=gequal 100
+}
+}
+shader_textured_material_boxb
+{
+  layer0
+  {
+    map=boxb.bmp
+  }
+}
+shader_textured_material_cama
+{
+  layer0
+  {
+    map=cama.bmp
+  }
+}
+shader_textured_material_signe
+{
+  layer0
+  {
+    map=signe.bmp
+  }
+}
+shader_textured_material_clouda
+{
+  layer0
+  {
+    map=clouda.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_cranb
+{
+  layer0
+  {
+    map=cranb.bmp
+  }
+}
+shader_textured_material_cranc
+{
+  layer0
+  {
+    map=cranc.bmp
+  }
+}
+shader_textured_material_rmblat
+{
+  layer0
+  {
+    map=rmbla.bmp
+  }
+}
+shader_textured_material_crana
+{
+  layer0
+  {
+    map=crana.bmp
+  }
+}
+shader_textured_material_crand
+{
+  layer0
+  {
+    map=crand.bmp
+  }
+}
+shader_textured_material_cranh
+{
+  layer0
+  {
+    map=cranh.bmp
+  }
+}
+shader_textured_material_cranj
+{
+  layer0
+  {
+    map=cranj.bmp
+  }
+}
+shader_textured_material_cmntb
+{
+  layer0
+  {
+    map=cmntb.bmp
+  }
+}
+shader_textured_material_fnceb
+{
+  layer0
+  {
+    map=fnceb.bmp
+    alphafunc=gequal 150
+  }
+}
+shader_textured_material_gstnda
+{
+  layer0
+  {
+    map=gstnda.bmp
+;texenv= modulate
+  }
+}
+shader_textured_material_gstasla
+{
+  layer0
+  {
+    map=gstasla.bmp
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_grdrb
+{
+  layer0
+  {
+    map=grdrb.bmp
+  }
+}
+shader_textured_material_tentc
+{
+  layer0
+  {
+    map=tentc.bmp
+  }
+}
+shader_textured_material_lined
+{
+  layer0
+  {
+    map=lined.bmp
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_fncek
+{
+  layer0
+  {
+    map=fncek.bmp
+   alphafunc=gequal 100 
+  }
+}
+shader_textured_material_litglass
+{
+  layer0
+  {
+    map=litglass.bmp
+    ;texenv=modulate
+    emission=2 2 2
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_litswirl
+{
+  layer0
+  {
+    map=litswirl.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_litec
+{
+  layer0
+  {
+    map=litec.bmp
+    ;texenv=modulate
+    emission=2 2 2
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_liteb
+{
+  layer0
+  {
+    map=liteb.bmp
+    ;texenv=modulate
+    emission=2 2 2
+  }
+}
+shader_textured_material_signm
+{
+  layer0
+  {
+    map=signm.bmp
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_signl
+{
+  layer0
+  {
+    map=signl.bmp
+  }
+}
+shader_textured_material_ppla
+{
+  layer0
+  {
+    map=ppla.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_pplb
+{
+  layer0
+  {
+    map=pplb.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_stglow
+{
+  layer0
+  {
+    map=stglow.bmp
+    ;texenv=modulate
+    
+  }
+}
+shader_textured_stglow00
+{
+  layer0
+  {
+    map=stglow00.bmp
+    ;texenv=modulate
+    
+  }
+}
+shader_textured_stglow01
+{
+  layer0
+  {
+    map=stglow01.bmp
+    ;texenv=modulate
+    
+  }
+}
+shader_textured_material_pplc
+{
+  layer0
+  {
+    map=pplc.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_roadft
+{
+  layer0
+  {
+    map=roadf.bmp
+    specular=0.05 0.05 0.05
+    shinines=0
+  }
+}
+shader_textured_material_sata
+{
+  layer0
+  {
+    map=sata.bmp
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_cmntat
+{
+  layer0
+  {
+    map=cmnta.bmp
+  }
+}
+shader_textured_material_concat
+{
+  layer0
+  {
+    map=conca.bmp
+  }
+}
+shader_textured_material_tileat
+{
+  layer0
+  {
+    map=tilea.bmp
+  }
+}
+shader_textured_material_litea
+{
+  layer0
+  {
+    map=litea.bmp
+    emission=2 2 2
+  }
+}
+shader_textured_material_garageat
+{
+  layer0
+  {
+    map=garagea.bmp
+  }
+}
+shader_textured_material_bldgga
+{
+  layer0
+  {
+    map=bldgga.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgfa
+{
+  layer0
+  {
+    map=bldgfa.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgfc
+{
+  layer0
+  {
+    map=bldgfc.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_brdgat
+{
+  layer0
+  {
+    map=brdga.bmp
+  }
+}
+shader_textured_material_bldgce
+{
+  layer0
+  {
+    map=bldgce.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_stonh
+{
+  layer0
+  {
+    map=stonh.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_stong
+{
+  layer0
+  {
+    map=stong.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldghs
+{
+  layer0
+  {
+    map=bldghs.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgst
+{
+  layer0
+  {
+    map=bldgst.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgta
+{
+  layer0
+  {
+    map=bldgta.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgtj
+{
+  layer0
+  {
+    map=bldgtj.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgtg
+{
+  layer0
+  {
+    map=bldgtg.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgtd
+{
+  layer0
+  {
+    map=bldgtd.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgtq
+{
+  layer0
+  {
+    map=bldgtq.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgto
+{
+  layer0
+  {
+    map=bldgto.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgyet
+{
+  layer0
+  {
+    map=bldgye.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgydt
+{
+  layer0
+  {
+    map=bldgyd.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgyht
+{
+  layer0
+  {
+    map=bldgyh.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgya
+{
+  layer0
+  {
+    map=bldgya.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgyl
+{
+  layer0
+  {
+    map=bldgyl.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgha
+{
+  layer0
+  {
+    map=bldgha.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgzb
+{
+  layer0
+  {
+    map=bldgzb.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bldgza
+{
+  layer0
+  {
+    map=bldgza.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_rmblbt
+{
+  layer0
+  {
+    map=rmblb.bmp
+  }
+}
+shader_textured_material_water
+{
+layer0
+  {
+map=water.bmp
+  }
+;  layer1
+;{
+;map=$tracksunmap
+;blendfunc=add   
+;texgen_s=reflection_map
+;texgen_t=reflection_map
+;texgen_r=reflection_map
+;}
+}
+shader_textured_material_bldgzj
+{
+  layer0
+  {
+    map=bldgzj.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_staira
+{
+  layer0
+  {
+    map=staira.bmp
+  }
+}
+shader_textured_material_bldgad
+{
+  layer0
+  {
+    map=bldgad.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgzw
+{
+  layer0
+  {
+    map=bldgzw.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgzu
+{
+  layer0
+  {
+    map=bldgzu.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_trewala
+{
+  layer0
+  {
+    map=trewala.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_trewalb
+{
+  layer0
+  {
+    map=trewalb.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_bldgzq
+{
+  layer0
+  {
+    map=bldgzq.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgzr
+{
+  layer0
+  {
+    map=bldgzr.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_trewalc
+{
+  layer0
+  {
+    map=trewalc.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_bldgac
+{
+  layer0
+  {
+    map=bldgac.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgah
+{
+  layer0
+  {
+    map=bldgah.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgdd
+{
+  layer0
+  {
+    map=bldgdd.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgsa
+{
+  layer0
+  {
+    map=bldgsa.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgsb
+{
+  layer0
+  {
+    map=bldgsb.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_tilebt
+{
+  layer0
+  {
+    map=tileb.bmp
+  }
+}
+shader_textured_material_tilec
+{
+  layer0
+  {
+    map=tilec.bmp
+  }
+}
+shader_textured_material_bldgsp
+{
+  layer0
+  {
+    map=bldgsp.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgsr
+{
+  layer0
+  {
+    map=bldgsr.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgso
+{
+  layer0
+  {
+    map=bldgso.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgsk
+{
+  layer0
+  {
+    map=bldgsk.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgqw
+{
+  layer0
+  {
+    map=bldgqw.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgqs
+{
+  layer0
+  {
+    map=bldgqs.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgqu
+{
+  layer0
+  {
+    map=bldgqu.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgqv
+{
+  layer0
+  {
+    map=bldgqv.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgse
+{
+  layer0
+  {
+    map=bldgse.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgsf
+{
+  layer0
+  {
+    map=bldgsf.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgzc
+{
+  layer0
+  {
+    map=bldgzc.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgzg
+{
+  layer0
+  {
+    map=bldgzg.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgzf
+{
+  layer0
+  {
+    map=bldgzf.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldgze
+{
+  layer0
+  {
+    map=bldgze.bmp
+    ;texenv=modulate
+     alphafunc=gequal 100
+  }
+}
+shader_textured_material_bldghg
+{
+  layer0
+  {
+    map=bldghg.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_bldghf
+{
+  layer0
+  {
+    map=bldghf.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_roadkt
+{
+  layer0
+  {
+    map=roadk.bmp
+  }
+}
+shader_textured_material_logomncat
+{
+  layer0
+  {
+    map=logomnca.bmp
+  }
+}
+shader_textured_material_stona
+{
+  layer0
+  {
+    map=stona.bmp
+  }
+}
+shader_textured_material_bldgma
+{
+  layer0
+  {
+    map=bldgma.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_logomalb
+{
+  layer0
+  {
+    map=logomalb.bmp
+  }
+}
+shader_textured_material_logomala
+{
+  layer0
+  {
+    map=logomala.bmp
+  }
+}
+shader_textured_material_bldgmh
+{
+  layer0
+  {
+    map=bldgmh.bmp
+  }
+}
+shader_textured_material_mcgha
+{
+  layer0
+  {
+    map=mcgha.bmp
+  }
+}
+shader_textured_material_stonb
+{
+  layer0
+  {
+    map=stonb.bmp
+  }
+}
+shader_textured_material_brdgbt
+{
+  layer0
+  {
+    map=brdgb.bmp
+  }
+}
+shader_textured_material_bldgpe
+{
+  layer0
+  {
+    map=bldgpe.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_waterb
+{
+  layer0
+  {
+    map=waterb.bmp
+  }
+}
+shader_textured_material_signh
+{
+  layer0
+  {
+    map=signh.bmp
+  }
+}
+shader_textured_material_signd
+{
+  layer0
+  {
+    map=signd.bmp
+  }
+}
+shader_textured_material_signj
+{
+  layer0
+  {
+    map=signj.bmp
+  }
+}
+shader_textured_material_signk
+{
+  layer0
+  {
+    map=signk.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_linef
+{
+  layer0
+  {
+    map=linef.bmp
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_linec
+{
+  layer0
+  {
+    map=linec.bmp
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_roadj
+{
+  layer0
+  {
+    map=roadj.bmp
+    specular=0.05 0.05 0.05
+    shinines=0
+  }
+layer1
+{
+map=$tracksunmap
+blendfunc=add
+}
+}
+
+shader_textured_material_rmblc
+{
+  layer0
+  {
+    map=rmblc.bmp
+  }
+}
+shader_textured_material_fncem
+{
+  layer0
+  {
+    map=fncem.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_treeh
+{
+  layer0
+  {
+    map=treeh.bmp
+    ;texenv=modulate
+   alphafunc=gequal 100 
+  }
+}
+shader_textured_material_treeg
+{
+  layer0
+  {
+    map=treeg.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_treta
+{
+  layer0
+  {
+    map=treta.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_treea
+{
+  layer0
+  {
+    map=treea.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_tretb
+{
+  layer0
+  {
+    map=tretb.bmp
+    ;texenv=modulate
+  }
+}
+shader_textured_material_treed
+{
+  layer0
+  {
+    map=treed.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_treeb
+{
+  layer0
+  {
+    map=treeb.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_treec
+{
+  layer0
+  {
+    map=treec.bmp
+    ;texenv=modulate
+    alphafunc=gequal 100
+  }
+}
+shader_textured_material_treej
+{
+  layer0
+  {
+    map=treej.bmp
+    ;texenv=modulate
+    
+  }
+}
+shader_textured_material_signg
+{
+  layer0
+  {
+    map=signg.bmp
+  }
+}
+shader_textured_material_signf
+{
+  layer0
+  {
+    map=signf.bmp
+  }
+}
+shader_textured_material_tyresa
+{
+  layer0
+  {
+    map=tyresa.bmp
+  }
+}
+shader_textured_material_tyresat
+{
+  layer0
+  {
+    map=tyresat.bmp
+  }
+}
+shader_textured_material_shadabrt
+{
+   layer0
+   {
+      map=sh.tga
+      blendfunc=blend
+      depthwrite=0
+
+   }
+}

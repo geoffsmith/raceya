@@ -30,6 +30,9 @@ Track::Track(string trackPath) {
     }
 
     this->_loadGeometryIni();
+
+    // Load and parse special.ini
+    this->_loadSpecialIni();
 }
 
 Track::~Track() {
@@ -38,6 +41,20 @@ Track::~Track() {
         delete this->_dofs[i];
     }
     delete[] this->_dofs;
+}
+
+void Track::_loadSpecialIni() {
+    string value;
+    path currentDir("./");
+    Ini ini((currentDir / this->_path / "special.ini").string());
+
+    // Get the starting position
+    value = ini["/grid/pos0/from/x"];
+    this->startPosition[0] = atof(value.c_str());
+    value = ini["/grid/pos0/from/y"];
+    this->startPosition[1] = atof(value.c_str());
+    value = ini["/grid/pos0/from/z"];
+    this->startPosition[2] = atof(value.c_str());
 }
 
 void Track::_loadGeometryIni() { 

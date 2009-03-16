@@ -132,6 +132,12 @@ void Dof::_parseMats(ifstream * file) {
                 mat->name = fileString;
                 // Ignore the material class
                 parseString(file, fileString);
+
+                // Now that we have the name, we can check a shader
+                mat->shader = Shader::getShader(mat->name);
+                if (mat->shader != NULL)
+                    cout << "For " << mat->name << ", shader: " << mat->shader << ", issky: " << mat->shader->isSky << endl;
+
             } else if (strcmp(token, "MCOL") == 0) {
                 // Contains the various material colors
                 parseVector<float>(file, mat->ambient, 4);
@@ -148,15 +154,14 @@ void Dof::_parseMats(ifstream * file) {
                 for (int j = 0; j < mat->nTextures; ++j) {
                     fileStringLength = parseString(file, fileString);
 
-                    // Check if there is a shader for this file
                     shader = Shader::getShader(fileString);
                     if (shader != NULL) {
-                        mat->textures[j] = shader->texture;
+                        mat->textures[j] = shader->layers[0]->texture;
                         mat->shaders[j] = shader;
                     } else {
                         textureName = (texturePath / fileString).string();
                         mat->textures[j] = Texture::getOrMakeTexture(textureName);
-                        mat->shaders[j] = 0;
+                        mat->shaders[j] = NULL;
                     }
 
                 }
@@ -380,6 +385,9 @@ void Dof::_initialiseMaterials() {
 
     glDisable(GL_ALPHA_TEST);
     this->_renderState.alphaTest = false;
+
+    glEnable(GL_DEPTH_TEST);
+    this->_renderState.depthTest = true;
 }
 
 void Dof::loadMaterial(Mat * mat) {
@@ -389,6 +397,21 @@ void Dof::loadMaterial(Mat * mat) {
         this->_renderState.alphaTest = false;
 
     }
+
+    // We turn off depth test for sky rendering
+    /*
+       if (mat->nTextures && mat->shaders[0] != NULL && mat->shaders[0]->isSky) {
+        if (this->_renderState.depthTest) {
+            glDisable(GL_DEPTH_TEST);
+            this->_renderState.depthTest = false;
+        }
+    } else {
+        if (!this->_renderState.depthTest) {
+            glEnable(GL_DEPTH_TEST);
+            this->_renderState.depthTest = true;
+        }
+    }
+    */
 
     // Check if this material has a shader
     if (mat->blendMode > 0 || 
@@ -404,7 +427,17 @@ void Dof::loadMaterial(Mat * mat) {
         }
     }
 
-    if (mat->nTextures > 0 && mat->textures[0]->texture) {
+    if (mat->shader != NULL && mat->shader->layers[0]->texture != NULL) { 
+        if (!this->_renderState.texture2d) {
+            glEnable(GL_TEXTURE_2D);
+            this->_renderState.texture2d = true;
+        }
+        Texture * texture = mat->shader->layers[0]->texture;
+        if (this->_renderState.texture != texture->texture) {
+            glBindTexture(GL_TEXTURE_2D, texture->texture);
+            this->_renderState.texture = texture->texture;
+        }
+    } else if (mat->nTextures > 0 && mat->textures[0]->texture) {
         if (!this->_renderState.texture2d) {
             glEnable(GL_TEXTURE_2D);
             this->_renderState.texture2d = true;
@@ -460,12 +493,42 @@ int Dof::render(bool overrideFrustrumTest) {
     Geob * geob;
     Mat * mat;
     Mat * previousMat = NULL;
+    Shader * shader;
 
     //this->_calculateBoundingBox();
 
     this->_initialiseMaterials();
 
-    // First we render the non-transparent geobs
+    // First we render the sky
+    for (int i = 0; i < this->_nGeobs; ++i) {
+        geob = &(this->_geobs[i]);
+        mat = &(this->_mats[geob->material]);
+        shader = mat->shader;
+
+        if (shader != NULL && shader->isSky) {
+            // We need to set up the project to be able to manage sky
+            glMatrixMode(GL_PROJECTION);
+            glPushMatrix();
+            glLoadIdentity();
+            int w = 800;
+            int h = 600;
+            float height = 1.0;
+            float width = (float)w / (float)h;
+            glFrustum(-1.0 * width, width, -1.0 * height, height, 1.5, 10000000.0);
+            glMatrixMode(GL_MODELVIEW);
+            glPushMatrix();
+
+            this->_renderGeob(geob, previousMat);
+
+            glPopMatrix();
+            glMatrixMode(GL_PROJECTION);
+            glPopMatrix();
+            glMatrixMode(GL_MODELVIEW);
+        }
+    }
+
+
+    // second we render the non-transparent geobs
     for (int i = 0; i < this->_nGeobs; ++i) {
         geob = &(this->_geobs[i]);
         mat = &(this->_mats[geob->material]);
@@ -636,6 +699,12 @@ void Geob::generateVAO() {
     glGenBuffers(1, &(this->indexVBO));
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->indexVBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->nIndices * sizeof(unsigned short), this->indices, GL_STATIC_DRAW);
+}
+
+Shader * Geob::getShader() {
+    Mat * mat = &(dof->getMats()[this->material]);
+    if (mat->nTextures > 0 && mat->shaders[0] != NULL) return mat->shaders[0];
+    else return NULL;
 }
 
 Mat::Mat() {

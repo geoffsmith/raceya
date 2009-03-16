@@ -3,6 +3,7 @@
  *
  * Possible optimisations:
  *  * Cache transparent and non-transparent dofs
+ *  * Use ini parser for configuration files
  */
 #pragma once
 
@@ -24,6 +25,9 @@ class Track {
         Dof ** getDofs() { return this->_dofs; }
         unsigned int getNDofs() { return this->_nDofs; }
 
+        // Start position
+        float startPosition[3];
+
     private:
         string _path;
         Dof ** _dofs;
@@ -33,4 +37,8 @@ class Track {
         // NOTE: this is ultra simplified at the moment and will almost certainly need 
         // expanding. It just looks for lines with a dof file and loads it.
         void _loadGeometryIni();
+
+        // Load the special ini file which includes: grid positions, camera positions, 
+        // high level track variables (sun position and colour)
+        void Track::_loadSpecialIni();
 };

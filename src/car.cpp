@@ -452,6 +452,9 @@ void Car::setBody(Dof * dof) {
 
 void Car::setTrack(Track * track) {
     this->_track = track;
+
+    // Set the start position to the position on the track
+    vertexCopy(this->_track->startPosition, this->_position);
 }
 
 void Car::setWheel(Wheel * wheel, int index) {

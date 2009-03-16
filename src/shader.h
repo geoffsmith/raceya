@@ -8,26 +8,41 @@
  *  * getShader assumes the file casing is right
  *  * Shader assumes a gequal alpha function
  *  * Only have clamp to edge for wrapT
+ *  * Enable / disable writing to the depth buffer
  */
 #pragma once
 
+#include "texture.h"
+#include "ini.h"
+
 #include <string>
 #include <map>
-#include "texture.h"
 
 using namespace std;
+
+class ShaderLayer {
+    public:
+        ShaderLayer();
+        Texture * texture;
+        string textureMapPath;
+        bool isMipmap;
+};
 
 class Shader {
     public:
         Shader(); 
         string name;
 
+        // The shader layers
+        ShaderLayer ** layers;
+        int nLayers;
+
+    Texture * texture;
+    string textureMapPath;
+
         // Texture stuff
         unsigned int texEnv;
-        bool isMipmap;
-        //unsigned int textureMap;
-        Texture * texture;
-        string textureMapPath;
+
         unsigned int wrapT;
 
         // Alpha stuff
@@ -36,10 +51,14 @@ class Shader {
         unsigned int alphaFunc;
         bool alphaFuncSet;
 
+        // If this is a sky shader
+        bool isSky;
+
         // Static method and members so we have access to shaders from 
         // anywhere
         static Shader * getShader(string name);
         static void parseShaderFile(string file);
+        static void _parseLayers(string path, Ini & ini, Shader & shader);
 
 
 

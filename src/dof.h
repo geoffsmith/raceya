@@ -33,6 +33,7 @@ struct OpenGLState {
     bool alphaTest;
     bool blend;
     bool texture2d;
+    bool depthTest;
     float ambient[4];
     float diffuse[4];
     float specular[4];
@@ -70,6 +71,9 @@ class Geob {
 
         // Generate the vao
         void Geob::generateVAO();
+
+        // Get the shader for this geob, NULL if there isn't one
+        Shader * getShader();
 };
 
 class Mat {
@@ -99,6 +103,7 @@ class Mat {
         Texture ** textures;
         // Pointer to some shaders, this array will be the same size as textures
         // but may have NULL entries
+        Shader * shader;
         Shader ** shaders;
 
         Geob * getGeob(int index);
