@@ -51,7 +51,7 @@ Dof::Dof(string filePath, int flags, bool perGeobDisplayList) {
     // .. first up should be the MATS
     file.read(buffer, 4);
     if (strcmp(buffer, "MATS") != 0) {
-        cout << "Warning: MATS was expected but not found" << endl;
+        cout << "Warning: MATS was expected but not found in " << this->_filePath << endl;
     }
 
     this->_parseMats(&file);

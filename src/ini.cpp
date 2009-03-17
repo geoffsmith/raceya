@@ -70,6 +70,8 @@ void Ini::queryTokens(string query, list<string> & results) {
  *****************************************************************************/
 void Ini::_parseFile() {
     vector<string> parts;
+    list<string> tokens;
+    string token;
     list<string> currentPath;
     string path;
     string line;
@@ -97,27 +99,41 @@ void Ini::_parseFile() {
         // Skip the line if its empty or is a comment
         if (line.size() == 0 || line[0] == ';') continue;
 
-        // Check if we need to pop a path token, NOTE due to bugs in inis we ignore
-        // too many closing brackets
-        if (line[0] == '}' && currentPath.size() > 0) {
-            currentPath.pop_back();
-            continue;
-        }
-
-        // Check if the next value is a token
-        if (line[0] == '{') {
-            currentPath.push_back(previous);
-            continue;
-        }
-
-        // Check if we have a key/value pair
+        // If the line has an equal sign, then it is a key / value line. At the moment
+        // we can't handle { or } here
         split(parts, line, is_any_of("="));
-        previous = parts[0];
         if (parts.size() >= 2) {
             // build the current path
             path = Ini::makeIniPath(currentPath) + parts[0];
+            cout << "path: " << path << " - " << parts[1] << endl;
             this->data[path] = parts[1];
+            previous = parts[0];
             continue;
+        } 
+
+        // Now we space-separated tokenise the line to check for path tokens and { }
+        split(tokens, line, is_any_of(" "));
+        while (tokens.size() > 0) {
+            token = tokens.front();
+            tokens.pop_front();
+
+            // Ignore empty tokens
+            if (token.size() == 0) continue;
+
+            // If we hit a comment, we stop
+            if (token[0] == ';') break;
+
+            // Check if the token is a closing bracket. NOTE due to bugs in inis 
+            // we ignore too many closing brackets
+            if (token == "}") {
+                if (currentPath.size() > 0) {
+                    currentPath.pop_back();
+                }
+            } else if (token == "{") {
+                currentPath.push_back(previous);
+            } else {
+                previous = token;
+            }
         }
     }
 }

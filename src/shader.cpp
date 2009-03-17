@@ -135,9 +135,13 @@ Shader * Shader::getShader(string name) {
     to_lower(name);
     split(parts, name, is_any_of("."));
 
-    // Check if we have this shader
+    // Check if we have this shader, based on the material name
     for (it = Shader::_shaders.begin(); it != Shader::_shaders.end(); ++it) {
         // Strip the "shader_ part out"
+        if (it->first.size() < 7) {
+            //cout << "out of range shader: " << it->first << endl;
+            continue;
+        }
         tmp = it->first.substr(7);
         if (tmp == parts[0]) {
             return Shader::_shaders[it->first];

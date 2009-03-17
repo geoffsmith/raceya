@@ -27,13 +27,17 @@ Car * parseCar(string carPathString) {
     vector<string> parts;
     float center[3];
 
+    // First we try and load the car shader
+    //Shader::parseShaderFile((carPath / "car.shd").string());
+
     // Load the car body
-    Logger::debug << "Loading the car..." << endl;
+    cout << "Loading the car...";
     if (carIniFile.hasKey("/body/model/file")) {
+        cout << (carPath / carIniFile["/body/model/file"]).string() << endl;
         dof = new Dof((carPath / carIniFile["/body/model/file"]).string(), 0, false);
         car->setBody(dof);
     }
-    Logger::debug << "done loading the car" << endl;
+    cout << "done loading the car" << endl;
     
     // Load the car center of gravity
     if (carIniFile.hasKey("/aero/body/center")) {

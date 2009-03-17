@@ -34,8 +34,8 @@ void OpenGLState::reset() {
     // NOTE: It looks like it's quicker just to enable this from the start and not
     // keep enabling / disabling all the time. However, alpha testing seems to be
     // really slow
-    //glDisable(GL_ALPHA_TEST);
-    glEnable(GL_ALPHA_TEST);
+    glDisable(GL_ALPHA_TEST);
+    //glEnable(GL_ALPHA_TEST);
     this->alphaFunction = 1;
 }
 
@@ -70,11 +70,9 @@ void OpenGLState::setAlpha(int function, int value) {
     if (function != this->alphaFunction) {
         // Decide if we need to enable / disable alphafunc
         if (this->alphaFunction == 1) {
-            //glEnable(GL_ALPHA_TEST);
-            cout << "Enaling" << endl;
+            glEnable(GL_ALPHA_TEST);
         } else if (function == 1) {
-            //glDisable(GL_ALPHA_TEST);
-            cout << "Disabling" << endl;
+            glDisable(GL_ALPHA_TEST);
         }
 
         // Change the actual function

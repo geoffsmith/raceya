@@ -48,8 +48,8 @@ class Shader {
         ShaderLayer ** layers;
         int nLayers;
 
-    Texture * texture;
-    string textureMapPath;
+        Texture * texture;
+        string textureMapPath;
 
         // Texture stuff
         unsigned int texEnv;
@@ -70,7 +70,6 @@ class Shader {
         static Shader * getShader(string name);
         static void parseShaderFile(string file);
         static void _parseLayers(string path, Ini & ini, Shader & shader);
-
 
 
     private:

@@ -89,8 +89,8 @@ void setupLighting() {
 
 void initObjects() {
     // Load a track
-    track = new Track("resources/tracks/Monaco_AM/");
-    //track = new Track("resources/tracks/broussailles/");
+    //track = new Track("resources/tracks/Monaco_AM/");
+    track = new Track("resources/tracks/broussailles/");
 
     // Load up a car obj
     //car = new Car(track);
