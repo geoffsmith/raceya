@@ -37,6 +37,16 @@ class ShaderLayer {
         // 4: equal [value], 5: gequal [value], 6: greater [value], 7: notequal [value]
         int alphaFunction;
         int alphaValue;
+
+        // Texture environment - this is how light color effects the texture
+        // 0: modulate (default), 1: replace, 2: add
+        int texEnv;
+
+        // Texture coordinate generation
+        // 0: object_linear, 1: reflection_map
+        int texGenS;
+        int texGenT;
+        int texGenR;
 };
 
 class Shader {
@@ -70,6 +80,7 @@ class Shader {
         static Shader * getShader(string name);
         static void parseShaderFile(string file);
         static void _parseLayers(string path, Ini & ini, Shader & shader);
+        static void _checkForTexGen(Ini & ini, string type, int & result);
 
 
     private:

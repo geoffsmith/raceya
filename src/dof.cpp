@@ -373,6 +373,18 @@ void Dof::loadMaterial(Mat * mat) {
         // Set up the alpha function
         OpenGLState::global.setAlpha(mat->shader->layers[0]->alphaFunction, 
                 mat->shader->layers[0]->alphaValue);
+
+        // Set up the texture layer
+        if (!OpenGLState::global.texture2d) {
+            glEnable(GL_TEXTURE_2D);
+            OpenGLState::global.texture2d = true;
+        }
+        list<ShaderLayer *> layers;
+        //for (int i = 0; i < mat->shader->nLayers; ++i) {
+        for (int i = 0; i < min(mat->shader->nLayers, 2); ++i) {
+            layers.push_front(mat->shader->layers[i]);
+        }
+        OpenGLState::global.setTextures(&layers);
     }
 
 
@@ -391,15 +403,6 @@ void Dof::loadMaterial(Mat * mat) {
     }
 
     if (mat->shader != NULL && mat->shader->layers[0]->texture != NULL) { 
-        if (!OpenGLState::global.texture2d) {
-            glEnable(GL_TEXTURE_2D);
-            OpenGLState::global.texture2d = true;
-        }
-        Texture * texture = mat->shader->layers[mat->shader->nLayers - 1]->texture;
-        if (OpenGLState::global.texture != texture->texture) {
-            glBindTexture(GL_TEXTURE_2D, texture->texture);
-            OpenGLState::global.texture = texture->texture;
-        }
     } else if (mat->nTextures > 0 && mat->textures[0]->texture) {
         if (!OpenGLState::global.texture2d) {
             glEnable(GL_TEXTURE_2D);
@@ -407,18 +410,7 @@ void Dof::loadMaterial(Mat * mat) {
         }
         if (OpenGLState::global.texture != mat->textures[0]->texture) {
             Texture * texture = mat->textures[0];
-            glBindTexture(GL_TEXTURE_2D, texture->texture);
-            OpenGLState::global.texture = texture->texture;
-        }
-        
-        // See if there is an alpha function to be set
-        if (mat->shader != NULL) {
-            if (mat->shader->alphaFuncSet) {
-                glEnable(GL_ALPHA_TEST);
-                //glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
-                OpenGLState::global.alphaTest = true;
-                glAlphaFunc(GL_EQUAL, mat->shader->alphaFunc);
-            }
+            OpenGLState::global.setTexture(texture->texture);
         }
     } else {
         if (OpenGLState::global.texture2d) {

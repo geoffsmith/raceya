@@ -46,6 +46,7 @@ void Shader::parseShaderFile(string shaderPath) {
 
         // Create a new shader
         shader = new Shader();
+        shader->name = name;
         Shader::_shaders[name] = shader;
 
         // Check if this shader is sky
@@ -122,8 +123,20 @@ void Shader::_parseLayers(string iniPath, Ini & ini, Shader & shader) {
             }
         }
 
+        // See if there is a texgen_{s,t,r}
+        Shader::_checkForTexGen(ini, iniPath + "/" + *it + "/texgen_r", layer->texGenR);
+        Shader::_checkForTexGen(ini, iniPath + "/" + *it + "/texgen_s", layer->texGenS);
+        Shader::_checkForTexGen(ini, iniPath + "/" + *it + "/texgen_t", layer->texGenT);
+
         ++index;
     }
+}
+
+void Shader::_checkForTexGen(Ini & ini, string type, int & result) {
+    vector<string> parts;
+    string value = ini[type];
+    if (value == "object_linear") result = GL_OBJECT_LINEAR;
+    else if (value == "reflection_map") result = GL_REFLECTION_MAP;
 }
 
 Shader * Shader::getShader(string name) {
@@ -164,4 +177,8 @@ ShaderLayer::ShaderLayer() {
     // Default alpha function is none
     this->alphaFunction = 1;
     this->alphaValue = 0;
+
+    this->texGenR = GL_OBJECT_LINEAR;
+    this->texGenS = GL_OBJECT_LINEAR;
+    this->texGenT = GL_OBJECT_LINEAR;
 }

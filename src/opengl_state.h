@@ -5,6 +5,12 @@
  */
 #pragma once
 
+#include "shader.h"
+
+#include <list>
+
+using namespace std;
+
 class OpenGLState {
     public:
         bool alphaTest;
@@ -16,6 +22,11 @@ class OpenGLState {
         float specular[4];
         float emission[4];
         unsigned int texture;
+
+        // The current texgen values
+        int * texGenRs;
+        int * texGenSs;
+        int * texGenTs;
 
         // A global openGL state
         static OpenGLState global;
@@ -34,4 +45,18 @@ class OpenGLState {
         int alphaFunction;
         int alphaValue;
         void setAlpha(int function, int value);
+
+        // Manage the state of the texture objects. We use multitexturing, so either a 
+        // single texture can be set as current, or several can be and multitextuing will
+        // be used
+        // Keep track of which GL_TEXTUREi_ARB is being used
+        int maxTextures;
+        int * multiTextures;
+        int * currentTextures;
+        // So we know which textures we need to disable
+        int lastUsedTextures;
+
+        // Set an array of textures
+        void setTextures(list<ShaderLayer *> * layers);
+        void setTexture(int texture);
 };
