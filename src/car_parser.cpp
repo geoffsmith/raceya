@@ -28,16 +28,14 @@ Car * parseCar(string carPathString) {
     float center[3];
 
     // First we try and load the car shader
-    //Shader::parseShaderFile((carPath / "car.shd").string());
+    Shader::parseShaderFile((carPath / "car.shd").string());
 
     // Load the car body
-    cout << "Loading the car...";
     if (carIniFile.hasKey("/body/model/file")) {
         cout << (carPath / carIniFile["/body/model/file"]).string() << endl;
         dof = new Dof((carPath / carIniFile["/body/model/file"]).string(), 0, false);
         car->setBody(dof);
     }
-    cout << "done loading the car" << endl;
     
     // Load the car center of gravity
     if (carIniFile.hasKey("/aero/body/center")) {
@@ -60,8 +58,18 @@ Car * parseCar(string carPathString) {
             dof = new Dof(p, 0, false);
             wheel = new Wheel(i, dof);
             car->setWheel(wheel, i);
+        } else {
+            cout << "Wheel not found: " << s.str() << endl;
+            exit(1);
         }
+
         s.str("");
+
+        // Find out if this wheel steers
+        s << "/wheel" << i << "/steering";
+        if (carIniFile[s.str()] == "1") {
+            wheel->enableSteering();
+        }
 
         // Load the brake dof
         s << "/wheel" << i << "/model_brake/file";

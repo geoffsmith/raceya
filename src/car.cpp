@@ -371,8 +371,9 @@ void Car::render() {
     // rotate the front wheel according to the steering
     this->_wheelsAngle = this->_steeringAngle;
     // Update the rotation of the front wheels
-    this->_wheels[2]->setAngle(this->_wheelsAngle);
-    this->_wheels[3]->setAngle(this->_wheelsAngle);
+    for (int i = 0; i < 4; ++i) {
+        this->_wheels[i]->setAngle(this->_wheelsAngle);
+    }
 
     // Render the wheels
     for (int i = 0; i < 4; ++i) {

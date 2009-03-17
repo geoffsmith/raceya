@@ -70,6 +70,8 @@ void Ini::queryTokens(string query, list<string> & results) {
  *****************************************************************************/
 void Ini::_parseFile() {
     vector<string> parts;
+    vector<string> inherit;
+    string inheritPath;
     list<string> tokens;
     string token;
     list<string> currentPath;
@@ -105,7 +107,6 @@ void Ini::_parseFile() {
         if (parts.size() >= 2) {
             // build the current path
             path = Ini::makeIniPath(currentPath) + parts[0];
-            cout << "path: " << path << " - " << parts[1] << endl;
             this->data[path] = parts[1];
             previous = parts[0];
             continue;
@@ -130,10 +131,34 @@ void Ini::_parseFile() {
                     currentPath.pop_back();
                 }
             } else if (token == "{") {
-                currentPath.push_back(previous);
+                // If there is a ~ in the token, we need to inherit from another key
+                split(inherit, previous, is_any_of("~"));
+                if (inherit.size() == 1) {
+                    currentPath.push_back(previous);
+                } else {
+                    path = Ini::makeIniPath(currentPath);
+                    this->_inheritKeys(inherit[1], inherit[0], path);
+                    // Copy the settings from inherit[1]
+                    currentPath.push_back(inherit[0]);
+                }
             } else {
                 previous = token;
             }
+        }
+    }
+}
+
+void Ini::_inheritKeys(string base, string child, string path) {
+    string test = path + base;
+    string tmp;
+    map<string, string>::iterator it;
+    for (it = this->data.begin(); it != this->data.end(); ++it) {
+        // Check if this starts with path + base
+        if (starts_with(it->first, path + base)) {
+            // replace base with child
+            tmp = it->first;
+            replace_first(tmp, base, child);
+            this->data[tmp] = it->second;
         }
     }
 }

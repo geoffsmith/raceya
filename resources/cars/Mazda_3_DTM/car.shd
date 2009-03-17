@@ -1,0 +1,267 @@
+shader_body
+{
+	sort_offset=0
+	layer0
+	{
+		map=fresnel.tga
+		texgen_s=sphere_map
+		texgen_t=sphere_map
+		emission=1 1 1 1
+	}
+	layer1
+	{
+		map=$trackenvmap
+		texgen_s=reflection_map
+		texgen_t=reflection_map
+		texgen_r=reflection_map
+		emission=0.5 0.5 0.5
+		blendfunc=filter
+		shininess=24
+		specular=0.75 0.75 0.75
+	}
+	layer2
+	{
+		map=$tracksunmap
+		texgen_s=sphere_map
+		texgen_t=reflection_map
+		texgen_r=reflection_map
+		blendfunc=dst_color one 
+		shininess=24
+		specular=1 1 1 1
+	}
+	layer3
+	{
+		map=body.tga
+		blendfunc=one src_alpha
+		shininess=24
+		specular=0.15 0.15 0.15 0.15	
+	}
+}
+
+shader_black
+{
+	sort_offset=0
+	layer0
+	{
+		map=fresnel.tga
+		texgen_s=sphere_map
+		texgen_t=sphere_map
+		emission=1 1 1 1
+	}
+	layer1
+	{
+		map=$tracksunmap
+		texgen_s=sphere_map
+		texgen_t=reflection_map
+		texgen_r=reflection_map
+		blendfunc=dst_color one 
+		shininess=24
+		specular=2 2 2 2
+	}
+  	layer2
+  	{
+    		map=black.tga
+    		shininess=8
+    		specular=0.2 0.2 0.2 0.2
+  }
+}
+
+shader_tyre
+{
+  	layer0
+  	{
+    		map=tyre.tga
+    		shininess=8
+    		specular=0.2 0.2 0.2 0.2
+  }
+}
+
+shader_tyre1
+{
+	layer0
+	{
+		map=tyre1.tga
+    shininess=8
+    specular=0.2 0.2 0.2 0.2
+	}
+}
+
+shader_tyre2
+{
+	layer0
+	{
+		map=tyre2.tga
+    shininess=8
+    specular=0.2 0.2 0.2 0.2
+	}
+}
+
+shader_tyre3
+{
+	layer0
+	{
+		map=tyre3.tga
+    shininess=8
+    specular=0.2 0.2 0.2 0.2
+	}
+}
+
+shader_rim
+{
+  layer0
+  {
+    map=rim.tga
+  }
+}
+
+shader_rim1
+{
+  layer0
+  {
+    map=rim1.tga
+    blendfunc=blend
+  }
+}
+
+shader_rim2
+{
+  layer0
+  {
+    map=rim2.tga
+    blendfunc=blend
+  }
+}
+
+shader_rim3
+{
+  layer0
+  {
+    map=rim3.tga
+    blendfunc=blend
+  }
+}
+
+shader_clear
+{
+	sort_offset=1
+	layer0
+	{
+		texenv=replace
+		map=clear.tga
+		blendfunc=zero src_alpha 
+	}
+	layer1
+	{
+		texenv=replace
+		map=fresnel2.tga
+		texgen_s=sphere_map
+		texgen_t=sphere_map
+		blendfunc=one dst_alpha
+	}
+	layer2
+	{
+		texenv=replace
+		map=$trackenvmap
+		texgen_s=reflection_map
+		texgen_t=reflection_map
+		texgen_r=reflection_map
+		blendfunc=dst_alpha one
+	}
+}
+
+shader_chrome
+{
+	layer0
+	{
+		map=$trackenvmap
+		texgen_s=reflection_map
+		texgen_t=reflection_map
+		texgen_r=reflection_map
+	}
+	layer1
+	{
+		map=chrome.tga
+		blendfunc=one src_alpha
+		shininess=24
+	}
+}
+
+shader_brakedisk
+{
+  layer0
+  {
+    map=brakedisk.tga
+  }
+}
+
+shader_brakedisk1
+{
+  layer0
+  {
+    map=brakedisk1.tga
+  }
+}
+
+shader_brakedisk2
+{
+  layer0
+  {
+    map=brakedisk2.tga
+  }
+}
+
+shader_brakedisk3
+{
+  layer0
+  {
+    map=brakedisk3.tga
+  }
+}
+
+shader_nut
+{
+  layer0
+  {
+    map=nut.tga
+  }
+}
+
+shader_misc
+{
+	sort_offset=0
+	layer0
+	{
+		map=fresnel.tga
+		texgen_s=sphere_map
+		texgen_t=sphere_map
+		emission=1 1 1 1
+	}
+	layer1
+	{
+		map=$trackenvmap
+		texgen_s=reflection_map
+		texgen_t=reflection_map
+		texgen_r=reflection_map
+		emission=0.5 0.5 0.5
+		blendfunc=filter
+		shininess=24
+		specular=0.75 0.75 0.75
+	}
+	layer2
+	{
+		map=$tracksunmap
+		texgen_s=sphere_map
+		texgen_t=reflection_map
+		texgen_r=reflection_map
+		blendfunc=dst_color one 
+		shininess=24
+		specular=1 1 1 1
+	}
+	layer3
+	{
+		map=misc.tga
+		blendfunc=one src_alpha
+		shininess=24
+		specular=0.15 0.15 0.15 0.15	
+	}
+}

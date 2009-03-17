@@ -395,7 +395,7 @@ void Dof::loadMaterial(Mat * mat) {
             glEnable(GL_TEXTURE_2D);
             OpenGLState::global.texture2d = true;
         }
-        Texture * texture = mat->shader->layers[0]->texture;
+        Texture * texture = mat->shader->layers[mat->shader->nLayers - 1]->texture;
         if (OpenGLState::global.texture != texture->texture) {
             glBindTexture(GL_TEXTURE_2D, texture->texture);
             OpenGLState::global.texture = texture->texture;

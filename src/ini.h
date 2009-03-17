@@ -43,4 +43,7 @@ class Ini {
         // Parse an ini file into the data structure
         void _parseFile();
 
+        // Add all the keys under path + base to path + child
+        void _inheritKeys(string base, string child, string path);
+
 };

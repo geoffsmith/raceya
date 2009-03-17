@@ -22,6 +22,7 @@ class Wheel {
 
         void setCenter(float * center);
         void setBrakeDof(Dof * dof);
+        void enableSteering();
 
     private:
         // The dof model representing the wheel
@@ -43,5 +44,8 @@ class Wheel {
 
         // The angle of the wheel deviating from front facing
         float _wheelAngle;
+
+        // True if this wheel is steered
+        bool _steering;
 
 };

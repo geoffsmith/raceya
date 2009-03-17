@@ -94,7 +94,8 @@ void initObjects() {
 
     // Load up a car obj
     //car = new Car(track);
-    car = parseCar("resources/cars/Mitsubishi_Lancer_EVO_IX/");
+    //car = parseCar("resources/cars/Mitsubishi_Lancer_EVO_IX/");
+    car = parseCar("resources/cars/Mazda_3_DTM/");
     if (car == NULL) {
         cout << "Car was not loaded" << endl;
         exit(1);
