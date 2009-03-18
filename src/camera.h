@@ -24,6 +24,13 @@ class Camera {
         float _rotationY;
         float _rotationDelta;
 
+        // The target yaw angle from the car yaw
+        float _targetYawAngle;
+        float _targetYawModifier;
+        float _maxYawMovementPerFrame;
+        float _currentYawAngle;
+        void _calculateYawAngle();
+
         // The player's car, so we can follow it
         Car * _playersCar;
 };

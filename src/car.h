@@ -35,6 +35,8 @@ class Car {
         void setWheel(Wheel * wheel, int index);
         void setCenter(float * center);
 
+        float * getVector();
+
     private:
         Wheel * _wheels[4];
 

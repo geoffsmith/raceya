@@ -465,3 +465,7 @@ void Car::setWheel(Wheel * wheel, int index) {
 void Car::setCenter(float * center) {
     vertexCopy(center, this->_center);
 }
+
+float * Car::getVector() {
+    return this->_vector;
+}

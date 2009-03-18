@@ -7,8 +7,13 @@
  * gameplay.
  */
 #include "camera.h"
-#include <OpenGL/gl.h>
+#include "lib.h"
 
+#include <OpenGL/gl.h>
+#include <iostream>
+#include <math.h>
+
+using namespace std;
 
 Camera::Camera(Car * playersCar) {
     this->_playersCar = playersCar;
@@ -18,14 +23,54 @@ Camera::Camera(Car * playersCar) {
     this->_rotationX = -80;
     this->_rotationY = 30;
     this->_rotationDelta = 10;
+
+    // Initalise yaw
+    this->_targetYawAngle = 180;
+    this->_currentYawAngle = 0;
+    this->_maxYawMovementPerFrame = 2;
+}
+
+void Camera::_calculateYawAngle() {
+    // First find the angle between the car direction and the X unit vector on the X/Z
+    // plane
+    float zUnit[] = { 0, 0, 1 };
+    float xUnit[] = { 1, 0, 0 };
+    float carAngle;
+    float targetAngle;
+    float workingAngle;
+
+    carAngle = angleInPlane(xUnit, this->_playersCar->getVector(), zUnit, xUnit);
+
+    // ... then add the target angle
+    targetAngle = carAngle + this->_targetYawAngle;
+
+    // ... get the difference between the current and target angle
+    workingAngle = this->_currentYawAngle - targetAngle;
+
+    // We only want to move +/- 180, otherwise, we might try to go the long way round
+    if (workingAngle > 180) {
+        workingAngle -= 360;
+    } else if (workingAngle < -180) {
+        workingAngle += 360;
+    }
+
+    // ... clamp to maximum
+    if (fabs(workingAngle) > this->_maxYawMovementPerFrame) {
+        workingAngle = this->_maxYawMovementPerFrame * fabs(workingAngle) / workingAngle;
+    }
+
+    // ... move it
+    this->_currentYawAngle -= workingAngle;
 }
 
 void Camera::viewTransform() {
+    // Calculate the new yaw angle
+    this->_calculateYawAngle();
 
     // Rotate the scene for the camera
     glTranslatef(0, 0, -1 * this->_distance);
     glRotatef(this->_rotationY, 1, 0, 0);
-    glRotatef(this->_rotationX, 0, 1, 0);
+    glRotatef(this->_currentYawAngle - 90, 0, 1, 0);
 
     // Translate so that the player's car is the focus
     float * playerPosition = this->_playersCar->getPosition();
