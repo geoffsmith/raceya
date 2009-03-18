@@ -26,6 +26,7 @@ Car * parseCar(string carPathString) {
     string tmp;
     vector<string> parts;
     float center[3];
+    float restLength;
 
     // First we try and load the car shader
     Shader::parseShaderFile((carPath / "car.shd").string());
@@ -93,7 +94,15 @@ Car * parseCar(string carPathString) {
         center[2] = atof(carIniFile[s.str()].c_str());
         s.str("");
 
+        // Get the rest len and move the wheel in the (0, -1, 0) direction
+        s << "/susp" << i << "/restlen";
+        restLength = atof(carIniFile[s.str()].c_str());
+        s.str("");
+
+        center[1] -= restLength;
+
         // Add the roll center
+        /*
         s << "/susp" << i << "/roll_center/x";
         center[0] += atof(carIniFile[s.str()].c_str());
         s.str("");
@@ -105,6 +114,7 @@ Car * parseCar(string carPathString) {
         s << "/susp" << i << "/roll_center/z";
         center[2] += atof(carIniFile[s.str()].c_str());
         s.str("");
+        */
 
         wheel->setCenter(center);
     }
