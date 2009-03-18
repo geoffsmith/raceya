@@ -326,15 +326,17 @@ void Dof::_renderGeob(Geob * geob, Mat * & previousMat) {
     glVertexPointer(3, GL_FLOAT, 0, (GLvoid*)((char*)NULL));
     glNormalPointer(GL_FLOAT, 0, 
             (GLvoid*)((char*)NULL + geob->nVertices * 3 * sizeof(float)));
+
     for (int i = 0; i < OpenGLState::global.lastUsedTextures; ++i) {
 
         glClientActiveTexture(GL_TEXTURE0 + i);
         glTexCoordPointer(2, GL_FLOAT, 0, (GLvoid*)((char*)NULL + geob->nVertices * 3 * sizeof(float) + geob->nNormals * 3 * sizeof(float)));
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
+
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
-
 
     for (int j = 0; j < geob->nBursts; ++j) {
         burstCount = geob->burstsCount[j] / 3;
@@ -378,10 +380,6 @@ void Dof::loadMaterial(Mat * mat) {
                 mat->shader->layers[0]->alphaValue);
 
         // Set up the texture layer
-        if (!OpenGLState::global.texture2d) {
-            glEnable(GL_TEXTURE_2D);
-            OpenGLState::global.texture2d = true;
-        }
         list<ShaderLayer *> layers;
         for (int i = 0; i < mat->shader->nLayers; ++i) {
             layers.push_back(mat->shader->layers[i]);

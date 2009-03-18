@@ -1,0 +1,127 @@
+; torque.crv
+; 1973 Alfa Romeo GT Junior
+; Technically a 2000 ccm Dell'Orto dual carburetted Nord engine
+; (GTV engine)
+; Max torque: 129 BHp @ 3000 rpm
+; Max hp: 131 @ 5500 rpm
+; Ro80 29 aug 2005
+curve
+{
+	xname=Engine RPM
+	yname=Normalized torque (Nm)
+	xsteps=20
+	ysteps=20
+	xmin=0
+	ymin=0
+	xmax=6500
+	ymax=1
+	points=18
+	point0
+	{
+		x=50
+		y=0.07
+		type=0
+	}
+	point1
+	{
+		x=510
+		y=0.465
+		type=0
+	}
+	point2
+	{
+		x=800
+		y=0.659
+		type=0
+	}
+	point3
+	{
+		x=1150
+		y=0.780
+		type=0
+	}
+	point4
+	{
+		x=1500
+		y=0.853
+		type=0
+	}
+	point5
+	{
+		x=1900
+		y=0.915
+		type=0
+	}
+	point6
+	{
+		x=2300
+		y=0.961
+		type=0
+	}
+	point7
+	{
+		x=2650
+		y=0.984
+		type=0
+	}
+	point8
+	{
+		x=3000
+		y=1.000
+		type=0
+	}
+	point9
+	{
+		x=3950
+		y=0.996
+		type=0
+	}
+	point10
+	{
+		x=4800
+		y=0.981
+		type=0
+	}
+	point11
+	{
+		x=5200
+		y=0.973
+		type=0
+	}
+	point12
+	{
+		x=5500
+		y=0.953
+		type=0
+	}
+	point13
+	{
+		x=5640
+		y=0.926
+		type=0
+	}
+	point14
+	{
+		x=5800
+		y=0.880
+		type=0
+	}
+	point15
+	{
+		x=6000
+		y=0.775
+		type=0
+	}
+	point16
+	{
+		x=6280
+		y=0.496
+		type=0
+	}
+	point17
+	{
+		x=6467
+		y=0.0
+		type=0
+	}
+}

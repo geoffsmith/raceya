@@ -1,0 +1,328 @@
+; car.shd
+; 1973 Alfa Romeo GTJunior 1600
+; Rob Burgers
+; ro80@dividebyzero.nl
+; id=alfagtjr_ro80_170805
+; created: 16-08-2005
+;
+; materials:
+;	wood
+;	ceiling
+;	vent
+;	in_dull
+;	in_dm_gl
+;	in_gloss
+;	in_chrom
+;	grille
+;	out_dull
+;	indicat
+;	out_gloss
+;	mirror
+;	chrome
+;	glass
+;	headligh
+;	logo
+;	aplogo
+;	wheel
+;	lugnuts
+;	tyre
+;	brakelig
+;
+; interior
+shader_body
+{
+	layer0
+	{
+		map=colors/bluro80.tga
+		texenv=replace
+	}
+}
+shader_wood
+{
+	; wood in dash, shifter knob and headrest supports
+	layer0
+	{
+		map=wood.tga
+		texenv=modulate 
+	}
+}
+
+shader_ceiling
+{
+	; ceiling
+	layer0
+	{
+		map=ceiling.jpg
+		texenv=modulate 
+	}
+}
+
+shader_in_dull
+{
+	; interior no reflection
+	layer0
+	{
+		map=colors/bluro80.tga
+		texenv=modulate 
+	}
+}
+
+shader_in_dm_gl
+{
+	; interior demi gloss
+	layer0
+	{
+		map=colors/bluro80.tga
+		texenv=modulate 
+	}
+}
+
+shader_in_gloss
+{
+	; interior leathery stuff
+	layer0
+	{
+		map=colors/bluro80.tga
+		texenv=modulate 
+	}
+}
+
+shader_in_chrom
+{
+	; interior chrome
+	layer0
+	{
+		map=gradient.tga
+		texenv=modulate 
+	}
+}
+
+shader_vent
+{
+	; vents in dash
+	layer0
+	{
+		map=vent.tga
+		blendfunc=blend
+	}
+}
+
+
+; exterior
+shader_grille
+{
+	; radiator grille
+	layer0
+	{
+		map=grille.tga
+		texenv=modulate 
+	}
+}
+
+shader_out_dull
+{
+	; nogloss exterior like floor
+	cull=none
+	layer0
+	{
+		map=colors/bluro80.tga
+		texenv=modulate 
+	}
+}
+
+shader_indicat
+{
+	; indicators and rear lights
+	layer0
+	{
+		map=colors/bluro80.tga
+		texenv=modulate 
+	}
+}
+
+shader_out_glos
+{
+	; body shell paint
+	layer0
+	{
+		map=gradient.tga
+		texgen_s=sphere_map
+		texgen_t=sphere_map
+		emission=1 1 1 1
+	}
+	layer1
+	{
+		map=$trackenvmap
+		texgen_s=reflection_map
+		texgen_t=reflection_map
+		texgen_r=reflection_map
+		blendfunc=filter
+	}
+	layer2
+	{
+		map=colors/bluro80.tga
+		blendfunc=one src_alpha
+	}
+}
+
+shader_mirror
+{
+	; mirror texture
+	layer0
+	{
+		map=$mirror
+		texscale_s=1
+		texscale_r=1
+		texscale_t=1
+		emission=0.3 0.3 0.3 1
+	}
+}
+
+shader_chrome
+{
+	; chrome bits, some inside as well
+	cull=none
+	layer0
+	{
+		map=chrome.tga
+		texgen_s=reflection_map
+		texgen_t=reflection_map
+		texgen_r=reflection_map
+	}
+	layer1
+	{
+		map=gradient.tga
+		blendfunc=add
+	}
+	;layer0
+	;{
+	;	map=gradient.tga
+	;	texenv=modulate 
+	;}
+}
+
+shader_glass
+{
+	; windows
+	cull=none
+	layer0
+	{
+		map=window.tga
+		blendfunc=blend
+	}
+	layer1
+	{
+		map=$trackenvmap
+		texgen_s=reflection_map
+		texgen_t=reflection_map
+		texgen_r=reflection_map
+		blendfunc=src_color one_minus_src_color
+	}
+}
+
+shader_headligh
+{
+	; headlights
+	cull=none
+	layer0
+	{
+		map=headlight.tga
+		blendfunc=blend
+	}
+	layer1
+	{
+		map=$trackenvmap
+		texgen_s=reflection_map
+		texgen_t=reflection_map
+		texgen_r=reflection_map
+		blendfunc=src_color one_minus_src_color
+	}
+}
+
+shader_logo
+{
+	; grille logo
+	layer0
+	{
+		map=arlogo.tga
+		blendfunc=blend
+	}
+}
+
+shader_aplogo
+{
+	layer0
+	{
+		map=logo.tga
+		blendfunc=blend
+		wrap_s=clamp_to_edge
+		wrap_t=clamp_to_edge
+	}
+}
+
+
+; wheels
+shader_wheel
+{
+	; wheel rim, alu or magnesium
+	layer0
+	{
+		map=$trackenvmap
+		texgen_s=reflection_map
+		texgen_t=reflection_map
+		texgen_r=reflection_map
+	}
+	layer1
+	{
+		map=alu.tga
+		blendfunc=one src_alpha
+		shininess=40
+		specular=0.15 0.15 0.15 1
+	}
+}
+
+shader_lugnuts
+{
+	; lugnuts, chrome
+	layer0
+	{
+		map=$trackenvmap
+		texgen_s=reflection_map
+		texgen_t=reflection_map
+		texgen_r=reflection_map
+	}
+	layer1
+	{
+		map=alu.tga
+		blendfunc=add
+	}
+}
+
+shader_tyre
+{
+	; tyre rubber
+	layer0
+	{
+		map=tyre.jpg
+		texenv=modulate 
+	}
+}
+
+shader_brakelig
+{
+  layer0
+  {
+		map=brake.tga
+		blendfunc=blend
+		emission=.99 .36 .04 1
+  }
+	layer1
+	{
+		map=$trackenvmap
+		texgen_s=reflection_map
+		texgen_t=reflection_map
+		texgen_r=reflection_map
+		blendfunc=src_color one_minus_src_color
+	}
+}
+

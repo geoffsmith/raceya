@@ -16,6 +16,7 @@
 #include <time.h>
 #include <string>
 
+#include "lib.h"
 #include "car.h"
 #include "car_parser.h"
 #include "camera.h"
@@ -40,7 +41,7 @@ void setupLighting();
 
 void init(void) {
     glClearColor(0.0, 0.0, 0.0, 0.0);
-    //glShadeModel(GL_SMOOTH);
+    glShadeModel(GL_SMOOTH);
     glShadeModel(GL_FLAT);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
@@ -135,7 +136,7 @@ void display(void) {
     // Reset the openGL state
     OpenGLState::global.reset();
 
-    //track->render();
+    track->render();
 
     // Draw the car, this needs to be after track, because we can sometime see through
     // the window
@@ -148,6 +149,8 @@ void display(void) {
     // Position the light at the camera
     float lightPosition[] = { 0, 0, 1, 0 };
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+
+    printError();
 }
 
 void handleKeyboard() {
