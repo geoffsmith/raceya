@@ -14,7 +14,6 @@ using namespace std;
 class OpenGLState {
     public:
         bool alphaTest;
-        bool blend;
         bool texture2d;
         bool depthTest;
         float ambient[4];
@@ -22,6 +21,11 @@ class OpenGLState {
         float specular[4];
         float emission[4];
         unsigned int texture;
+
+        // The blending src and dsts
+        int * blendSrcs;
+        int * blendDsts;
+        bool blend;
 
         // The current texgen values
         int * texGenRs;

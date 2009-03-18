@@ -1,6 +1,7 @@
 #include "opengl_state.h"
 #include "logger.h"
 #include "texture.h"
+#include "lib.h"
 
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -15,8 +16,6 @@ void OpenGLState::reset() {
     glDisable(GL_TEXTURE_2D);
     this->texture2d = false;
 
-    glDisable(GL_BLEND);
-    this->blend = false;
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -31,6 +30,10 @@ void OpenGLState::reset() {
 
     glDisable(GL_CULL_FACE);
     this->culling = 0;
+
+    //glDisable(GL_BLEND);
+    glEnable(GL_BLEND);
+    this->blend = false;
 
     // NOTE: It looks like it's quicker just to enable this from the start and not
     // keep enabling / disabling all the time. However, alpha testing seems to be
@@ -47,14 +50,19 @@ void OpenGLState::reset() {
     this->texGenRs = new int[this->maxTextures];
     this->texGenSs = new int[this->maxTextures];
     this->texGenTs = new int[this->maxTextures];
+    this->blendSrcs = new int[this->maxTextures];
+    this->blendDsts = new int[this->maxTextures];
 
     for (int i = 0; i < this->maxTextures; ++i)  {
-        this->multiTextures[i] = GL_TEXTURE0_ARB;
+        this->multiTextures[i] = GL_TEXTURE0 + i;
         this->currentTextures[i] = 0;
 
         this->texGenRs[i] = GL_OBJECT_LINEAR;
         this->texGenSs[i] = GL_OBJECT_LINEAR;
         this->texGenTs[i] = GL_OBJECT_LINEAR;
+
+        this->blendSrcs[i] = GL_SRC_ALPHA;
+        this->blendDsts[i] = GL_ONE_MINUS_SRC_ALPHA;
     }
 }
 
@@ -164,35 +172,39 @@ void OpenGLState::setTextures(list<ShaderLayer *> * layers) {
         texture = layer->texture;
 
         // Skip if the current texture is not valid, NOTE, this will skip ++index too
-        if (texture->texture == 0) continue;
-
-        // Only set the texture if it is different
-        if (this->currentTextures[index] != texture->texture) {
-            glClientActiveTexture(this->multiTextures[index]);
-            glBindTexture(GL_TEXTURE_2D, texture->texture);
-            this->currentTextures[index] = texture->texture;
+        if (texture == NULL) {
+            continue;
         }
+
+        // Enable or disable blending
+        /*
+        if (this->blend != layer->blend) {
+            if (layer->blend) glEnable(GL_BLEND);
+            else glDisable(GL_BLEND);
+            this->blend = layer->blend;
+        }
+        */
+
+        glClientActiveTexture(this->multiTextures[index]);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glBindTexture(GL_TEXTURE_2D, texture->texture);
 
         // Set the texenv
         if (index > 0) {
-            glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_ADD);
+            //glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_ADD);
         } else {
-            glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
+            //glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
         }
 
         // Set the texgen
-        if (this->texGenRs[index] != layer->texGenR) {
-            this->texGenRs[index] = layer->texGenR;
-            glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, layer->texGenR);
-        }
-        if (this->texGenSs[index] != layer->texGenS) {
-            this->texGenSs[index] = layer->texGenS;
-            glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, layer->texGenS);
-        }
-        if (this->texGenTs[index] != layer->texGenT) {
-            this->texGenTs[index] = layer->texGenT;
-            glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, layer->texGenT);
-        }
+        glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, layer->texGenR);
+        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, layer->texGenS);
+        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, layer->texGenT);
+
+        // Set the blending
+        glBlendFunc(layer->blendSrc, layer->blendDst);
+        this->blendSrcs[index] = layer->blendSrc;
+        this->blendDsts[index] = layer->blendDst;
 
         ++index;
     }
@@ -200,8 +212,13 @@ void OpenGLState::setTextures(list<ShaderLayer *> * layers) {
     // Now go through disabling anything thats left
     for (int i = index; i < this->lastUsedTextures; ++i) {
             glClientActiveTexture(this->multiTextures[i]);
-            glBindTexture(GL_TEXTURE_2D, 0);
+            glDisable(GL_TEXTURE_2D);
+            //glActiveTexture(this->multiTextures[index]);
+            //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+            //glBindTexture(GL_TEXTURE_2D, 0);
     }
+
+    printError();
 
     this->lastUsedTextures = index;
 }

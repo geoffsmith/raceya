@@ -47,6 +47,11 @@ class ShaderLayer {
         int texGenS;
         int texGenT;
         int texGenR;
+
+        // The blender parameters
+        bool blend;
+        int blendSrc;
+        int blendDst;
 };
 
 class Shader {
@@ -81,6 +86,7 @@ class Shader {
         static void parseShaderFile(string file);
         static void _parseLayers(string path, Ini & ini, Shader & shader);
         static void _checkForTexGen(Ini & ini, string type, int & result);
+        static void _checkForBlendFunc(string value, ShaderLayer * layer);
 
 
     private:

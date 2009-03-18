@@ -91,8 +91,13 @@ void Shader::_parseLayers(string iniPath, Ini & ini, Shader & shader) {
         // Check for a texture on this layer
         value = ini[iniPath + "/" + *it + "/map"];
         if (!value.empty()) {
-            layer->texture = Texture::getOrMakeTexture((iniFilePath / value).string(), 
-                    layer->isMipmap);
+            layer->textureMapPath = (iniFilePath / value).string();
+            // Check if this is a special texture and starts with $
+            if (!starts_with(value, "$")) {
+                layer->texture = Texture::getOrMakeTexture(
+                        layer->textureMapPath, 
+                        layer->isMipmap);
+            }
         }
 
         // Get the culling value if there is one
@@ -128,15 +133,68 @@ void Shader::_parseLayers(string iniPath, Ini & ini, Shader & shader) {
         Shader::_checkForTexGen(ini, iniPath + "/" + *it + "/texgen_s", layer->texGenS);
         Shader::_checkForTexGen(ini, iniPath + "/" + *it + "/texgen_t", layer->texGenT);
 
+        // Get the blending function
+        Shader::_checkForBlendFunc(ini[iniPath + "/" + *it + "/blendfunc"], layer);
+
         ++index;
     }
 }
 
-void Shader::_checkForTexGen(Ini & ini, string type, int & result) {
+void Shader::_checkForBlendFunc(string value, ShaderLayer * layer) {
     vector<string> parts;
+    int result;
+    split(parts, value, is_any_of(" "));
+
+    // Enable if value is not empty
+    if (!value.empty()) {
+        layer->blend = true;
+    } else {
+        return;
+    }
+
+    // If there is only one part, this is an abbreviation, otherwise it specifies both
+    // src and dst
+    if (parts.size() == 1) {
+        if (parts[0] == "add") {
+            layer->blendSrc = GL_ONE;
+            layer->blendDst = GL_ONE;
+        } else if (parts[0] == "filter") {
+            layer->blendSrc = GL_ZERO;
+            layer->blendDst = GL_SRC_COLOR;
+        } else if (parts[0] == "blend") {
+            layer->blendSrc = GL_SRC_ALPHA;
+            layer->blendDst = GL_ONE_MINUS_SRC_ALPHA;
+        }
+    } else {
+        for (int i = 0; i < 2; ++i) {
+            if (parts[i] == "zero") result = GL_ZERO;
+            else if (parts[i] == "one") result = GL_ONE;
+            else if (parts[i] == "dst_color") result = GL_DST_COLOR;
+            else if (parts[i] == "one_minus_dst_color") result = GL_ONE_MINUS_DST_COLOR;
+            else if (parts[i] == "src_color") result = GL_SRC_COLOR;
+            else if (parts[i] == "one_minus_src_color") result = GL_ONE_MINUS_SRC_COLOR;
+            else if (parts[i] == "src_alpha") result = GL_SRC_ALPHA;
+            else if (parts[i] == "one_minus_src_alpha") result = GL_ONE_MINUS_SRC_ALPHA;
+            else if (parts[i] == "dst_alpha") result = GL_DST_ALPHA;
+            else if (parts[i] == "one_minus_dst_alpha") result = GL_ONE_MINUS_DST_ALPHA;
+            else if (parts[i] == "src_alpha_saturate") result = GL_SRC_ALPHA_SATURATE;
+
+            if (i == 0) {
+                layer->blendSrc = result;
+            }
+            else {
+                layer->blendDst = result;
+            }
+        } 
+    }
+
+}
+
+void Shader::_checkForTexGen(Ini & ini, string type, int & result) {
     string value = ini[type];
     if (value == "object_linear") result = GL_OBJECT_LINEAR;
     else if (value == "reflection_map") result = GL_REFLECTION_MAP;
+    else if (value == "sphere_map") result = GL_SPHERE_MAP;
 }
 
 Shader * Shader::getShader(string name) {
@@ -169,6 +227,7 @@ Shader * Shader::getShader(string name) {
  * ShaderLayer stuff
  *****************************************************************************/
 ShaderLayer::ShaderLayer() {
+    this->texture = NULL;
     this->isMipmap = true;
 
     // Default culling to none
@@ -181,4 +240,10 @@ ShaderLayer::ShaderLayer() {
     this->texGenR = GL_OBJECT_LINEAR;
     this->texGenS = GL_OBJECT_LINEAR;
     this->texGenT = GL_OBJECT_LINEAR;
+
+    //this->blendSrc = GL_SRC_ALPHA;
+    //this->blendDst = GL_ONE_MINUS_SRC_ALPHA;
+    this->blendSrc = GL_ONE;
+    this->blendDst = GL_ZERO;
+    this->blend = false;
 }

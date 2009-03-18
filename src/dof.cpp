@@ -326,11 +326,14 @@ void Dof::_renderGeob(Geob * geob, Mat * & previousMat) {
     glVertexPointer(3, GL_FLOAT, 0, (GLvoid*)((char*)NULL));
     glNormalPointer(GL_FLOAT, 0, 
             (GLvoid*)((char*)NULL + geob->nVertices * 3 * sizeof(float)));
-    glTexCoordPointer(2, GL_FLOAT, 0, 
-            (GLvoid*)((char*)NULL + geob->nVertices * 3 * sizeof(float) + geob->nNormals * 3 * sizeof(float)));
+    for (int i = 0; i < OpenGLState::global.lastUsedTextures; ++i) {
+
+        glClientActiveTexture(GL_TEXTURE0 + i);
+        glTexCoordPointer(2, GL_FLOAT, 0, (GLvoid*)((char*)NULL + geob->nVertices * 3 * sizeof(float) + geob->nNormals * 3 * sizeof(float)));
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 
     for (int j = 0; j < geob->nBursts; ++j) {
@@ -380,15 +383,15 @@ void Dof::loadMaterial(Mat * mat) {
             OpenGLState::global.texture2d = true;
         }
         list<ShaderLayer *> layers;
-        //for (int i = 0; i < mat->shader->nLayers; ++i) {
-        for (int i = 0; i < min(mat->shader->nLayers, 2); ++i) {
-            layers.push_front(mat->shader->layers[i]);
+        for (int i = 0; i < mat->shader->nLayers; ++i) {
+            layers.push_back(mat->shader->layers[i]);
         }
         OpenGLState::global.setTextures(&layers);
     }
 
 
     // Check if this material has a shader
+    /*
     if (mat->blendMode > 0 || 
        (mat->nTextures > 0 && mat->shader != NULL && mat->shader->blend)) {
         if (!OpenGLState::global.blend) {
@@ -401,9 +404,11 @@ void Dof::loadMaterial(Mat * mat) {
             OpenGLState::global.blend = false;
         }
     }
+    */
 
-    if (mat->shader != NULL && mat->shader->layers[0]->texture != NULL) { 
-    } else if (mat->nTextures > 0 && mat->textures[0]->texture) {
+    if (mat->shader != NULL) { 
+        // Skip if we have a shader
+    } else if (mat->nTextures > 0 && mat->textures[0] != NULL) {
         if (!OpenGLState::global.texture2d) {
             glEnable(GL_TEXTURE_2D);
             OpenGLState::global.texture2d = true;
@@ -419,6 +424,7 @@ void Dof::loadMaterial(Mat * mat) {
         }
     }
 
+    /*
     if (colorEquals4(OpenGLState::global.ambient, mat->ambient)) {
         glMaterialfv(GL_FRONT, GL_AMBIENT, mat->ambient);
         colorCopy4(mat->ambient, OpenGLState::global.ambient);
@@ -440,6 +446,7 @@ void Dof::loadMaterial(Mat * mat) {
         glMaterialfv(GL_FRONT, GL_EMISSION, mat->emission);
         colorCopy4(mat->emission, OpenGLState::global.emission);
     }
+    */
 }
 
 int Dof::render(bool overrideFrustrumTest) {

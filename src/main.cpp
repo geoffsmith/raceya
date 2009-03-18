@@ -135,10 +135,11 @@ void display(void) {
     // Reset the openGL state
     OpenGLState::global.reset();
 
-    // Draw the car
-    car->render();
+    //track->render();
 
-    track->render();
+    // Draw the car, this needs to be after track, because we can sometime see through
+    // the window
+    car->render();
 
     // Render the HUD
     // Alpha blending is still messed up here. Not sure why, 
