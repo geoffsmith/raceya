@@ -17,7 +17,6 @@ map<string, Shader *> Shader::_shaders;
 
 Shader::Shader() {
     this->texEnv = NULL;
-    this->wrapT = GL_REPEAT;
     this->alphaFunc = 0;
     this->alphaFuncSet = false;
     this->blend = false;
@@ -136,7 +135,28 @@ void Shader::_parseLayers(string iniPath, Ini & ini, Shader & shader) {
         // Get the blending function
         Shader::_checkForBlendFunc(ini[iniPath + "/" + *it + "/blendfunc"], layer);
 
+        // Get the texture wrapping
+        Shader::_checkForTextureWrap(ini[iniPath + "/" + *it + "/wrap_t"], layer->wrapT);
+
+        // Get texture environment
+        Shader::_checkForTextureEnv(ini[iniPath + "/" + *it + "/texenv"], layer->texEnv);
+
         ++index;
+    }
+}
+
+void Shader::_checkForTextureEnv(string value, int & result) {
+    if (value.empty()) return;
+
+    if (value == "replace") result = GL_REPLACE;
+    else if (value == "disable") result = GL_REPLACE;
+}
+
+void Shader::_checkForTextureWrap(string value, int & result) {
+    if (value.empty()) return;
+
+    if (value == "clamp_to_edge") {
+        result = GL_CLAMP_TO_EDGE;
     }
 }
 
@@ -187,7 +207,6 @@ void Shader::_checkForBlendFunc(string value, ShaderLayer * layer) {
             }
         } 
     }
-
 }
 
 void Shader::_checkForTexGen(Ini & ini, string type, int & result) {
@@ -246,4 +265,9 @@ ShaderLayer::ShaderLayer() {
     this->blendSrc = GL_ONE;
     this->blendDst = GL_ZERO;
     this->blend = false;
+
+    this->wrapS = GL_REPEAT;
+    this->wrapT = GL_REPEAT;
+
+    this->texEnv = GL_MODULATE;
 }

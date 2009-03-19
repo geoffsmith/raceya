@@ -146,12 +146,10 @@ void OpenGLState::setAlpha(int function, int value) {
 }
 
 void OpenGLState::setTexture(int texture) {
-    if (this->currentTextures[0] != texture || this->lastUsedTextures > 1) {
-        glActiveTexture(GL_TEXTURE0);
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        this->currentTextures[0] = texture;
-    }
+    glActiveTexture(GL_TEXTURE0);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
     // Now go through disabling anything thats left
     for (int i = 1; i < this->lastUsedTextures; ++i) {
         glActiveTexture(GL_TEXTURE0 + i);
@@ -182,10 +180,18 @@ void OpenGLState::setTextures(list<ShaderLayer *> * layers) {
         glBindTexture(GL_TEXTURE_2D, texture->texture);
         this->currentTextures[index] = texture->texture;
 
+        // Set the texture environment
+        // This should only really be used when we multi-pass
+        //glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, layer->texEnv);
+
         // Set the texgen
         glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, layer->texGenR);
         glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, layer->texGenS);
         glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, layer->texGenT);
+
+        // Set the wrapping
+        // This doesn't seem to help at all
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, layer->wrapT);
 
         // If the bottom layer has a blend function, we use it
         if (index == 0 && layer->blend) {

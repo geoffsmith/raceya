@@ -66,15 +66,13 @@ void Texture::_loadTexture(string name) {
         */
 
         // mix color with texture
-        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+        //glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
         //glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
-        // Set the texture's stretching properties
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         // Write the texture data
         if ((error = glGetError()) != 0) {
@@ -83,11 +81,19 @@ void Texture::_loadTexture(string name) {
             this->texture = 0;
         }
 
-        // TODO: check the flags for loading Mipmaps
         if (this->isMipmap) {
+            // Set the texture's stretching properties
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, 
+                    GL_NEAREST_MIPMAP_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
             gluBuild2DMipmaps(GL_TEXTURE_2D, nOfColours, surface->w, surface->h, 
                     textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
         } else {
+            // Set the texture's stretching properties
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
             glTexImage2D(GL_TEXTURE_2D, 0, nOfColours, surface->w, surface->h, 
                     0, textureFormat, GL_UNSIGNED_BYTE, surface->pixels);
         }

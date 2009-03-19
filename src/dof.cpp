@@ -151,7 +151,7 @@ void Dof::_parseMats(ifstream * file) {
                     fileStringLength = parseString(file, fileString);
 
                     if (mat->shader != NULL) {
-                        mat->textures[j] = mat->shader->layers[0]->texture;
+                        //mat->textures[j] = mat->shader->layers[0]->texture;
                     } else {
                         textureName = (texturePath / fileString).string();
                         mat->textures[j] = Texture::getOrMakeTexture(textureName);
@@ -365,12 +365,6 @@ void Dof::_renderGeob(Geob * geob, Mat * & previousMat) {
 }
 
 void Dof::loadMaterial(Mat * mat) {
-    if (OpenGLState::global.alphaTest) {
-        glDisable(GL_ALPHA_TEST);
-        this->_renderState.alphaTest = false;
-
-    }
-
     if (mat->shader != NULL) {
         // Set up culling
         OpenGLState::global.setCulling(mat->shader->layers[0]->culling);
@@ -387,39 +381,13 @@ void Dof::loadMaterial(Mat * mat) {
         OpenGLState::global.setTextures(&layers);
     }
 
-
-    // Check if this material has a shader
-    /*
-    if (mat->blendMode > 0 || 
-       (mat->nTextures > 0 && mat->shader != NULL && mat->shader->blend)) {
-        if (!OpenGLState::global.blend) {
-            glEnable(GL_BLEND);
-            OpenGLState::global.blend = true;
-        }
-    } else {
-        if (OpenGLState::global.blend) {
-            glDisable(GL_BLEND);
-            OpenGLState::global.blend = false;
-        }
-    }
-    */
-
     if (mat->shader != NULL) { 
         // Skip if we have a shader
     } else if (mat->nTextures > 0 && mat->textures[0] != NULL) {
-        if (!OpenGLState::global.texture2d) {
-            glEnable(GL_TEXTURE_2D);
-            OpenGLState::global.texture2d = true;
-        }
-        if (OpenGLState::global.texture != mat->textures[0]->texture) {
-            Texture * texture = mat->textures[0];
-            OpenGLState::global.setTexture(texture->texture);
-        }
+        Texture * texture = mat->textures[0];
+        OpenGLState::global.setTexture(texture->texture);
     } else {
-        if (OpenGLState::global.texture2d) {
-            glDisable(GL_TEXTURE_2D);
-            OpenGLState::global.texture2d = false;
-        }
+        glDisable(GL_TEXTURE_2D);
     }
 
     /*
@@ -482,11 +450,12 @@ int Dof::render(bool overrideFrustrumTest) {
         }
     }
 
-
     // second we render the non-transparent geobs
     for (int i = 0; i < this->_nGeobs; ++i) {
         geob = &(this->_geobs[i]);
         mat = &(this->_mats[geob->material]);
+
+        //if (mat->name != "herbe04") continue;
 
         if (!mat->isTransparent()) {
             // Check if we need to render this geob
@@ -503,6 +472,9 @@ int Dof::render(bool overrideFrustrumTest) {
     for (int i = 0; i < this->_nGeobs; ++i) {
         geob = &(this->_geobs[i]);
         mat = &(this->_mats[geob->material]);
+
+        //cout << "Name: " << mat->name << endl;
+        //if (mat->name != "herbe04.tga") continue;
 
         if (mat->isTransparent()) {
             // Check if we need to render this geob

@@ -42,6 +42,10 @@ class ShaderLayer {
         // 0: modulate (default), 1: replace, 2: add
         int texEnv;
 
+        // Texture wrapping
+        int wrapS;
+        int wrapT;
+
         // Texture coordinate generation
         // 0: object_linear, 1: reflection_map
         int texGenS;
@@ -69,8 +73,6 @@ class Shader {
         // Texture stuff
         unsigned int texEnv;
 
-        unsigned int wrapT;
-
         // Alpha stuff
         // This assume a gequal function
         bool blend;
@@ -87,7 +89,8 @@ class Shader {
         static void _parseLayers(string path, Ini & ini, Shader & shader);
         static void _checkForTexGen(Ini & ini, string type, int & result);
         static void _checkForBlendFunc(string value, ShaderLayer * layer);
-
+        static void _checkForTextureWrap(string value, int & result);
+        static void _checkForTextureEnv(string value, int & result);
 
     private:
         static map<string, Shader *> _shaders;
