@@ -45,7 +45,7 @@ Car::Car() {
 
     this->_vector[0] = 0;
     this->_vector[1] = 0;
-    this->_vector[2] = -1;
+    this->_vector[2] = 0;
 
     this->_localOrigin[0][0] = -1;
     this->_localOrigin[0][1] = 0;
@@ -317,7 +317,6 @@ void Car::_updateComponents() {
 
 void Car::_updateMatrix() {
     // The car's angle of rotation, calculated from the _vector
-    float angle;
     float zVector[3];
     float yVector[3];
     float xVector[3];
@@ -492,6 +491,14 @@ void Car::setMass(float mass) {
     this->_mass = mass;
 }
 
+void Car::setBodyArea(float area) {
+    this->_bodyArea = area;
+}
+
+void Car::setDragCoefficient(float coefficient) {
+    this->_dragCoefficient = coefficient;
+}
+
 /******************************************************************************
  * Collision detection
  *****************************************************************************/
@@ -575,6 +582,7 @@ void Car::_calculateMovement() {
     float yAxis[] = { 0, -9.8, 0 };
     float time = FrameTimer::timer.getSeconds();
     float acceleration[3];
+    float dragForce[3];
     vertexMultiply(this->_mass, yAxis, gravityForce);
     vertexAdd(gravityForce, accumulativeForce, accumulativeForce);
 
@@ -595,6 +603,12 @@ void Car::_calculateMovement() {
             vertexAdd(tmpForce, accumulativeForce, accumulativeForce);
         }
     }
+
+    // Add drag
+    // NOTE _mass ^ 2 here needs checking, but will do for now...
+    float drag = (-1.0 / 391.0) * this->_mass * this->_mass * this->_bodyArea * this->_dragCoefficient;
+    vertexMultiply(drag, this->_vector, dragForce);
+    vertexAdd(dragForce, accumulativeForce, accumulativeForce);
 
     // convert sum of forces into acceleration vector
     vertexMultiply(1 / this->_mass, accumulativeForce, acceleration);

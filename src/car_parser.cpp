@@ -66,6 +66,19 @@ Car * parseCar(string carPathString) {
         car->setMass(atof(tmp.c_str()));
     }
 
+    // Load the body surface area
+    if (carIniFile.hasKey("/aero/body/area")) {
+        tmp = carIniFile["/aero/body/area"];
+        car->setBodyArea(atof(tmp.c_str()));
+    }
+
+    // Load the drag coefficient
+    if (carIniFile.hasKey("/aero/body/cx")) {
+        tmp = carIniFile["/aero/body/cx"];
+        car->setDragCoefficient(atof(tmp.c_str()));
+    }
+
+
     // Load the wheels
     Wheel * wheel;
     stringstream s;

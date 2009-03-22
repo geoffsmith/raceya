@@ -37,6 +37,8 @@ class Car {
         void setCenter(float * center);
         void setInertia(float * inertia);
         void setMass(float mass);
+        void setBodyArea(float area);
+        void setDragCoefficient(float coefficient);;
 
         float * getVector();
 
@@ -81,6 +83,10 @@ class Car {
 
         // Moments of inertia
         float _inertia[3];
+
+        // Drag coefficient and body area
+        float _dragCoefficient;
+        float _bodyArea;
 
         // Center of gravity of the car
         float _center[3];
