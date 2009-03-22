@@ -1,12 +1,19 @@
 #include "quaternion.h"
 
 #include <math.h>
+#include <iostream>
+
+using namespace std;
+
+#define PI 3.14159265
 
 Quaternion::Quaternion() {
     this->w = 0;
     this->x = 0;
     this->y = 0;
     this->z = 0;
+
+    this->normalise();
 }
 
 Quaternion::Quaternion(float w, float x, float y, float z) {
@@ -44,10 +51,20 @@ void Quaternion::fromEuler(float * euler) {
     float s2 = sin(euler[1] / 2);
     float s3 = sin(euler[2] / 2);
 
+    /*
+       From the physics for game programmers book
+    this->w = c1 * c2 * c3 + s1 * s2 * s3;
+    this->x = c1 * c2 * s3 - s1 * s2 * c3;
+    this->y = c1 * s2 * c3 + s1 * c2 * s3;
+    this->z = s1 * c2 * c3 - c1 * s2 * s3;
+    */
     this->w = c1 * c2 * c3 - s1 * s2 * s3;
     this->x = s1 * s2 * c3 + c1 * c2 * s3;
     this->y = s1 * c2 * c3 + c1 * s2 * s3;
     this->z = c1 * s2 * c3 - s1 * c2 * s3;
+
+    cout << "Just set: ";
+    this->print();
 }
 
 void Quaternion::toEuler(float * euler) {
@@ -59,4 +76,45 @@ void Quaternion::toEuler(float * euler) {
     euler[1] = asin(2 * (this->x * this->y + this->z * this->w));
     euler[2] = atan2((2 * (this->w * this->x + this->y * this->z)), 
             (1 - 2 * (this->x * this->x + this->z * this->z)));
+}
+
+void Quaternion::normalise() {
+    // Calculate the magnitude
+    float magnitude = sqrt(pow(this->w, 2) + pow(this->x, 2) + pow(this->y, 2) 
+            + pow(this->z, 2));
+    if (magnitude != 0) {
+        this->x /= magnitude;
+        this->y /= magnitude;
+        this->z /= magnitude;
+        this->w /= magnitude;
+    }
+}
+
+void Quaternion::print() {
+    cout << "w: " << this->w << " q = { " << this->x << ", " << this->y << ", " << this->z << " }" << endl;
+}
+
+void Quaternion::multiply(float * vector, Quaternion & result) {
+    result.w = -(this->x * vector[0] + this->y * vector[1] + this->z * vector[2]);
+    result.x = this->w * vector[0] + this->y * vector[2] - this->z * vector[1];
+    result.y = this->w * vector[1] + this->z * vector[0] - this->x * vector[2];
+    result.z = this->w * vector[2] + this->x * vector[1] - this->y * vector[0];
+}
+
+void Quaternion::multiply(float * vector) {
+    this->multiply(vector, *this);
+}
+
+void Quaternion::multiply(float scalar) {
+    this->w *= scalar;
+    this->x *= scalar;
+    this->y *= scalar;
+    this->z *= scalar;
+}
+
+void Quaternion::add(Quaternion & quaternion) {
+    this->w += quaternion.w;
+    this->x += quaternion.x;
+    this->y += quaternion.y;
+    this->z += quaternion.z;
 }

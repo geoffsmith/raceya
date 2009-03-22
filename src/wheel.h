@@ -20,9 +20,13 @@ class Wheel {
         // Get the point at which the wheel touches the ground
         void getGroundContact(float * point);
 
+        // Get the center of the wheel
+        float * getWheelCenter();
+
         void setCenter(float * center);
         void setBrakeDof(Dof * dof);
         void enableSteering();
+        bool isSteering();
 
         bool isPowered;
 

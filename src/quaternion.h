@@ -27,4 +27,18 @@ class Quaternion {
         void toEuler(float * euler);
         // Set this quaternion based on the euler vector
         void fromEuler(float * euler);
+
+        // Normalise this quaternion
+        void normalise();
+
+        // Multiply with a vector
+        void multiply(float * vector);
+        void multiply(float * vector, Quaternion & result);
+        void multiply(float scalar);
+
+        // Add to quaternions
+        void Quaternion::add(Quaternion & quaternion);
+
+        void print();
+
 };

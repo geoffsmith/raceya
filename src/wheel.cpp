@@ -87,3 +87,11 @@ void Wheel::setBrakeDof(Dof * dof) {
 void Wheel::enableSteering() {
     this->_steering = true;
 }
+
+bool Wheel::isSteering() {
+    return this->_steering;
+}
+
+float * Wheel::getWheelCenter() {
+    return this->_wheelCenter;
+}

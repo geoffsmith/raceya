@@ -14,7 +14,8 @@
 class Matrix {
     public:
         Matrix();
-        Matrix(GLfloat *input);
+        Matrix(GLfloat * input);
+        Matrix(int order);
         ~Matrix();
         void reset();
         float& operator[] (const unsigned int index);
@@ -33,9 +34,23 @@ class Matrix {
 
         void multiplyMatrix(Matrix * matrix);
         void multiplyMatrix(float * matrix);
+        
+        // Calculate the minor matrix of order - 1
+        void minor(Matrix & minor, int row, int column);
+
+        // Calculate the determinant of this matrix
+        float determinant();
+
+        // Calculate the inverse of this matrix
+        void invert(Matrix & matrix);
+
+        // Print out the matrix
+        void print();
 
         float* getMatrix();
 
+        int order;
+
     private:
-        float *_matrix;
+        float * _matrix;
 };

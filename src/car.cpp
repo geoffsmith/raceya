@@ -58,6 +58,16 @@ Car::Car() {
     this->_localOrigin[2][0] = 0;
     this->_localOrigin[2][1] = 0;
     this->_localOrigin[2][2] = -1;
+
+    this->_inertiaTensor = Matrix(3);
+    this->_inverseInertiaTensor = Matrix(3);
+
+    this->_angularVelocity[0] = 0;
+    this->_angularVelocity[1] = 0;
+    this->_angularVelocity[2] = 0;
+
+    float euler[] = { 2, 0, 0 };
+    this->_orientation.fromEuler(euler);
 }
 
 void Car::_updateSteering() {
@@ -316,23 +326,6 @@ void Car::_updateComponents() {
 }
 
 void Car::_updateMatrix() {
-    // The car's angle of rotation, calculated from the _vector
-    float zVector[3];
-    float yVector[3];
-    float xVector[3];
-
-    yVector[0] = 0;
-    yVector[1] = 1;
-    yVector[2] = 0;
-
-    xVector[0] = 1;
-    xVector[1] = 0;
-    xVector[2] = 0;
-
-    zVector[0] = 0;
-    zVector[1] = 0;
-    zVector[2] = -1;
-
     // Reset the matrix
     this->_matrix.reset();
 
@@ -355,12 +348,13 @@ void Car::_updateMatrix() {
     this->_orientation.toRotationMatrix(orientationMatrix);
     this->_matrix.multiplyMatrix(&orientationMatrix);
 
+    // TODO: what is going on with all these rotations?
+    this->_matrix.rotateY(90);
+
     this->_matrix.translate(-1 * center[0], -1 * center[1], -1 * center[2]);
 
 
     // Rotate the car to be parallel to ground
-    //this->_matrix.rotateZ(180);
-    //this->_matrix.rotateX(90);
     this->_matrix.rotateY(180);
     this->_matrix.scale(this->_modelScale);
 }
@@ -485,6 +479,7 @@ float * Car::getVector() {
 
 void Car::setInertia(float * inertia) {
     vertexCopy(inertia, this->_inertia);
+    this->_calculateInertiaTensor();
 }
 
 void Car::setMass(float mass) {
@@ -575,14 +570,16 @@ void Car::_groundCollisionCorrection() {
  * Physics stuff
  *****************************************************************************/
 void Car::_calculateMovement() {
-    // Calculate the force of gravity
     float tmpForce[3];
     float accumulativeForce[] = { 0, 0, 0 };
+    float accumulativeMoment[] = { 0, 0, 0 };
     float gravityForce[3];
     float yAxis[] = { 0, -9.8, 0 };
     float time = FrameTimer::timer.getSeconds();
     float acceleration[3];
     float dragForce[3];
+
+    // Calculate the force of gravity
     vertexMultiply(this->_mass, yAxis, gravityForce);
     vertexAdd(gravityForce, accumulativeForce, accumulativeForce);
 
@@ -596,19 +593,40 @@ void Car::_calculateMovement() {
 
     // Add the forces for each wheel
     for (int i = 0; i < 4; ++i) {
+        // Check if this is a powered wheel
         if (this->_wheels[i]->isPowered) {
             // TODO check for steering
             // Add a force in the local X direction related to the RPM
-            vertexMultiply(this->_engineRPM / 1000 * this->_mass, this->_localOrigin[0], tmpForce);
+            vertexMultiply(this->_engineRPM / 1000 * this->_mass, this->_localOrigin[0], 
+                    tmpForce);
             vertexAdd(tmpForce, accumulativeForce, accumulativeForce);
+        }
+
+        // Check if this is a steered wheel
+        if (this->_wheels[i]->isSteering()) {
+            float * point = this->_wheels[i]->getWheelCenter();
+            // make sure the point is at the save level as the cog
+            point[1] = 0;
+            // r x F
+            float force[3];
+            force[0] = 1;
+            force[1] = 0;
+            force[2] = 0;
+            crossProduct(point, force, tmpForce);
+            vertexAdd(tmpForce, accumulativeMoment, accumulativeMoment);
+            cout << "Wheel force: ";
+            printVector(tmpForce);
         }
     }
 
     // Add drag
     // NOTE _mass ^ 2 here needs checking, but will do for now...
-    float drag = (-1.0 / 391.0) * this->_mass * this->_mass * this->_bodyArea * this->_dragCoefficient;
+    float drag = (-1.0 / 391.0) * this->_mass * this->_mass 
+        * this->_bodyArea * this->_dragCoefficient;
     vertexMultiply(drag, this->_vector, dragForce);
     vertexAdd(dragForce, accumulativeForce, accumulativeForce);
+
+    // Add a steering force
 
     // convert sum of forces into acceleration vector
     vertexMultiply(1 / this->_mass, accumulativeForce, acceleration);
@@ -618,4 +636,44 @@ void Car::_calculateMovement() {
 
     // Apply the force to the vector
     vertexAdd(acceleration, this->_vector, this->_vector);
+
+    // Now we apply the moments to the angular velocity
+    float tmp[] = { 0, 0, 0 };
+    this->_inertiaTensor.multiplyVector(this->_angularVelocity, tmp);
+    crossProduct(this->_angularVelocity, tmp, tmp);
+    vertexSub(accumulativeMoment, tmp, tmp);
+    this->_inverseInertiaTensor.multiplyVector(tmp);
+    vertexMultiply(time, tmp, tmp);
+    vertexAdd(this->_angularVelocity, tmp, this->_angularVelocity);
+
+    printVector(this->_angularVelocity);
+
+
+    // Now apply angular velocity to the orientation
+    Quaternion tmpQ;
+    this->_orientation.multiply(this->_angularVelocity, tmpQ);
+    tmpQ.multiply(0.5 * time);
+    this->_orientation.add(tmpQ);
+
+    // Now we need to normalise the quaternion
+    this->_orientation.normalise();
+}
+
+void Car::_calculateInertiaTensor() {
+    // At the moment we're not adding any extra elements to the car (wheels, gas tank, 
+    // etc) so the inertia tensor is pretty simple.
+    this->_inertiaTensor[0] = this->_inertia[0];
+    this->_inertiaTensor[1] = 0;
+    this->_inertiaTensor[2] = 0;
+
+    this->_inertiaTensor[3] = 0;
+    this->_inertiaTensor[4] = this->_inertia[1];
+    this->_inertiaTensor[5] = 0;
+
+    this->_inertiaTensor[6] = 0;
+    this->_inertiaTensor[7] = 0;
+    this->_inertiaTensor[8] = this->_inertia[2];
+
+    this->_inertiaTensor.invert(this->_inverseInertiaTensor);
+    this->_inverseInertiaTensor.print();
 }

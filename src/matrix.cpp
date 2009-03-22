@@ -7,43 +7,42 @@
 using namespace std;
 
 Matrix::Matrix() {
-    // Start with the identity matrix
-    this->_matrix = new float[16];
+    this->order = 4;
+    // Our default matrix is order 4
+    this->_matrix = new float[this->order * this->order];
+    this->reset();
+}
+
+Matrix::Matrix(int order) {
+    this->order = order;
+    this->_matrix = new float[this->order * this->order];
     this->reset();
 }
 
 Matrix::Matrix(GLfloat *input) {
     // Start with the identity matrix
-    this->_matrix = new float[16];
+    this->order = 4;
+    this->_matrix = new float[this->order * this->order];
     for (int i = 0; i < 16; ++i) {
         this->_matrix[i] = input[i];
     }
 }
 
 void Matrix::reset() {
-    this->_matrix[0] = 1;
-    this->_matrix[1] = 0;
-    this->_matrix[2] = 0;
-    this->_matrix[3] = 0;
-
-    this->_matrix[4] = 0;
-    this->_matrix[5] = 1;
-    this->_matrix[6] = 0;
-    this->_matrix[7] = 0;
-
-    this->_matrix[8] = 0;
-    this->_matrix[9] = 0;
-    this->_matrix[10] = 1;
-    this->_matrix[11] = 0;
-
-    this->_matrix[12] = 0;
-    this->_matrix[13] = 0;
-    this->_matrix[14] = 0;
-    this->_matrix[15] = 1;
+    // Start with the identity matrix
+    for (int i = 0; i < this->order; ++i) {
+        for (int j = 0; j < this->order; ++j) {
+            if (i == j) {
+                this->_matrix[i * this->order + j] = 1;
+            } else {
+                this->_matrix[i * this->order + j] = 0;
+            }
+        }
+    }
 }
 
 Matrix::~Matrix() {
-    delete[] this->_matrix;
+    //delete[] this->_matrix;
 }
 
 void Matrix::rotate(float angle, float * normal) {
@@ -192,10 +191,10 @@ void Matrix::scale(float scale) {
 void Matrix::multiplyVector(float *vector, float *result) {
     float *thisMatrix = this->_matrix;
     float sum;
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < this->order; ++i) {
         sum = 0;
-        for (int j = 0; j < 4; ++j) {
-            sum += thisMatrix[j * 4 + i] * vector[j];
+        for (int j = 0; j < this->order; ++j) {
+            sum += thisMatrix[j * this->order + i] * vector[j];
         }
         result[i] = sum;
     }
@@ -204,25 +203,35 @@ void Matrix::multiplyVector(float *vector, float *result) {
 void Matrix::multiplyVector(float *vector) {
     float *thisMatrix = this->_matrix;
     float sum;
-    float tmp[4];
-    float result[4];
+    float tmp[this->order];
+    float result[this->order];
 
+    // TODO: this is horrible, need to sort out orders
     tmp[0] = vector[0];
     tmp[1] = vector[1];
     tmp[2] = vector[2];
-    tmp[3] = 1;
 
-    for (int i = 0; i < 4; ++i) {
+    if (this->order == 4) {
+        tmp[3] = 1;
+    }
+
+    for (int i = 0; i < this->order; ++i) {
         sum = 0;
-        for (int j = 0; j < 4; ++j) {
-            sum += thisMatrix[j * 4 + i] * tmp[j];
+        for (int j = 0; j < this->order; ++j) {
+            sum += thisMatrix[j * this->order + i] * tmp[j];
         }
         result[i] = sum;
     }
 
-    vector[0] = result[0] / result[3];
-    vector[1] = result[1] / result[3];
-    vector[2] = result[2] / result[3];
+    if (this->order == 4) {
+        vector[0] = result[0] / result[3];
+        vector[1] = result[1] / result[3];
+        vector[2] = result[2] / result[3];
+    } else {
+        for (int i = 0; i < this->order; ++i) {
+            vector[i] = result[i];
+        }
+    }
 }
 
 void Matrix::multiplyVectorSkipTranslation(float *vector, float *result) {
@@ -270,4 +279,85 @@ void Matrix::multiplyMatrix(Matrix *matrix) {
 
 float* Matrix::getMatrix() {
     return this->_matrix;
+}
+
+void Matrix::minor(Matrix & minor, int row, int column) {
+    int p, q;
+
+    p = q = 0;
+
+    for (int i = 0; i < this->order; ++i) {
+        if (i != row) {
+            q = 0;
+            for (int j = 0; j < this->order; ++j) {
+                if (j != column) {
+                    minor[q * minor.order + p] = this->_matrix[j * this->order + i];
+                    ++q;
+                }
+            }
+            ++p;
+        }
+    }
+}
+
+float Matrix::determinant() {
+    float result = 0;
+    float factor;
+
+    // Stopping condition
+    if (this->order < 1) {
+        return 0;
+    }
+
+    // ... the usual stopping condition
+    if (this->order == 1) {
+        return this->_matrix[0];
+    }
+
+    if (this->order == 2) {
+        return this->_matrix[0] * this->_matrix[3] - this->_matrix[1] * this->_matrix[2];
+    }
+
+    Matrix minor(this->order - 1);
+
+    for (int i = 0; i < 1; ++i) {
+        for (int j = 0; j < this->order; ++j) {
+            this->minor(minor, i, j);
+            factor = minor.determinant();
+            result += pow(-1, i + j)  
+                * this->_matrix[j * this->order + i] 
+                * factor;
+        }
+    }
+
+    return result;
+}
+
+void Matrix::invert(Matrix & result) {
+    // Calculate the inverse of this matrix, using the adjoint method
+    // First we need the determinant
+    float determinant = this->determinant();
+    cout << "Determinant: " << determinant << endl;
+    determinant = 1.0 / this->determinant();
+
+    Matrix minor(this->order - 1);
+
+    for (int i = 0; i < this->order; ++i) {
+        for (int j = 0; j < this->order; ++j) {
+            this->minor(minor, i, j);
+            result[j * this->order + i] = determinant * minor.determinant();
+            if ((i + j) % 2 == 1) {
+                result[j * this->order + i] = -result[j * this->order + i];
+            }
+        }
+    }
+}
+
+void Matrix::print() {
+    for (int i = 0; i < this->order; ++i) {
+        for (int j = 0; j < this->order; ++j) {
+            cout << this->_matrix[j * this->order + i] << " ";
+        }
+        cout << endl;
+    }
 }

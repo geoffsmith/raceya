@@ -80,8 +80,11 @@ class Car {
         // Position
         float _position[3];
         float _vector[3];
+        float _angularVelocity[3];
 
         // Moments of inertia
+        Matrix _inertiaTensor;
+        Matrix _inverseInertiaTensor;
         float _inertia[3];
 
         // Drag coefficient and body area
@@ -117,7 +120,11 @@ class Car {
         void _groundCollisionCorrection();
 
 
-        void Car::_calculateMovement();
+        void _calculateMovement();
+
+        // Calculate the inertia tensor using the body intertia constants
+        void _calculateInertiaTensor();
+
 
         // the car's transformation matrix
         Matrix _matrix;

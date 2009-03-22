@@ -50,7 +50,7 @@ Car * parseCar(string carPathString) {
     } 
 
     // Load the inertia
-    if (carIniFile.hasKey("/body/inertia")) {
+    if (carIniFile.hasKey("/body/inertia/x")) {
         tmp = carIniFile["/body/inertia/x"];
         inertia[0] = atof(tmp.c_str());
         tmp = carIniFile["/body/inertia/y"];
@@ -58,6 +58,7 @@ Car * parseCar(string carPathString) {
         tmp = carIniFile["/body/inertia/z"];
         inertia[2] = atof(tmp.c_str());
         car->setInertia(inertia);
+        cout << "done iwth inertia" << endl;
     } 
 
     // Load the mass
