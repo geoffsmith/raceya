@@ -24,6 +24,8 @@ class Wheel {
         void setBrakeDof(Dof * dof);
         void enableSteering();
 
+        bool isPowered;
+
     private:
         // The dof model representing the wheel
         Dof * _dof;
@@ -47,5 +49,4 @@ class Wheel {
 
         // True if this wheel is steered
         bool _steering;
-
 };

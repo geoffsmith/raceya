@@ -9,6 +9,8 @@ Wheel::Wheel(int position, Dof * dof) {
     this->_wheelAngle = 0;
     this->_steering = false;
 
+    this->isPowered = false;
+
 }
 
 void Wheel::render() {

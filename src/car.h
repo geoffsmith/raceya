@@ -11,6 +11,7 @@
 #include "wheel.h"
 #include "track.h"
 #include "dof.h"
+#include "quaternion.h"
 
 class Dof;
 
@@ -87,6 +88,11 @@ class Car {
         // Mass of the car
         float _mass;
 
+        // The matrix representing the local coordinate system of the car
+        float _localOrigin[3][3];
+        // The quaternion representing the yaw, pitch and roll of the car
+        Quaternion _orientation;
+
         // Update the engine variables
         void _updateEngine();
         // Update the moving components of the car such as engine and wheels
@@ -103,6 +109,7 @@ class Car {
 
         // Check if there was a collision with the ground and correct for it
         void _groundCollisionCorrection();
+
 
         void Car::_calculateMovement();
 

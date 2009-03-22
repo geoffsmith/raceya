@@ -46,6 +46,18 @@ Car::Car() {
     this->_vector[0] = 0;
     this->_vector[1] = 0;
     this->_vector[2] = -1;
+
+    this->_localOrigin[0][0] = -1;
+    this->_localOrigin[0][1] = 0;
+    this->_localOrigin[0][2] = 0;
+
+    this->_localOrigin[1][0] = 0;
+    this->_localOrigin[1][1] = 1;
+    this->_localOrigin[1][2] = 0;
+
+    this->_localOrigin[2][0] = 0;
+    this->_localOrigin[2][1] = 0;
+    this->_localOrigin[2][2] = -1;
 }
 
 void Car::_updateSteering() {
@@ -339,20 +351,10 @@ void Car::_updateMatrix() {
     // Translate away from center
     this->_matrix.translate(center[0], center[1], center[2]);
     
-    // Adjust the pitch of the car
-    float n[3];
-    angle = 90 - angleInPlaneY(yVector, this->_vector, this->_vector);
-    angle *= -1;
-    crossProduct(yVector, this->_vector, n);
-    //this->_matrix.rotate(angle, n);
-
-    // Rotate the car to point in the right direction
-    // angle = -1 * angleBetweenVectors(this->_vector, zVector);
-    // what is going on here? xVector[0] gets set to 0 somehow by this point?!
-    xVector[0] = 1;
-    angle = -1 * angleInPlaneZ(this->_vector, zVector, xVector);
-    this->_matrix.rotate(angle, yVector);
-
+    // Set the cars orientation using the quaternion
+    Matrix orientationMatrix;
+    this->_orientation.toRotationMatrix(orientationMatrix);
+    this->_matrix.multiplyMatrix(&orientationMatrix);
 
     this->_matrix.translate(-1 * center[0], -1 * center[1], -1 * center[2]);
 
@@ -479,7 +481,7 @@ void Car::setCenter(float * center) {
 }
 
 float * Car::getVector() {
-    return this->_vector;
+    return this->_localOrigin[0];
 }
 
 void Car::setInertia(float * inertia) {
@@ -567,6 +569,7 @@ void Car::_groundCollisionCorrection() {
  *****************************************************************************/
 void Car::_calculateMovement() {
     // Calculate the force of gravity
+    float tmpForce[3];
     float accumulativeForce[] = { 0, 0, 0 };
     float gravityForce[3];
     float yAxis[] = { 0, -9.8, 0 };
@@ -581,6 +584,16 @@ void Car::_calculateMovement() {
         // vector
         vertexMultiply(-1, gravityForce, gravityForce);
         vertexAdd(gravityForce, accumulativeForce, accumulativeForce);
+    }
+
+    // Add the forces for each wheel
+    for (int i = 0; i < 4; ++i) {
+        if (this->_wheels[i]->isPowered) {
+            // TODO check for steering
+            // Add a force in the local X direction related to the RPM
+            vertexMultiply(this->_engineRPM / 1000 * this->_mass, this->_localOrigin[0], tmpForce);
+            vertexAdd(tmpForce, accumulativeForce, accumulativeForce);
+        }
     }
 
     // convert sum of forces into acceleration vector

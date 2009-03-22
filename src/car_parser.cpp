@@ -99,6 +99,13 @@ Car * parseCar(string carPathString) {
         }
         s.str("");
 
+        // Check if this wheel is powered
+        s << "/wheel" << i << "/powered";
+        if (carIniFile[s.str()] == "1") {
+            wheel->isPowered = true;
+        }
+        s.str("");
+
         // Try and get the center of the wheel from the suspension
         s << "/susp" << i << "/x";
         center[0] = atof(carIniFile[s.str()].c_str());

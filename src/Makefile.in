@@ -57,7 +57,7 @@ am_raceya_OBJECTS = raceya-camera.$(OBJEXT) raceya-car.$(OBJEXT) \
 	raceya-shader.$(OBJEXT) raceya-track.$(OBJEXT) \
 	raceya-wheel.$(OBJEXT) raceya-car_parser.$(OBJEXT) \
 	raceya-texture.$(OBJEXT) raceya-ini.$(OBJEXT) \
-	raceya-opengl_state.$(OBJEXT)
+	raceya-opengl_state.$(OBJEXT) raceya-quaternion.$(OBJEXT)
 raceya_OBJECTS = $(am_raceya_OBJECTS)
 raceya_DEPENDENCIES =
 raceya_LINK = $(CXXLD) $(raceya_CXXFLAGS) $(CXXFLAGS) \
@@ -189,7 +189,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-raceya_SOURCES = camera.cpp car.cpp closest_point.cpp dof.cpp frame_timer.cpp frustum_culler.cpp hud.cpp jpeg.cpp lib.cpp logger.cpp main.cpp matrix.cpp shader.cpp track.cpp wheel.cpp camera.h car.h closest_point.h dof.h frame_timer.h frustum_culler.h hud.h jpeg.h lib.h logger.h main.h matrix.h shader.h track.h wheel.h car_parser.h car_parser.cpp texture.h texture.cpp ini.h ini.cpp opengl_state.h opengl_state.cpp
+raceya_SOURCES = camera.cpp car.cpp closest_point.cpp dof.cpp frame_timer.cpp frustum_culler.cpp hud.cpp jpeg.cpp lib.cpp logger.cpp main.cpp matrix.cpp shader.cpp track.cpp wheel.cpp camera.h car.h closest_point.h dof.h frame_timer.h frustum_culler.h hud.h jpeg.h lib.h logger.h main.h matrix.h shader.h track.h wheel.h car_parser.h car_parser.cpp texture.h texture.cpp ini.h ini.cpp opengl_state.h opengl_state.cpp quaternion.h quaternion.cpp
 raceya_LDADD = -lglut -lGLU -lGL -lSDL -lSDLmain -lSDL_ttf -lSDL_mixer -lSDL_image -ljpeg -lboost_filesystem-mt -lboost_system-mt -lftgl -lfreetype 
 raceya_LDFLAGS = -framework Cocoa $(SDL_LIBS) $(GL_LIBS)
 raceya_CXXFLAGS = $(SDL_CFLAGS) $(BOOST_CPPFLAGS) $(GL_CFLAGS) -Wall
@@ -274,6 +274,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-matrix.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-opengl_state.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-quaternion.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-shader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-texture.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-track.Po@am__quote@
@@ -558,6 +559,20 @@ raceya-opengl_state.obj: opengl_state.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='opengl_state.cpp' object='raceya-opengl_state.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-opengl_state.obj `if test -f 'opengl_state.cpp'; then $(CYGPATH_W) 'opengl_state.cpp'; else $(CYGPATH_W) '$(srcdir)/opengl_state.cpp'; fi`
+
+raceya-quaternion.o: quaternion.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -MT raceya-quaternion.o -MD -MP -MF $(DEPDIR)/raceya-quaternion.Tpo -c -o raceya-quaternion.o `test -f 'quaternion.cpp' || echo '$(srcdir)/'`quaternion.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/raceya-quaternion.Tpo $(DEPDIR)/raceya-quaternion.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='quaternion.cpp' object='raceya-quaternion.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-quaternion.o `test -f 'quaternion.cpp' || echo '$(srcdir)/'`quaternion.cpp
+
+raceya-quaternion.obj: quaternion.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -MT raceya-quaternion.obj -MD -MP -MF $(DEPDIR)/raceya-quaternion.Tpo -c -o raceya-quaternion.obj `if test -f 'quaternion.cpp'; then $(CYGPATH_W) 'quaternion.cpp'; else $(CYGPATH_W) '$(srcdir)/quaternion.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/raceya-quaternion.Tpo $(DEPDIR)/raceya-quaternion.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='quaternion.cpp' object='raceya-quaternion.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-quaternion.obj `if test -f 'quaternion.cpp'; then $(CYGPATH_W) 'quaternion.cpp'; else $(CYGPATH_W) '$(srcdir)/quaternion.cpp'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

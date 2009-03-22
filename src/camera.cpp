@@ -25,21 +25,24 @@ Camera::Camera(Car * playersCar) {
     this->_rotationDelta = 10;
 
     // Initalise yaw
-    this->_targetYawAngle = 180;
-    this->_currentYawAngle = 0;
+    this->_targetYawAngle = 0;
+    this->_currentYawAngle = 180;
     this->_maxYawMovementPerFrame = 2;
 }
 
 void Camera::_calculateYawAngle() {
     // First find the angle between the car direction and the X unit vector on the X/Z
     // plane
-    float zUnit[] = { 0, 0, 1 };
-    float xUnit[] = { 1, 0, 0 };
+    float zUnit[] = { 0, 0, -1 };
+    float xUnit[] = { -1, 0, 0 };
+    float carXAxis[3];
     float carAngle;
     float targetAngle;
     float workingAngle;
 
-    carAngle = angleInPlane(xUnit, this->_playersCar->getVector(), zUnit, xUnit);
+    vertexCopy(this->_playersCar->getVector(), carXAxis);
+
+    carAngle = angleInPlane(xUnit, carXAxis, zUnit, xUnit);
 
     // ... then add the target angle
     targetAngle = carAngle + this->_targetYawAngle;
