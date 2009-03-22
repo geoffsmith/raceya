@@ -11,8 +11,8 @@ FrameTimer FrameTimer::timer;
 FrameTimer::FrameTimer() {
     // We are using SDL_GetTicks, which is in milliseconds
     this->_ticksPerSecond = 1000;
-    this->_currentFrame = SDL_GetTicks();
     this->_lastFrame = SDL_GetTicks();
+    this->_currentFrame = SDL_GetTicks();
     this->_targetFPS = 20;
     this->_currentFPS = 0;
 }
@@ -23,7 +23,11 @@ void FrameTimer::newFrame() {
     this->_currentFrame = SDL_GetTicks();
 
     // Calculate how many frames we are doing 
-    this->_currentFPS = this->_ticksPerSecond / (this->_currentFrame - this->_lastFrame);
+    if (this->_currentFrame - this->_lastFrame == 0) {
+        this->_currentFPS = 0;
+    } else {
+        this->_currentFPS = this->_ticksPerSecond / (this->_currentFrame - this->_lastFrame);
+    }
 
     // Add this to the history
     this->_fpsHistory.push_back(this->_currentFPS);

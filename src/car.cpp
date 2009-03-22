@@ -277,6 +277,16 @@ void Car::_updateComponents() {
     }
 
     // Update the car's vector
+    this->_calculateMovement();
+    float tmp[3];
+    vertexMultiply(FrameTimer::timer.getSeconds(), this->_vector, tmp);
+    vertexAdd(this->_position, tmp, this->_position);
+
+    // Check for collision with the ground on this new position
+    this->_groundCollisionCorrection();
+
+    // Update the car's vector
+    /*
     Matrix matrix;
     matrix.rotateY(-1 * this->_steeringAngle * FrameTimer::timer.getSeconds());
     matrix.multiplyVector(this->_vector);
@@ -287,9 +297,10 @@ void Car::_updateComponents() {
     this->_position[0] += moveForward * this->_vector[0];
     this->_position[1] += moveForward * this->_vector[1];
     this->_position[2] += moveForward * this->_vector[2];
+    */
 
     // Update the car's position in relation to the ground
-    this->_updateLay();
+    //this->_updateLay();
 }
 
 void Car::_updateMatrix() {
@@ -318,8 +329,6 @@ void Car::_updateMatrix() {
     this->_matrix.translate(this->_position[0], this->_position[1], this->_position[2]);
 
     Matrix centerMatrix;
-    //centerMatrix.rotateZ(180);
-    //centerMatrix.rotateX(90);
     centerMatrix.rotateY(180);
     centerMatrix.scale(this->_modelScale);
     float center[3];
@@ -335,7 +344,7 @@ void Car::_updateMatrix() {
     angle = 90 - angleInPlaneY(yVector, this->_vector, this->_vector);
     angle *= -1;
     crossProduct(yVector, this->_vector, n);
-    this->_matrix.rotate(angle, n);
+    //this->_matrix.rotate(angle, n);
 
     // Rotate the car to point in the right direction
     // angle = -1 * angleBetweenVectors(this->_vector, zVector);
@@ -456,6 +465,9 @@ void Car::setTrack(Track * track) {
 
     // Set the start position to the position on the track
     vertexCopy(this->_track->startPosition, this->_position);
+
+    // Add to the position
+    //this->_position[1] += 500;
 }
 
 void Car::setWheel(Wheel * wheel, int index) {
@@ -468,4 +480,115 @@ void Car::setCenter(float * center) {
 
 float * Car::getVector() {
     return this->_vector;
+}
+
+void Car::setInertia(float * inertia) {
+    vertexCopy(inertia, this->_inertia);
+}
+
+void Car::setMass(float mass) {
+    this->_mass = mass;
+}
+
+/******************************************************************************
+ * Collision detection
+ *****************************************************************************/
+bool Car::_isOnGround() {
+    float wheelPoint[3];
+    float groundPoint[3];
+    for (int i = 0; i < 4; ++i) {
+        this->_wheels[i]->getGroundContact(wheelPoint);
+        // Transform this point to world coords
+        this->_matrix.multiplyVector(wheelPoint);
+
+        // Get the closest point on the track
+        findClosestPoint(this->_track->getDofs(), this->_track->getNDofs(), 
+                wheelPoint, groundPoint);
+
+        // check for NaN
+        // TODO: this is probably caused by a bug in closest point
+        if (isnan(groundPoint[0]) 
+                || isnan(groundPoint[1]) 
+                || isnan(groundPoint[2])) {
+            // Set the ground point to the wheel point
+            vertexCopy(wheelPoint, groundPoint);
+        }
+
+        // If the ground point is >= wheel point, the car is on the ground
+        if (groundPoint[1] >= wheelPoint[1]) return true;
+    }
+    return false;
+}
+
+void Car::_groundCollisionCorrection() {
+    float wheelPoints[4][3];
+    float groundPoints[4][3];
+    for (int i = 0; i < 4; ++i) {
+        this->_wheels[i]->getGroundContact(wheelPoints[i]);
+        // Transform this point to world coords
+        this->_matrix.multiplyVector(wheelPoints[i]);
+
+        // Get the closest point on the track
+        findClosestPoint(this->_track->getDofs(), this->_track->getNDofs(), 
+                wheelPoints[i], groundPoints[i]);
+
+        // check for NaN
+        // TODO: this is probably caused by a bug in closest point
+        if (isnan(groundPoints[i][0]) 
+                || isnan(groundPoints[i][1]) 
+                || isnan(groundPoints[i][2])) {
+            // Set the ground point to the wheel point
+            vertexCopy(wheelPoints[i], groundPoints[i]);
+        }
+    }
+
+    // Go through the ground points and find the biggest negative difference
+    int largestIndex = 0;
+    float maxDifference = 1;
+    float difference;
+    for (int i = 0; i < 4; ++i) {
+        difference = wheelPoints[i][1] - groundPoints[i][1];
+        if (i == 0 || (difference < 0 && difference > maxDifference)) {
+            maxDifference = difference;
+            largestIndex = i;
+        }
+    }
+
+    // If maxDifference is still 1, all the wheels are above the ground
+    if (maxDifference < 0) {
+        // The wheel is below the ground surface, we need to move the car up by the
+        // difference
+        this->_position[1] += -1 * maxDifference;
+    }
+}
+
+/******************************************************************************
+ * Physics stuff
+ *****************************************************************************/
+void Car::_calculateMovement() {
+    // Calculate the force of gravity
+    float accumulativeForce[] = { 0, 0, 0 };
+    float gravityForce[3];
+    float yAxis[] = { 0, -9.8, 0 };
+    float time = FrameTimer::timer.getSeconds();
+    float acceleration[3];
+    vertexMultiply(this->_mass, yAxis, gravityForce);
+    vertexAdd(gravityForce, accumulativeForce, accumulativeForce);
+
+    // Add the upwards for equal to gravity
+    if (this->_isOnGround()) {
+        // If a wheel is on the ground we counter act vertical aspect of the car's
+        // vector
+        vertexMultiply(-1, gravityForce, gravityForce);
+        vertexAdd(gravityForce, accumulativeForce, accumulativeForce);
+    }
+
+    // convert sum of forces into acceleration vector
+    vertexMultiply(1 / this->_mass, accumulativeForce, acceleration);
+
+    // Scale the force by time
+    vertexMultiply(time, acceleration, acceleration);
+
+    // Apply the force to the vector
+    vertexAdd(acceleration, this->_vector, this->_vector);
 }

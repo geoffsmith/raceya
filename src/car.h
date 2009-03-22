@@ -34,6 +34,8 @@ class Car {
         void setTrack(Track * track);
         void setWheel(Wheel * wheel, int index);
         void setCenter(float * center);
+        void setInertia(float * inertia);
+        void setMass(float mass);
 
         float * getVector();
 
@@ -76,8 +78,14 @@ class Car {
         float _position[3];
         float _vector[3];
 
-        // Center of the car
+        // Moments of inertia
+        float _inertia[3];
+
+        // Center of gravity of the car
         float _center[3];
+
+        // Mass of the car
+        float _mass;
 
         // Update the engine variables
         void _updateEngine();
@@ -89,6 +97,14 @@ class Car {
         void _updateLay();
         // Update hte transformation matrix
         void _updateMatrix();
+
+        // Return true of one of the wheels is on the ground
+        bool _isOnGround();
+
+        // Check if there was a collision with the ground and correct for it
+        void _groundCollisionCorrection();
+
+        void Car::_calculateMovement();
 
         // the car's transformation matrix
         Matrix _matrix;

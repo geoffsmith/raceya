@@ -26,6 +26,7 @@ Car * parseCar(string carPathString) {
     string tmp;
     vector<string> parts;
     float center[3];
+    float inertia[3];
     float restLength;
 
     // First we try and load the car shader
@@ -47,6 +48,23 @@ Car * parseCar(string carPathString) {
         center[2] = atof(parts[2].c_str());
         car->setCenter(center);
     } 
+
+    // Load the inertia
+    if (carIniFile.hasKey("/body/inertia")) {
+        tmp = carIniFile["/body/inertia/x"];
+        inertia[0] = atof(tmp.c_str());
+        tmp = carIniFile["/body/inertia/y"];
+        inertia[1] = atof(tmp.c_str());
+        tmp = carIniFile["/body/inertia/z"];
+        inertia[2] = atof(tmp.c_str());
+        car->setInertia(inertia);
+    } 
+
+    // Load the mass
+    if (carIniFile.hasKey("/body/mass")) {
+        tmp = carIniFile["/body/mass"];
+        car->setMass(atof(tmp.c_str()));
+    }
 
     // Load the wheels
     Wheel * wheel;

@@ -212,6 +212,7 @@ int main(int argc, char** argv) {
     initObjects();
 
     // Enter the main look
+    FrameTimer::timer.newFrame();
     while (1) {
         // Update the frame timer
         FrameTimer::timer.newFrame();
