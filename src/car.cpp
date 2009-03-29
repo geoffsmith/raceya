@@ -448,7 +448,7 @@ void Car::_calculateMovement() {
 
     // dampen the angular velocity - this is to correct for rotation friction of the
     // tyres, which i've not modelled properly yet
-    vertexMultiply(0.8, this->_angularVelocity, this->_angularVelocity);
+    vertexMultiply(0.9, this->_angularVelocity, this->_angularVelocity);
 
     // Now apply angular velocity to the orientation
     Quaternion tmpQ;
@@ -561,7 +561,7 @@ void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumul
             orientation.multiplyVector(forward, tmpForce);
 
             // Add a force in the local X direction related to the RPM
-            vertexMultiply(this->_engineRPM / 1000 * this->_mass, tmpForce, tmpForce);
+            vertexMultiply(this->_engineRPM / 100 * this->_mass, tmpForce, tmpForce);
             vertexAdd(tmpForce, forceAccumulator, forceAccumulator);
 
             // Add this force to the rotational forces
@@ -576,25 +576,27 @@ void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumul
 
         // Find the wheel vector using the wheel angle and the car's orientation
 
-        wheelMatrix.reset();
-        wheelMatrix.rotateY(this->_wheels[i]->getAngle());
-        wheelMatrix.multiplyMatrix(&orientation);
-        wheelMatrix.multiplyVector(forward, tmpForce);
+        if (this->_wheels[i]->isSteering()) {
+            wheelMatrix.reset();
+            wheelMatrix.rotateY(this->_wheels[i]->getAngle());
+            wheelMatrix.multiplyMatrix(&orientation);
+            wheelMatrix.multiplyVector(forward, tmpForce);
 
-        // The forward is actually backwards and is the same length as _vector
-        vertexMultiply(-vectorLength(this->_vector), tmpForce, tmpForce);
+            // The forward is actually backwards and is the same length as _vector
+            vertexMultiply(-vectorLength(this->_vector), tmpForce, tmpForce);
 
-        // Find the L vector 
-        float lVector[3];
-        vertexAdd(this->_vector, tmpForce, lVector);
-        vertexMultiply(-this->_mass, lVector, lVector);
+            // Find the L vector 
+            float lVector[3];
+            vertexAdd(this->_vector, tmpForce, lVector);
+            vertexMultiply(this->_mass, lVector, lVector);
 
-        // Put the L vector back into car's local system
-        opposite.multiplyVector(lVector);
+            // Put the L vector back into car's local system
+            opposite.multiplyVector(lVector);
 
-        momentDistance(groundPoint, lVector, this->_center, r);
-        crossProduct(point, lVector, tmpForce);
-        vertexAdd(tmpForce, angularAccumulator, angularAccumulator);
+            momentDistance(groundPoint, lVector, this->_center, r);
+            crossProduct(point, lVector, tmpForce);
+            vertexAdd(tmpForce, angularAccumulator, angularAccumulator);
+        }
     }
 }
 
