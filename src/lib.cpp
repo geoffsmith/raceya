@@ -283,3 +283,40 @@ void printError() {
         cout << "OpenGL error: " << gluErrorString(error) << endl;
     }
 }
+
+void momentDistance(float * a, float * vector, float * cog, float * result) {
+    // Get a second point
+    float n[3];
+    float tmp[3];
+    float ac[3];
+    float t;
+    float l;
+
+    // Find the closest point from origin to line defined by a -> b
+    // closest point = a + t(b - a)
+
+    // n = (b - a) / |b - a|
+    l = vectorLength(vector);
+
+    // If l is 0, we set result to 0
+    if (l == 0) {
+        result[0] = 0;
+        result[1] = 0;
+        result[2] = 0;
+        return;
+    }
+
+    vertexCopy(vector, n);
+    vertexMultiply(1.0 / l, n, n);
+
+    // t = (O - a) . n / |b - a|
+    vertexSub(cog, a, ac);
+    t = dotProduct(ac, n) / l;
+
+    // closest point = a + t(b - a)
+    vertexMultiply(t, vector, tmp);
+    vertexAdd(a, tmp, tmp);
+
+    // Vector from p to cog
+    vertexSub(cog, tmp, result);
+}

@@ -15,6 +15,7 @@
 #include <iostream>
 #include <time.h>
 #include <string>
+#include <pthread.h>
 
 #include "lib.h"
 #include "car.h"
@@ -33,6 +34,7 @@ static Camera * camera;
 static Hud * hud;
 static SDL_Surface * drawContext;
 static Track * track;
+static pthread_t carUpdateThread;
 
 static int screenWidth = 800;
 static int screenHeight = 600;
@@ -210,6 +212,10 @@ int main(int argc, char** argv) {
 
     init();
     initObjects();
+
+    // Update the car
+    void * v = (void *)car;
+    pthread_create(&carUpdateThread, NULL, &Car::update, v);
 
     // Enter the main look
     FrameTimer::timer.newFrame();

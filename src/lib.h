@@ -45,5 +45,9 @@ bool colorCopy4(float * from, float * to);
 
 void printVector(float * a);
 
+// calculate the vector from the origin that is perpendicular to the vector of a force
+// passing through a point
+void momentDistance(float * a, float * vector, float * cog, float * result);
+
 // Flip a SDL_Surface horizontally
 void horizontalFlipSurface(SDL_Surface * surface);

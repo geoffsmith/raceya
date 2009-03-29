@@ -42,6 +42,9 @@ class Car {
 
         float * getVector();
 
+        // Update the car's position and orientation at 1000Hz
+        static void * update(void * car);
+
     private:
         Wheel * _wheels[4];
 
@@ -108,8 +111,6 @@ class Car {
         void _updateComponents();
         // Update the car's steering
         void _updateSteering();
-        // Update the car's position so that it lies on the ground
-        void _updateLay();
         // Update hte transformation matrix
         void _updateMatrix();
 
