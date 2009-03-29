@@ -44,6 +44,9 @@ class Matrix {
         // Calculate the inverse of this matrix
         void invert(Matrix & matrix);
 
+        // Calculate the transport of this matrix
+        void transpose(Matrix & result);
+
         // Print out the matrix
         void print();
 

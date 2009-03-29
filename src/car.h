@@ -119,8 +119,11 @@ class Car {
         // Check if there was a collision with the ground and correct for it
         void _groundCollisionCorrection();
 
-
+        // Calculate the forces and their effect on the linear and angular velocities
         void _calculateMovement();
+
+        // Calculate the forces due to the wheels (contact with the ground and turning)
+        void _calculateWheelForces(float * forceAccumulator, float * angularAccumulator);
 
         // Calculate the inertia tensor using the body intertia constants
         void _calculateInertiaTensor();

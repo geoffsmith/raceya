@@ -188,9 +188,11 @@ void vertexCopy(float * from, float * to) {
 }
 
 void crossProduct(float * a, float * b, float * result) {
-    result[0] =  a[1] * b[2] - b[1] * a[2];
-    result[1] =  a[0] * b[2] - b[0] * a[2];
-    result[2] =  a[0] * b[1] - b[0] * a[1];
+    float tmp[3];
+    tmp[0] =  a[1] * b[2] - b[1] * a[2];
+    tmp[1] =  a[0] * b[2] - b[0] * a[2];
+    tmp[2] =  a[0] * b[1] - b[0] * a[1];
+    vertexCopy(tmp, result);
 }
 
 void vertexMultiply(float a, float * b, float * result) {

@@ -66,7 +66,7 @@ Car::Car() {
     this->_angularVelocity[1] = 0;
     this->_angularVelocity[2] = 0;
 
-    float euler[] = { 2, 0, 0 };
+    float euler[] = { 0, 0, 0 };
     this->_orientation.fromEuler(euler);
 }
 
@@ -333,7 +333,7 @@ void Car::_updateMatrix() {
     this->_matrix.translate(this->_position[0], this->_position[1], this->_position[2]);
 
     Matrix centerMatrix;
-    centerMatrix.rotateY(180);
+    //centerMatrix.rotateY(180);
     centerMatrix.scale(this->_modelScale);
     float center[3];
 
@@ -349,13 +349,13 @@ void Car::_updateMatrix() {
     this->_matrix.multiplyMatrix(&orientationMatrix);
 
     // TODO: what is going on with all these rotations?
-    this->_matrix.rotateY(90);
+    //this->_matrix.rotateY(90);
 
     this->_matrix.translate(-1 * center[0], -1 * center[1], -1 * center[2]);
 
 
     // Rotate the car to be parallel to ground
-    this->_matrix.rotateY(180);
+    //this->_matrix.rotateY(180);
     this->_matrix.scale(this->_modelScale);
 }
 
@@ -552,7 +552,7 @@ void Car::_groundCollisionCorrection() {
     float difference;
     for (int i = 0; i < 4; ++i) {
         difference = wheelPoints[i][1] - groundPoints[i][1];
-        if (i == 0 || (difference < 0 && difference > maxDifference)) {
+        if (i == 0 || (difference < 0 && difference < maxDifference)) {
             maxDifference = difference;
             largestIndex = i;
         }
@@ -583,41 +583,7 @@ void Car::_calculateMovement() {
     vertexMultiply(this->_mass, yAxis, gravityForce);
     vertexAdd(gravityForce, accumulativeForce, accumulativeForce);
 
-    // Add the upwards for equal to gravity
-    if (this->_isOnGround()) {
-        // If a wheel is on the ground we counter act vertical aspect of the car's
-        // vector
-        vertexMultiply(-1, gravityForce, gravityForce);
-        vertexAdd(gravityForce, accumulativeForce, accumulativeForce);
-    }
-
-    // Add the forces for each wheel
-    for (int i = 0; i < 4; ++i) {
-        // Check if this is a powered wheel
-        if (this->_wheels[i]->isPowered) {
-            // TODO check for steering
-            // Add a force in the local X direction related to the RPM
-            vertexMultiply(this->_engineRPM / 1000 * this->_mass, this->_localOrigin[0], 
-                    tmpForce);
-            vertexAdd(tmpForce, accumulativeForce, accumulativeForce);
-        }
-
-        // Check if this is a steered wheel
-        if (this->_wheels[i]->isSteering()) {
-            float * point = this->_wheels[i]->getWheelCenter();
-            // make sure the point is at the save level as the cog
-            point[1] = 0;
-            // r x F
-            float force[3];
-            force[0] = 1;
-            force[1] = 0;
-            force[2] = 0;
-            crossProduct(point, force, tmpForce);
-            vertexAdd(tmpForce, accumulativeMoment, accumulativeMoment);
-            cout << "Wheel force: ";
-            printVector(tmpForce);
-        }
-    }
+    this->_calculateWheelForces(accumulativeForce, accumulativeMoment);
 
     // Add drag
     // NOTE _mass ^ 2 here needs checking, but will do for now...
@@ -625,8 +591,6 @@ void Car::_calculateMovement() {
         * this->_bodyArea * this->_dragCoefficient;
     vertexMultiply(drag, this->_vector, dragForce);
     vertexAdd(dragForce, accumulativeForce, accumulativeForce);
-
-    // Add a steering force
 
     // convert sum of forces into acceleration vector
     vertexMultiply(1 / this->_mass, accumulativeForce, acceleration);
@@ -638,7 +602,7 @@ void Car::_calculateMovement() {
     vertexAdd(acceleration, this->_vector, this->_vector);
 
     // Now we apply the moments to the angular velocity
-    float tmp[] = { 0, 0, 0 };
+    float tmp[3];
     this->_inertiaTensor.multiplyVector(this->_angularVelocity, tmp);
     crossProduct(this->_angularVelocity, tmp, tmp);
     vertexSub(accumulativeMoment, tmp, tmp);
@@ -646,8 +610,9 @@ void Car::_calculateMovement() {
     vertexMultiply(time, tmp, tmp);
     vertexAdd(this->_angularVelocity, tmp, this->_angularVelocity);
 
-    printVector(this->_angularVelocity);
-
+    // dampen the angular velocity - this is to correct for rotation friction of the
+    // tyres, which i've not modelled properly yet
+    vertexMultiply(0.8, this->_angularVelocity, this->_angularVelocity);
 
     // Now apply angular velocity to the orientation
     Quaternion tmpQ;
@@ -657,6 +622,176 @@ void Car::_calculateMovement() {
 
     // Now we need to normalise the quaternion
     this->_orientation.normalise();
+}
+
+void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumulator) {
+    float wheelPoint[3];
+    float groundPoint[3];
+    float tmpForce[3];
+    float tmpVector[3];
+    bool wheelOnGround[4];
+    bool wheelBelowGround[4];
+    int wheelOnGroundCount = 0;
+    float gravityForce[3];
+    float yAxis[] = { 0, -9.8, 0 };
+    float forward[] = { 0, 0, 1 };
+    float * point;
+    Matrix orientation;
+    Matrix wheelMatrix;
+    Matrix opposite;
+    float distanceFromCOG[4];
+    float totalDistanceFromCOG = 0;
+
+    // Find out which wheels are on the ground
+    for (int i = 0; i < 4; ++i) {
+        this->_wheels[i]->getGroundContact(wheelPoint);
+
+        // Transform this point to world coords
+        this->_matrix.multiplyVector(wheelPoint);
+
+        // Get the closest point on the track
+        findClosestPoint(this->_track->getDofs(), this->_track->getNDofs(), 
+                wheelPoint, groundPoint);
+
+        // check for NaN
+        if (isnan(groundPoint[0]) 
+                || isnan(groundPoint[1]) 
+                || isnan(groundPoint[2])) {
+            // Set the ground point to the wheel point
+            vertexCopy(wheelPoint, groundPoint);
+        }
+
+        // If the ground point is >= wheel point, the car is on the ground
+        // NOTE: we're giving the wheel a 5cm leaway there
+        if (groundPoint[1] + 0.08 >= wheelPoint[1]) {
+            wheelOnGround[i] = true;
+            // We need a count of how many wheels are on the ground so that we know 
+            // how much weight is on each one
+            ++wheelOnGroundCount;
+        } else {
+            wheelOnGround[i] = false;
+        }
+
+        // We also want to know if the wheel is below the ground
+        wheelBelowGround[i] = groundPoint[1] > wheelPoint[1];
+    }
+
+    cout << endl;
+    cout << "Number of wheels: " << wheelOnGroundCount << endl;
+
+    // Calculate the force of gravity
+    vertexMultiply(this->_mass, yAxis, gravityForce);
+
+    // We will need a rotaton matrix for the orientation of the car
+    this->_orientation.toRotationMatrix(orientation);
+    orientation.invert(opposite);
+
+    cout << "Quaternion: ";
+    this->_orientation.print();
+
+    // Calculate the distance from the center of gravity for each wheel, the amount
+    // of weight carried by a wheel is inversely proportional to its distance from the 
+    // COG
+    for (int i = 0; i < 4; ++i) {
+        if (wheelOnGround[i]) {
+            point = this->_wheels[i]->getWheelCenter();
+            vertexSub(this->_center, point, tmpVector);
+            distanceFromCOG[i] = 1.0 / vectorLength(tmpVector);
+            totalDistanceFromCOG += distanceFromCOG[i];
+        }
+    }
+
+    // Add the forces for each wheel
+    for (int i = 0; i < 4; ++i) {
+        point = this->_wheels[i]->getWheelCenter();
+        this->_wheels[i]->getGroundContact(groundPoint);
+
+        // If the wheel is on the ground we add a upforce
+        if (wheelOnGround[i]) {
+            float weightRatio = distanceFromCOG[i] / totalDistanceFromCOG;
+
+            vertexMultiply(-weightRatio, gravityForce, tmpForce);
+            vertexAdd(tmpForce, forceAccumulator, forceAccumulator);
+
+            // And effect the angular momentum
+            // NOTE: I'm not really sure why this doesn't work
+            opposite.multiplyVector(tmpForce);
+
+            glPushMatrix();
+            GLUquadric * quad = gluNewQuadric();
+            glMultMatrixf(this->_matrix.getMatrix());
+            float unit[3];
+            vertexMultiply(1.0 / vectorLength(tmpForce), tmpForce, unit);
+            glTranslatef(groundPoint[0] + unit[0], groundPoint[1] + unit[1], groundPoint[2] + unit[2]);
+            gluSphere(quad, 0.4, 10, 10);
+            gluDeleteQuadric(quad);
+            glPopMatrix();
+            
+            crossProduct(groundPoint, tmpForce, tmpForce);
+            vertexAdd(tmpForce, angularAccumulator, angularAccumulator);
+        }
+
+        continue;
+
+        // Check if this is a powered wheel
+        if (this->_wheels[i]->isPowered) {
+            // Get the forward direction of the car in world coordinates
+            orientation.multiplyVector(forward, tmpForce);
+
+            // Add a force in the local X direction related to the RPM
+            vertexMultiply(this->_engineRPM / 1000 * this->_mass, tmpForce, tmpForce);
+            vertexAdd(tmpForce, forceAccumulator, forceAccumulator);
+
+            // Add this force to the rotational forces
+            //opposite.multiplyVector(tmpForce);
+            crossProduct(point, tmpForce, tmpForce);
+            vertexAdd(tmpForce, angularAccumulator, angularAccumulator);
+        }
+
+        continue;
+
+        // The force is perpendicular to the front of the car.
+        // We calculate it by applying the rotation matrix to the x unit vector
+
+        // Find the wheel vector using the wheel angle and the car's orientation
+
+        cout << "Orientation: ";
+        this->_orientation.print();
+
+        wheelMatrix.rotateY(this->_wheels[i]->getAngle());
+        wheelMatrix.multiplyMatrix(&orientation);
+        wheelMatrix.multiplyVector(forward, tmpForce);
+
+        // The forward is actually backwards and is the same length as _vector
+        vertexMultiply(-vectorLength(this->_vector), tmpForce, tmpForce);
+
+        cout << "Forward: ";
+        printVector(tmpForce);
+
+        // Find the L vector 
+        float lVector[3];
+        vertexAdd(this->_vector, tmpForce, lVector);
+        vertexMultiply(-1, lVector, lVector);
+
+        cout << "Before inverted: ";
+        printVector(lVector);
+        // Put the L vector back into car's local system
+        opposite.multiplyVector(lVector);
+        cout << "After inverted: ";
+        printVector(lVector);
+        vertexMultiply(this->_mass / 1, lVector, lVector);
+
+        cout << "Angle: " << this->_wheels[i]->getAngle() << endl;
+        cout << "Force: ";
+        printVector(lVector);
+        cout << "Force magnitude: " << vectorLength(lVector) << endl;
+        cout << "Vector: ";
+        printVector(this->_vector);
+        cout << endl;
+
+        crossProduct(point, lVector, tmpForce);
+        //vertexAdd(tmpForce, angularAccumulator, angularAccumulator);
+    }
 }
 
 void Car::_calculateInertiaTensor() {

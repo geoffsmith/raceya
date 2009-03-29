@@ -8,8 +8,8 @@ using namespace std;
 #define PI 3.14159265
 
 Quaternion::Quaternion() {
-    this->w = 0;
-    this->x = 0;
+    this->w = PI * 2;
+    this->x = 1;
     this->y = 0;
     this->z = 0;
 

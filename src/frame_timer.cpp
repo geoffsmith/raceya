@@ -13,7 +13,7 @@ FrameTimer::FrameTimer() {
     this->_ticksPerSecond = 1000;
     this->_lastFrame = SDL_GetTicks();
     this->_currentFrame = SDL_GetTicks();
-    this->_targetFPS = 20;
+    this->_targetFPS = 40;
     this->_currentFPS = 0;
 }
 

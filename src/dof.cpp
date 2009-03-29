@@ -554,7 +554,7 @@ void Dof::_calculateBoundingBox() {
 }
 
 bool Dof::isSurface() {
-    return this->_flags & DOF_SURFACE;
+    return this->_flags & DOF_SURFACE || this->_flags & DOF_COLLISION;
 }
 
 /****************************************************************************************

@@ -44,6 +44,10 @@ void Wheel::setAngle(float angle) {
     this->_wheelAngle = angle;
 }
 
+float Wheel::getAngle() {
+    return this->_wheelAngle;
+}
+
 void Wheel::getGroundContact(float * point) {
     // This is actually static, even though the wheel turns, just depends on
     // the wheel we want

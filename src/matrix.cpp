@@ -189,7 +189,7 @@ void Matrix::scale(float scale) {
 }
 
 void Matrix::multiplyVector(float *vector, float *result) {
-    float *thisMatrix = this->_matrix;
+    float * thisMatrix = this->_matrix;
     float sum;
     for (int i = 0; i < this->order; ++i) {
         sum = 0;
@@ -337,18 +337,25 @@ void Matrix::invert(Matrix & result) {
     // Calculate the inverse of this matrix, using the adjoint method
     // First we need the determinant
     float determinant = this->determinant();
-    cout << "Determinant: " << determinant << endl;
     determinant = 1.0 / this->determinant();
 
     Matrix minor(this->order - 1);
 
     for (int i = 0; i < this->order; ++i) {
         for (int j = 0; j < this->order; ++j) {
-            this->minor(minor, i, j);
+            this->minor(minor, j, i);
             result[j * this->order + i] = determinant * minor.determinant();
             if ((i + j) % 2 == 1) {
                 result[j * this->order + i] = -result[j * this->order + i];
             }
+        }
+    }
+}
+
+void Matrix::transpose(Matrix & result) {
+    for (int i = 0; i < this->order; ++i) {
+        for (int j = 0; j < this->order; ++j) {
+            result[j * this->order + i] = this->_matrix[i * this->order + j];
         }
     }
 }
