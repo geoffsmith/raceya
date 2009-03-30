@@ -27,7 +27,7 @@ class FrameTimer {
         // Get the time to pause until it's time to draw the next frame. We use 
         // the target FPS to calculate the time until we need to draw the next
         // frame. Result in milliseconds.
-        int getTimeTillNextDraw();
+        int getTimeTillNext();
         
         //  Get the current FPS
         int getCurrentFPS();

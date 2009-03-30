@@ -46,7 +46,7 @@ float FrameTimer::getMinutes() {
     return this->getSeconds() / 60.0;
 }
 
-int FrameTimer::getTimeTillNextDraw() {
+int FrameTimer::getTimeTillNext() {
     // Get the time since the current frame
     unsigned int now = SDL_GetTicks();
     int result = (float)this->_ticksPerSecond / (float)this->_targetFPS 

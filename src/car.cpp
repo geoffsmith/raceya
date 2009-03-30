@@ -166,7 +166,7 @@ void * Car::update(void * _car) {
     while (true) {
         car->_timer->newFrame();
         car->_updateComponents();
-        SDL_Delay(car->_timer->getTimeTillNextDraw());
+        SDL_Delay(car->_timer->getTimeTillNext());
     }
 }
 

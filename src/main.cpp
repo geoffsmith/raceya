@@ -235,7 +235,7 @@ int main(int argc, char** argv) {
         // Clear log
         Logger::maintain();
 
-        SDL_Delay(FrameTimer::timer.getTimeTillNextDraw());
+        SDL_Delay(FrameTimer::timer.getTimeTillNext());
     }
     return 0;
 }
