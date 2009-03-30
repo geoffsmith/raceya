@@ -12,9 +12,6 @@
 
 #define PI 3.14159265
 
-#define TIME_MS 5
-#define TIME_S 0.005
-
 using namespace std;
 
 Car::Car() {
@@ -70,8 +67,15 @@ Car::Car() {
     this->_angularVelocity[1] = 0;
     this->_angularVelocity[2] = 0;
 
-    float euler[] = { 0, 0, 0 };
+    float euler[] = { 0, 0, PI / 4.0 };
     this->_orientation.fromEuler(euler);
+
+    // Try and run the physics at 500Hz
+    this->_timer = new FrameTimer(30);
+}
+
+Car::~Car() {
+    delete this->_timer;
 }
 
 void Car::_updateSteering() {
@@ -98,17 +102,18 @@ void Car::_updateSteering() {
 void Car::_updateEngine() {
     // If the accelerator is pressed we increase the RPM be the accerelation coefficient
     if (this->_acceleratorPressed) {
-        this->_engineRPM += this->_acceleratorRPMSec * TIME_S;
+        this->_engineRPM += this->_acceleratorRPMSec * this->_timer->getSeconds();
     // ... otherwise we decrease the RPM
     } else if (this->_engineRPM > 0) {
         this->_engineRPM -= (this->_acceleratorRPMSec / 2.0) 
-            * TIME_S;
+            * this->_timer->getSeconds();
         // if this is negative, clamp to 0
         if (this->_engineRPM < 0) this->_engineRPM = 0;
     }
 
     // Check if we need to shift up or down a gear
-    if (this->_engineRPM >= this->_engineGearUpRPM && this->_currentGear < this->_numberOfGears - 1) {
+    if (this->_engineRPM >= this->_engineGearUpRPM 
+            && this->_currentGear < this->_numberOfGears - 1) {
         ++this->_currentGear;
         // and reset the RPM to the lower amount
         // TODO, this should probably be more clever and match the speed
@@ -134,7 +139,7 @@ void Car::_updateComponents() {
     this->_updateEngine();
 
     // Find out how much the engine has turned
-    float engineTurns = this->_engineRPM * TIME_S * 60.0;
+    float engineTurns = this->_engineRPM * this->_timer->getSeconds() * 60.0;
     // And divide by current gear ratio
     float wheelTurns = engineTurns / this->_gearRatios[this->_currentGear];
     // ... and divide by the final drive axis ratio
@@ -147,18 +152,21 @@ void Car::_updateComponents() {
     // Update the car's vector
     this->_calculateMovement();
     float tmp[3];
-    vertexMultiply(TIME_S, this->_vector, tmp);
+    vertexMultiply(this->_timer->getSeconds(), this->_vector, tmp);
     vertexAdd(this->_position, tmp, this->_position);
 
     // Check for collision with the ground on this new position
-    //this->_groundCollisionCorrection();
+    this->_groundCollisionCorrection();
+
     this->_updateMatrix();
 }
 
-void * Car::update(void * car) {
+void * Car::update(void * _car) {
+    Car * car = (Car *)_car;
     while (true) {
-        ((Car *)car)->_updateComponents();
-        SDL_Delay(TIME_MS);
+        car->_timer->newFrame();
+        car->_updateComponents();
+        SDL_Delay(car->_timer->getTimeTillNextDraw());
     }
 }
 
@@ -170,7 +178,6 @@ void Car::_updateMatrix() {
     this->_matrix.translate(this->_position[0], this->_position[1], this->_position[2]);
 
     Matrix centerMatrix;
-    //centerMatrix.rotateY(180);
     centerMatrix.scale(this->_modelScale);
     float center[3];
 
@@ -185,14 +192,10 @@ void Car::_updateMatrix() {
     this->_orientation.toRotationMatrix(orientationMatrix);
     this->_matrix.multiplyMatrix(&orientationMatrix);
 
-    // TODO: what is going on with all these rotations?
-    //this->_matrix.rotateY(90);
-
     this->_matrix.translate(-1 * center[0], -1 * center[1], -1 * center[2]);
 
 
     // Rotate the car to be parallel to ground
-    //this->_matrix.rotateY(180);
     this->_matrix.scale(this->_modelScale);
 }
 
@@ -411,7 +414,7 @@ void Car::_calculateMovement() {
     float gravityForce[3];
     float yAxis[] = { 0, -9.8, 0 };
     //float time = FrameTimer::timer.getSeconds();
-    float time = TIME_S;
+    float time = this->_timer->getSeconds();
     float acceleration[3];
     float dragForce[3];
 
@@ -448,7 +451,7 @@ void Car::_calculateMovement() {
 
     // dampen the angular velocity - this is to correct for rotation friction of the
     // tyres, which i've not modelled properly yet
-    vertexMultiply(0.9, this->_angularVelocity, this->_angularVelocity);
+    vertexMultiply(0.8, this->_angularVelocity, this->_angularVelocity);
 
     // Now apply angular velocity to the orientation
     Quaternion tmpQ;
@@ -541,7 +544,7 @@ void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumul
         if (wheelOnGround[i]) {
             float weightRatio = distanceFromCOG[i] / totalDistanceFromCOG;
 
-            if (wheelBelowGround[i]) weightRatio *= 1.2;
+            //if (wheelBelowGround[i]) weightRatio *= 1.2;
 
             vertexMultiply(-weightRatio, gravityForce, tmpForce);
             vertexAdd(tmpForce, forceAccumulator, forceAccumulator);
@@ -556,7 +559,7 @@ void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumul
 
 
         // Check if this is a powered wheel
-        if (this->_wheels[i]->isPowered) {
+        if (this->_wheels[i]->isPowered && wheelOnGround[i]) {
             // Get the forward direction of the car in world coordinates
             orientation.multiplyVector(forward, tmpForce);
 
@@ -568,7 +571,8 @@ void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumul
             opposite.multiplyVector(tmpForce);
             momentDistance(point, tmpForce, this->_center, r);
             crossProduct(r, tmpForce, tmpForce);
-            vertexAdd(tmpForce, angularAccumulator, angularAccumulator);
+            // TODO: this is very unstable at the moment
+            //vertexAdd(tmpForce, angularAccumulator, angularAccumulator);
         }
 
         // The force is perpendicular to the front of the car.
@@ -584,11 +588,11 @@ void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumul
 
             // The forward is actually backwards and is the same length as _vector
             vertexMultiply(-vectorLength(this->_vector), tmpForce, tmpForce);
+            vertexMultiply(this->_mass, tmpForce, tmpForce);
 
             // Find the L vector 
             float lVector[3];
             vertexAdd(this->_vector, tmpForce, lVector);
-            vertexMultiply(this->_mass, lVector, lVector);
 
             // Put the L vector back into car's local system
             opposite.multiplyVector(lVector);

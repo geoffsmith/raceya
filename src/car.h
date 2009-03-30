@@ -12,12 +12,14 @@
 #include "track.h"
 #include "dof.h"
 #include "quaternion.h"
+#include "frame_timer.h"
 
 class Dof;
 
 class Car {
     public:
         Car();
+        ~Car();
         void render();
 
         // Handle key presses
@@ -44,6 +46,7 @@ class Car {
 
         // Update the car's position and orientation at 1000Hz
         static void * update(void * car);
+
 
     private:
         Wheel * _wheels[4];
@@ -79,6 +82,9 @@ class Car {
         float _wheelDiameter;
         float _engineGearUpRPM;
         float _engineGearDownRPM;
+
+        // A timer to help with the physics calculations
+        FrameTimer * _timer;
 
         // Position
         float _position[3];

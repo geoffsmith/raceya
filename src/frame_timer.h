@@ -11,7 +11,7 @@ using namespace std;
 class FrameTimer {
     public:
         // The constructor queries the timer to set up the ticks per seconds
-        FrameTimer();
+        FrameTimer(int targetFPS=40);
 
         // Update the frame
         void newFrame();
@@ -40,6 +40,8 @@ class FrameTimer {
         unsigned int _ticksPerSecond;
         unsigned int _targetFPS;
         unsigned int _currentFPS;
-        list<unsigned int> _fpsHistory;
 
+        // We keep a history of the FPS so that we can work out the average for a smooth
+        // FPS display
+        list<unsigned int> _fpsHistory;
 };

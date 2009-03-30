@@ -8,12 +8,12 @@ using namespace std;
 
 FrameTimer FrameTimer::timer;
 
-FrameTimer::FrameTimer() {
+FrameTimer::FrameTimer(int targetFPS) {
     // We are using SDL_GetTicks, which is in milliseconds
     this->_ticksPerSecond = 1000;
     this->_lastFrame = SDL_GetTicks();
     this->_currentFrame = SDL_GetTicks();
-    this->_targetFPS = 40;
+    this->_targetFPS = targetFPS;
     this->_currentFPS = 0;
 }
 
@@ -26,7 +26,8 @@ void FrameTimer::newFrame() {
     if (this->_currentFrame - this->_lastFrame == 0) {
         this->_currentFPS = 0;
     } else {
-        this->_currentFPS = this->_ticksPerSecond / (this->_currentFrame - this->_lastFrame);
+        this->_currentFPS = this->_ticksPerSecond 
+            / (this->_currentFrame - this->_lastFrame);
     }
 
     // Add this to the history
@@ -48,7 +49,8 @@ float FrameTimer::getMinutes() {
 int FrameTimer::getTimeTillNextDraw() {
     // Get the time since the current frame
     unsigned int now = SDL_GetTicks();
-    int result = 1000.0 / (float)this->_targetFPS - (now - this->_currentFrame);
+    int result = (float)this->_ticksPerSecond / (float)this->_targetFPS 
+        - (now - this->_currentFrame);
 
     // Make sure the result is positive
     if (result < 0) result = 0;
