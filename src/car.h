@@ -13,6 +13,7 @@
 #include "dof.h"
 #include "quaternion.h"
 #include "frame_timer.h"
+#include "vector.h"
 
 class Dof;
 
@@ -88,7 +89,7 @@ class Car {
 
         // Position
         float _position[3];
-        float _vector[3];
+        float _linearVelocity[3];
         float _angularVelocity[3];
 
         // Moments of inertia
@@ -135,6 +136,8 @@ class Car {
         // Calculate the inertia tensor using the body intertia constants
         void _calculateInertiaTensor();
 
+        // Calculate the impulse when the car hits the ground
+        float _calculateImpulseOnGround(Vector & r);
 
         // the car's transformation matrix
         Matrix _matrix;

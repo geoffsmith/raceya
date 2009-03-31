@@ -9,16 +9,20 @@
  */
 #pragma once
 
+#include "vector.h"
+
 #include <OpenGL/gl.h>
 
 class Matrix {
     public:
         Matrix();
+        Matrix(const Matrix & other);
         Matrix(GLfloat * input);
         Matrix(int order);
         ~Matrix();
         void reset();
         float& operator[] (const unsigned int index);
+        float operator[] (const unsigned int index) const;
         void rotate(float angle, float * normal);
         void rotateY(float angle);
         void rotateX(float angle);
@@ -57,3 +61,24 @@ class Matrix {
     private:
         float * _matrix;
 };
+
+// Multiply vector * matrix
+// NOTE: Assumes square matrix of same order as vector
+inline Vector operator *(const Vector & v, const Matrix & m);
+
+/******************************************************************************
+ * Inline definitions
+ *****************************************************************************/
+
+inline Vector operator *(const Vector & v, const Matrix & m) {
+    Vector result(v.order);
+    float sum = 0;
+    for (int i = 0; i < v.order; ++i) {
+        sum = 0;
+        for (int j = 0; j < v.order; ++j) {
+            sum += v[j] * m[j * v.order + i];
+        }
+        result[i] = sum;
+    }
+    return result;
+}

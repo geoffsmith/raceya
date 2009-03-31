@@ -34,6 +34,7 @@ void vertexSub(float * a, float * b, float * result);
 void vertexCopy(float * from, float * to);
 void crossProduct(float * a, float * b, float * result);
 void vertexMultiply(float a, float * b, float * result);
+void vertexMultiply(float * a, float * b, float * result);
 void vertexAdd(float * a, float * b, float * result);
 float vertexSquareDistance(float * a, float * b);
 float vectorLength(float * a);

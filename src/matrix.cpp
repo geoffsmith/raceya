@@ -13,6 +13,14 @@ Matrix::Matrix() {
     this->reset();
 }
 
+Matrix::Matrix(const Matrix & other) {
+    this->order = other.order;
+    this->_matrix = new float[this->order * this->order];
+    for (int i = 0; i < this->order * this->order; ++i) {
+        this->_matrix[i] = other[i];
+    }
+}
+
 Matrix::Matrix(int order) {
     this->order = order;
     this->_matrix = new float[this->order * this->order];
@@ -250,6 +258,10 @@ void Matrix::multiplyVectorSkipTranslation(float *vector, float *result) {
 }
 
 float& Matrix::operator[] (const unsigned int index) {
+    return this->_matrix[index];
+}
+
+float Matrix::operator[] (const unsigned int index) const {
     return this->_matrix[index];
 }
 

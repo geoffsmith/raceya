@@ -195,6 +195,12 @@ void crossProduct(float * a, float * b, float * result) {
     vertexCopy(tmp, result);
 }
 
+void vertexMultiply(float * a, float * b, float * result) {
+    result[0] = a[0] * b[0];
+    result[1] = a[1] * b[1];
+    result[2] = a[2] * b[2];
+}
+
 void vertexMultiply(float a, float * b, float * result) {
     result[0] = a * b[0];
     result[1] = a * b[1];
@@ -249,6 +255,7 @@ bool colorCopy4(float * from, float * to) {
     to[1] = from[1];
     to[2] = from[2];
     to[3] = from[3];
+    return true;
 }
 
 void horizontalFlipSurface(SDL_Surface * surface) {

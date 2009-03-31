@@ -1,6 +1,9 @@
 /**
  * Class to calculate the time between frames for use by various parts of the game to 
  * calculate time-based algorithms. I.e. Velocity, wheel rotation etc.
+ *
+ * TODO: 
+ *  * The names are kind of out of date, it should be Hz rather than FPS
  */
 #pragma once
 

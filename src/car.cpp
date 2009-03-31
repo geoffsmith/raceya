@@ -44,9 +44,9 @@ Car::Car() {
     this->_engineGearUpRPM = 6000;
     this->_engineGearDownRPM = 2000;
 
-    this->_vector[0] = 0;
-    this->_vector[1] = 0;
-    this->_vector[2] = 0;
+    this->_linearVelocity[0] = 0;
+    this->_linearVelocity[1] = 0;
+    this->_linearVelocity[2] = 0;
 
     this->_localOrigin[0][0] = -1;
     this->_localOrigin[0][1] = 0;
@@ -152,7 +152,7 @@ void Car::_updateComponents() {
     // Update the car's vector
     this->_calculateMovement();
     float tmp[3];
-    vertexMultiply(this->_timer->getSeconds(), this->_vector, tmp);
+    vertexMultiply(this->_timer->getSeconds(), this->_linearVelocity, tmp);
     vertexAdd(this->_position, tmp, this->_position);
 
     // Check for collision with the ground on this new position
@@ -402,7 +402,61 @@ void Car::_groundCollisionCorrection() {
         // The wheel is below the ground surface, we need to move the car up by the
         // difference
         this->_position[1] += -1 * maxDifference;
+        float tmp[3];
+        this->_wheels[largestIndex]->getGroundContact(tmp);
+
+        // Get the vector from cog to contact point
+        Vector cog = Vector(this->_center, 3);
+        Vector ground = Vector(tmp, 3);
+        Vector r = cog - ground;
+
+        // Add the linear impulse
+        //Vector linearImpulse(3);
+        float j = this->_calculateImpulseOnGround(r);
+
+        // v' = v + Jn / m
+        // n is pointing up becaus COG of earth is so far away in that direction
+        //float n[] = { 0, 1, 0 };
+        Vector n(0, 1, 0);
+        Vector linearVelocity(this->_linearVelocity, 3);
+
+        linearVelocity = linearVelocity + (j * n) / this->_mass;
+        this->_linearVelocity[0] = linearVelocity[0];
+        this->_linearVelocity[1] = linearVelocity[1];
+        this->_linearVelocity[2] = linearVelocity[2];
+
+        // Now we attend to the angular velocity
+        Vector angularVelocity(this->_angularVelocity, 3);
+        angularVelocity += ( r ^ (j * n) ) * this->_inverseInertiaTensor;
+        this->_angularVelocity[0] = angularVelocity[0];
+        this->_angularVelocity[1] = angularVelocity[1];
+        this->_angularVelocity[2] = angularVelocity[2];
     }
+}
+
+float Car::_calculateImpulseOnGround(Vector & r) {
+    // J = impulse
+    // v = velocity of the car
+    // e = coefficient of restitution
+    // r = vector from car COG to contact point
+    // m1 = mass of car
+    // m2 = mass of earth - 1 / m2 tends to 0, so we don't need it
+    // n = unit vector from earch COG to car COG
+
+    // We choose a very elastic coefficient
+    float e = 0.9;
+    float tmp;
+    Vector v(this->_linearVelocity, 3);
+    Vector n(0, 1, 0);
+
+    // With moments
+    // J = -(v . n) * (e + 1) 
+    //     / 
+    //     (1/m1 + 1/m2 + n . [(r1 x n) / I1] x r1 + n . [(r2 x n) / I2] x r2)
+    tmp = n * ( ( (r ^ n) * this->_inverseInertiaTensor ) ^ r );
+    tmp = (v * n) * (-1 * (e + 1) ) / (this->_mass + tmp);
+
+    return tmp;
 }
 
 /******************************************************************************
@@ -428,7 +482,7 @@ void Car::_calculateMovement() {
     // NOTE _mass ^ 2 here needs checking, but will do for now...
     float drag = (-1.0 / 391.0) * this->_mass * this->_mass 
         * this->_bodyArea * this->_dragCoefficient;
-    vertexMultiply(drag, this->_vector, dragForce);
+    vertexMultiply(drag, this->_linearVelocity, dragForce);
     vertexAdd(dragForce, accumulativeForce, accumulativeForce);
 
     // convert sum of forces into acceleration vector
@@ -438,7 +492,7 @@ void Car::_calculateMovement() {
     vertexMultiply(time, acceleration, acceleration);
 
     // Apply the force to the vector
-    vertexAdd(acceleration, this->_vector, this->_vector);
+    vertexAdd(acceleration, this->_linearVelocity, this->_linearVelocity);
 
     // Now we apply the moments to the angular velocity
     float tmp[3];
@@ -575,24 +629,21 @@ void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumul
             //vertexAdd(tmpForce, angularAccumulator, angularAccumulator);
         }
 
-        // The force is perpendicular to the front of the car.
-        // We calculate it by applying the rotation matrix to the x unit vector
-
         // Find the wheel vector using the wheel angle and the car's orientation
-
+        // TODO: this is very simple, needs improving + back tyres have friction too
         if (this->_wheels[i]->isSteering()) {
             wheelMatrix.reset();
             wheelMatrix.rotateY(this->_wheels[i]->getAngle());
             wheelMatrix.multiplyMatrix(&orientation);
             wheelMatrix.multiplyVector(forward, tmpForce);
 
-            // The forward is actually backwards and is the same length as _vector
-            vertexMultiply(-vectorLength(this->_vector), tmpForce, tmpForce);
+            // The forward is actually backwards and is the same length as _linearVel
+            vertexMultiply(-vectorLength(this->_linearVelocity), tmpForce, tmpForce);
             vertexMultiply(this->_mass, tmpForce, tmpForce);
 
             // Find the L vector 
             float lVector[3];
-            vertexAdd(this->_vector, tmpForce, lVector);
+            vertexAdd(this->_linearVelocity, tmpForce, lVector);
 
             // Put the L vector back into car's local system
             opposite.multiplyVector(lVector);
@@ -622,3 +673,5 @@ void Car::_calculateInertiaTensor() {
     this->_inertiaTensor.invert(this->_inverseInertiaTensor);
     this->_inverseInertiaTensor.print();
 }
+
+
