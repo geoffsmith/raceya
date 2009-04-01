@@ -28,6 +28,9 @@ class Vector {
         Vector & operator/=(float s);
         Vector & operator+=(const Vector & rhs);
 
+        // Get the vector's magnitude
+        float magnitude();
+
         // Print out the vecotr
         void print();
 

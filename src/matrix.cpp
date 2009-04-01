@@ -36,6 +36,14 @@ Matrix::Matrix(GLfloat *input) {
     }
 }
 
+Matrix & Matrix::operator=(const Matrix & other) {
+    this->order = other.order;
+    this->_matrix = new float[this->order * this->order];
+    for (int i = 0; i < this->order * this->order; ++i) {
+        this->_matrix[i] = other[i];
+    }
+}
+
 void Matrix::reset() {
     // Start with the identity matrix
     for (int i = 0; i < this->order; ++i) {
@@ -373,6 +381,13 @@ void Matrix::transpose(Matrix & result) {
 }
 
 void Matrix::print() {
+    cout << "inline: ";
+    for (int i = 0; i < this->order * this->order; ++i) {
+        cout << this->_matrix[i] << ", ";
+    }
+    cout << endl;
+
+
     for (int i = 0; i < this->order; ++i) {
         for (int j = 0; j < this->order; ++j) {
             cout << this->_matrix[j * this->order + i] << " ";

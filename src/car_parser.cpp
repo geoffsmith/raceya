@@ -1,7 +1,7 @@
 #include "car_parser.h"
 #include "logger.h"
 #include "lib.h"
-#include "ini.h"
+#include "drive_systems.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -158,5 +158,29 @@ Car * parseCar(string carPathString) {
         wheel->setCenter(center);
     }
 
+    parseEngine(carIniFile, car, carPath);
+
     return car;
+}
+
+void parseEngine(Ini & ini, Car * car, path carPath) {
+    Engine engine;
+
+    // Get the engine variables
+    engine.setMass(ini.getFloat("/engine/mass"));
+    engine.setRpm(
+            ini.getFloat("/engine/max_rpm"),
+            ini.getFloat("/engine/idle_rpm"),
+            ini.getFloat("/engine/stall_rpm"),
+            ini.getFloat("/engine/start_rpm") );
+    engine.setDifferential(ini.getFloat("/differential/ratio"));
+
+    // Get the torque curve
+    Curve curve((carPath / ini["/engine/curve_torque"]).string());
+    engine.setTorqueCurve(
+            curve,
+            ini.getFloat("/engine/max_torque"));
+
+    car->setEngine(engine);
+    engine.print();
 }

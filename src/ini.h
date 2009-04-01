@@ -29,6 +29,10 @@ class Ini {
         // Return the value for that key
         string operator[](string key);
 
+        // Get an integer
+        int getInt(string key);
+        float getFloat(string key);
+
         // Query the data. Basically does a starts_with on each key in data and returns
         // a set of paths that match, but only at that path token length. i.e.
         // if query = /tracks/track would return /tracks/track0 and /tracks/track1 but not

@@ -85,6 +85,7 @@ void Ini::_parseFile() {
         return;
     }
 
+    cout << "Parsing ini file: " << this->path << endl;
     ifstream file(this->path.c_str());
 
     if (!file.is_open()) {
@@ -171,4 +172,17 @@ string Ini::makeIniPath(list<string> & nodes) {
         result += "/";
     }
     return result;
+}
+
+/******************************************************************************
+ * Getters for various types. They will try and convert a string into a type
+ *****************************************************************************/
+int Ini::getInt(string key) {
+    string value = (*this)[key];
+    return atoi(value.c_str());
+}
+
+float Ini::getFloat(string key) {
+    string value = (*this)[key];
+    return atof(value.c_str());
 }

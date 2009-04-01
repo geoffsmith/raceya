@@ -1,5 +1,6 @@
 #include "vector.h"
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 
@@ -25,8 +26,8 @@ Vector::Vector(float x, float y, float z) {
     this->order = 3;
     this->_vector = new float[this->order];
     this->_vector[0] = x;
-    this->_vector[1] = x;
-    this->_vector[2] = x;
+    this->_vector[1] = y;
+    this->_vector[2] = z;
 }
 
 Vector::Vector(float * vector, int size) {
@@ -50,6 +51,14 @@ Vector::~Vector() {
         delete [] (this->_vector);
         this->_vector = NULL;
     }
+}
+
+float Vector::magnitude() {
+    float result = 0;
+    for (int i = 0; i < this->order; ++i) {
+        result += this->_vector[i] * this->_vector[i];
+    }
+    return sqrt(result);
 }
 
 float & Vector::operator [](int i) {

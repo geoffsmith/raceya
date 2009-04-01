@@ -4,6 +4,8 @@
  */
 #pragma once
 
+#include "curve.h"
+
 class Engine {
     public:
         Engine();
@@ -12,6 +14,15 @@ class Engine {
         void setMass(float mass);
         void setRpm(float maxRpm, float idleRpm, float stallRpm, float startRpm);
         void setDifferential(float ratio);
+        void setTorqueCurve(Curve & curve, float maxTorque);
+
+        // Getters
+        float & getCurrentRpm();
+
+        // Calculate the torque produced by the engine at this time
+        float calculateTorque();
+
+        void print();
 
     private:
         // The engine mass
@@ -29,6 +40,15 @@ class Engine {
         // The start RPM 
         float _startRpm;
 
+        // The current RPM of the engine
+        float _currentRpm;
+
         // The differential ratio
         float _differentialRatio;
+
+        // The torque curve
+        Curve _torqueCurve;
+
+        // The max torque (the torque curve gives normalised values)
+        float _maxTorque;
 };

@@ -6,6 +6,8 @@
 #include <SDL/SDL.h>
 #include <string>
 
+#include "vector.h"
+
 using namespace std;
 
 void read_obj(const char *filename, GLfloat (*vertices)[3], GLfloat (*textures)[2], GLfloat (*normals)[3]);
@@ -48,7 +50,7 @@ void printVector(float * a);
 
 // calculate the vector from the origin that is perpendicular to the vector of a force
 // passing through a point
-void momentDistance(float * a, float * vector, float * cog, float * result);
+Vector momentDistance(Vector & a, Vector & vector, Vector & cog);
 
 // Flip a SDL_Surface horizontally
 void horizontalFlipSurface(SDL_Surface * surface);

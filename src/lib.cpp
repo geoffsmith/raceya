@@ -291,11 +291,11 @@ void printError() {
     }
 }
 
-void momentDistance(float * a, float * vector, float * cog, float * result) {
+Vector momentDistance(Vector & a, Vector & vector, Vector & cog) {
     // Get a second point
-    float n[3];
-    float tmp[3];
-    float ac[3];
+    Vector n(3);
+    Vector tmp(3);
+    Vector ac(3);
     float t;
     float l;
 
@@ -303,27 +303,29 @@ void momentDistance(float * a, float * vector, float * cog, float * result) {
     // closest point = a + t(b - a)
 
     // n = (b - a) / |b - a|
-    l = vectorLength(vector);
+    l = vector.magnitude();
 
     // If l is 0, we set result to 0
     if (l == 0) {
-        result[0] = 0;
-        result[1] = 0;
-        result[2] = 0;
-        return;
+        return Vector(0, 0, 0);
     }
 
-    vertexCopy(vector, n);
-    vertexMultiply(1.0 / l, n, n);
+    n = (1.0 / l) * vector;
+    //vertexCopy(vector, n);
+    //vertexMultiply(1.0 / l, n, n);
 
     // t = (O - a) . n / |b - a|
-    vertexSub(cog, a, ac);
-    t = dotProduct(ac, n) / l;
+    ac = cog - a;
+    //vertexSub(cog, a, ac);
+    t = (ac * n) / l;
+    //t = dotProduct(ac, n) / l;
+
 
     // closest point = a + t(b - a)
-    vertexMultiply(t, vector, tmp);
-    vertexAdd(a, tmp, tmp);
+    //vertexMultiply(t, vector, tmp);
+    //vertexAdd(a, tmp, tmp);
 
     // Vector from p to cog
-    vertexSub(cog, tmp, result);
+    //vertexSub(cog, tmp, result);
+    return cog - (a + (t * vector));
 }

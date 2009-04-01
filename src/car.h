@@ -14,6 +14,7 @@
 #include "quaternion.h"
 #include "frame_timer.h"
 #include "vector.h"
+#include "drive_systems.h"
 
 class Dof;
 
@@ -42,6 +43,7 @@ class Car {
         void setMass(float mass);
         void setBodyArea(float area);
         void setDragCoefficient(float coefficient);;
+        void setEngine(Engine & engine);
 
         float * getVector();
 
@@ -70,6 +72,7 @@ class Car {
         float _modelScale;
 
         // Engine related variables
+        Engine _engine;
         float _engineRPM;
         float _engineMaxRPM;
         bool _acceleratorPressed;

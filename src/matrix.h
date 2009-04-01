@@ -23,6 +23,7 @@ class Matrix {
         void reset();
         float& operator[] (const unsigned int index);
         float operator[] (const unsigned int index) const;
+        Matrix & operator=(const Matrix & other);
         void rotate(float angle, float * normal);
         void rotateY(float angle);
         void rotateX(float angle);
@@ -65,18 +66,33 @@ class Matrix {
 // Multiply vector * matrix
 // NOTE: Assumes square matrix of same order as vector
 inline Vector operator *(const Vector & v, const Matrix & m);
+inline Vector operator *(const Matrix & m, const Vector & v);
 
 /******************************************************************************
  * Inline definitions
  *****************************************************************************/
 
+// TODO: i'm not sure these are right...
 inline Vector operator *(const Vector & v, const Matrix & m) {
     Vector result(v.order);
     float sum = 0;
     for (int i = 0; i < v.order; ++i) {
         sum = 0;
         for (int j = 0; j < v.order; ++j) {
-            sum += v[j] * m[j * v.order + i];
+            sum += v[j] * m[j * m.order + i];
+        }
+        result[i] = sum;
+    }
+    return result;
+}
+
+inline Vector operator *(const Matrix & m, const Vector & v) {
+    Vector result(v.order);
+    float sum;
+    for (int i = 0; i < v.order; ++i) {
+        sum = 0;
+        for (int j = 0; j < v.order; ++j) {
+            sum += m[j * m.order + i] * v[j];
         }
         result[i] = sum;
     }
