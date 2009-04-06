@@ -190,7 +190,7 @@ void vertexCopy(float * from, float * to) {
 void crossProduct(float * a, float * b, float * result) {
     float tmp[3];
     tmp[0] =  a[1] * b[2] - b[1] * a[2];
-    tmp[1] =  a[0] * b[2] - b[0] * a[2];
+    tmp[1] =  -1 * a[0] * b[2] + b[0] * a[2];
     tmp[2] =  a[0] * b[1] - b[0] * a[1];
     vertexCopy(tmp, result);
 }

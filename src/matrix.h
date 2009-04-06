@@ -79,7 +79,7 @@ inline Vector operator *(const Vector & v, const Matrix & m) {
     for (int i = 0; i < v.order; ++i) {
         sum = 0;
         for (int j = 0; j < v.order; ++j) {
-            sum += v[j] * m[j * m.order + i];
+            sum += v[j] * m[i * m.order + j];
         }
         result[i] = sum;
     }

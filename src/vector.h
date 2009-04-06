@@ -3,9 +3,14 @@
  */
 #pragma once
 
+#include <iostream>
+
+using namespace std;
+
 class Vector {
     public:
         // We need to be able to copy properly
+        Vector();
         Vector(const Vector & other);
         Vector & operator=(const Vector & other);
 
@@ -32,7 +37,7 @@ class Vector {
         float magnitude();
 
         // Print out the vecotr
-        void print();
+        void print() const;
 
         // dtor
         ~Vector();
@@ -51,6 +56,7 @@ inline Vector operator *(const Vector & v, const float s);
 
 // Vector dot product
 inline float operator *(const Vector & a, const Vector & b);
+inline Vector operator-(const Vector & a);
 
 // Subtract two vectors
 inline Vector operator -(const Vector & a, const Vector & b);
@@ -94,6 +100,10 @@ inline float operator *(const Vector & a, const Vector & b) {
     return result;
 }
 
+inline Vector operator-(const Vector & a) {
+    return -1 * a;
+}
+
 inline Vector operator -(const Vector & a, const Vector & b) {
     Vector result(a.order);
     for (int i = 0; i < a.order; ++i) {
@@ -117,9 +127,9 @@ inline Vector operator ^(const Vector & a, const Vector & b) {
     }
 
     Vector result(a.order);
-    result[0] =  a[1] * b[2] - b[1] * a[2];
-    result[1] =  a[0] * b[2] - b[0] * a[2];
-    result[2] =  a[0] * b[1] - b[0] * a[1];
+    result[0] = a[1] * b[2] - b[1] * a[2];
+    result[1] = a[2] * b[0] - a[0] * b[2];
+    result[2] = a[0] * b[1] - b[0] * a[1];
     return result;
 }
 

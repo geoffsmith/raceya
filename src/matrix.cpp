@@ -42,6 +42,7 @@ Matrix & Matrix::operator=(const Matrix & other) {
     for (int i = 0; i < this->order * this->order; ++i) {
         this->_matrix[i] = other[i];
     }
+    return *this;
 }
 
 void Matrix::reset() {

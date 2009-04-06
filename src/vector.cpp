@@ -46,6 +46,14 @@ Vector::Vector(int order) {
     }
 }
 
+Vector::Vector() {
+    this->order = 0;
+    this->_vector = new float[this->order];
+    for (int i = 0; i < this->order; ++i) {
+        this->_vector[i] = 0;
+    }
+}
+
 Vector::~Vector() {
     if (this->_vector != NULL) {
         delete [] (this->_vector);
@@ -76,7 +84,7 @@ Vector & Vector::operator+=(const Vector & rhs) {
     return *this;
 }
 
-void Vector::print() {
+void Vector::print() const {
     cout << "{ ";
     for (int i = 0; i < this->order; ++i) {
         cout << this->_vector[i] << ", ";

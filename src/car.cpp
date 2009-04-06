@@ -67,11 +67,11 @@ Car::Car() {
     this->_angularVelocity[1] = 0;
     this->_angularVelocity[2] = 0;
 
-    float euler[] = { 0, 0, PI / 4.0 };
+    float euler[] = { PI / 3.0, PI / 8.0, 0 };
     this->_orientation.fromEuler(euler);
 
-    // Try and run the physics at 500Hz
-    this->_timer = new FrameTimer(30);
+    // Try and run the physics at 100Hz
+    this->_timer = new FrameTimer(300);
 }
 
 Car::~Car() {
@@ -168,10 +168,20 @@ void Car::_updateComponents() {
 
 void * Car::update(void * _car) {
     Car * car = (Car *)_car;
+    int i = 0;
+    float d;
     while (true) {
+        // Every 10th time, update the ground point
+        if (i % 10 == 0) {
+            car->_updateGroundPoints();
+            i = 0;
+        }
+        ++i;
+
         car->_timer->newFrame();
         car->_updateComponents();
-        SDL_Delay(car->_timer->getTimeTillNext());
+        d = car->_timer->getTimeTillNext();
+        SDL_Delay(d);
     }
 }
 
@@ -228,6 +238,13 @@ void Car::render() {
     // Render the wheels
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->render();
+
+        glPushMatrix();
+        GLUquadric * quad = gluNewQuadric();
+        glTranslatef(this->_wheelVectors[i][0], this->_wheelVectors[i][1], this->_wheelVectors[i][2]);
+        gluSphere(quad, 0.25, 5, 5);
+        gluDeleteQuadric(quad);
+        glPopMatrix();
     }
 
     glPopMatrix();
@@ -308,7 +325,7 @@ void Car::setTrack(Track * track) {
     vertexCopy(this->_track->startPosition, this->_position);
 
     // Add to the position
-    //this->_position[1] += 500;
+    this->_position[1] += 4;
 }
 
 void Car::setWheel(Wheel * wheel, int index) {
@@ -347,11 +364,12 @@ void Car::setEngine(Engine & engine) {
 /******************************************************************************
  * Collision detection
  *****************************************************************************/
-bool Car::_isOnGround() {
+void Car::_updateGroundPoints() {
     float wheelPoint[3];
     float groundPoint[3];
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->getGroundContact(wheelPoint);
+
         // Transform this point to world coords
         this->_matrix.multiplyVector(wheelPoint);
 
@@ -359,19 +377,14 @@ bool Car::_isOnGround() {
         findClosestPoint(this->_track->getDofs(), this->_track->getNDofs(), 
                 wheelPoint, groundPoint);
 
-        // check for NaN
-        // TODO: this is probably caused by a bug in closest point
         if (isnan(groundPoint[0]) 
                 || isnan(groundPoint[1]) 
                 || isnan(groundPoint[2])) {
             // Set the ground point to the wheel point
             vertexCopy(wheelPoint, groundPoint);
         }
-
-        // If the ground point is >= wheel point, the car is on the ground
-        if (groundPoint[1] >= wheelPoint[1]) return true;
+        this->_closestGroundPoints[i] = Vector(groundPoint, 3);
     }
-    return false;
 }
 
 void Car::_groundCollisionCorrection() {
@@ -379,21 +392,10 @@ void Car::_groundCollisionCorrection() {
     float groundPoints[4][3];
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->getGroundContact(wheelPoints[i]);
-        // Transform this point to world coords
         this->_matrix.multiplyVector(wheelPoints[i]);
-
-        // Get the closest point on the track
-        findClosestPoint(this->_track->getDofs(), this->_track->getNDofs(), 
-                wheelPoints[i], groundPoints[i]);
-
-        // check for NaN
-        // TODO: this is probably caused by a bug in closest point
-        if (isnan(groundPoints[i][0]) 
-                || isnan(groundPoints[i][1]) 
-                || isnan(groundPoints[i][2])) {
-            // Set the ground point to the wheel point
-            vertexCopy(wheelPoints[i], groundPoints[i]);
-        }
+        groundPoints[i][0] = this->_closestGroundPoints[i][0];
+        groundPoints[i][1] = this->_closestGroundPoints[i][1];
+        groundPoints[i][2] = this->_closestGroundPoints[i][2];
     }
 
     // Go through the ground points and find the biggest negative difference
@@ -412,7 +414,7 @@ void Car::_groundCollisionCorrection() {
     if (maxDifference < 0) {
         // The wheel is below the ground surface, we need to move the car up by the
         // difference
-        this->_position[1] += -1 * maxDifference;
+        //this->_position[1] += -1 * maxDifference;
         float tmp[3];
         this->_wheels[largestIndex]->getGroundContact(tmp);
 
@@ -422,23 +424,22 @@ void Car::_groundCollisionCorrection() {
         Vector r = cog - ground;
 
         // Add the linear impulse
-        //Vector linearImpulse(3);
-        float j = -this->_calculateImpulseOnGround(r);
+        float j = this->_calculateImpulseOnGround(r);
 
         // v' = v + Jn / m
         // n is pointing up becaus COG of earth is so far away in that direction
-        //float n[] = { 0, 1, 0 };
         Vector n(0, 1, 0);
         Vector linearVelocity(this->_linearVelocity, 3);
 
-        linearVelocity = linearVelocity + (j * n) / this->_mass;
+        Vector dLinearVelocity = (j * n) / this->_mass;
+        linearVelocity = linearVelocity + dLinearVelocity;
         this->_linearVelocity[0] = linearVelocity[0];
         this->_linearVelocity[1] = linearVelocity[1];
         this->_linearVelocity[2] = linearVelocity[2];
 
         // Now we attend to the angular velocity
         Vector angularVelocity(this->_angularVelocity, 3);
-        angularVelocity += ( r ^ (j * n) ) * this->_inverseInertiaTensor;
+        angularVelocity += ( r ^ ((j * n) / this->_mass) ) * this->_inverseInertiaTensor;
         this->_angularVelocity[0] = angularVelocity[0];
         this->_angularVelocity[1] = angularVelocity[1];
         this->_angularVelocity[2] = angularVelocity[2];
@@ -455,7 +456,7 @@ float Car::_calculateImpulseOnGround(Vector & r) {
     // n = unit vector from earch COG to car COG
 
     // We choose a very elastic coefficient
-    float e = 0.9;
+    float e = 0.5;
     float tmp;
     Vector v(this->_linearVelocity, 3);
     Vector n(0, 1, 0);
@@ -464,8 +465,9 @@ float Car::_calculateImpulseOnGround(Vector & r) {
     // J = -(v . n) * (e + 1) 
     //     / 
     //     (1/m1 + 1/m2 + n . [(r1 x n) / I1] x r1 + n . [(r2 x n) / I2] x r2)
-    tmp = n * ( ( (r ^ n) * this->_inverseInertiaTensor ) ^ r );
-    tmp = (v * n) * (-1 * (e + 1) ) / (this->_mass + tmp);
+    Vector zero(0, 0, 0);
+    tmp = n * ( ( (r ^ n) * this->_inverseInertiaTensor ) ^ r ) + n * zero;
+    tmp = (v * n) * (-1 * (e + 1) ) / (1.0 / this->_mass + tmp);
 
     return tmp;
 }
@@ -474,18 +476,19 @@ float Car::_calculateImpulseOnGround(Vector & r) {
  * Physics stuff
  *****************************************************************************/
 void Car::_calculateMovement() {
-    float accumulativeForce[] = { 0, 0, 0 };
-    float accumulativeMoment[] = { 0, 0, 0 };
-    float gravityForce[3];
-    float yAxis[] = { 0, -9.8, 0 };
-    //float time = FrameTimer::timer.getSeconds();
+    Vector accumulativeForce(0, 0, 0);
+    Vector accumulativeMoment(0, 0, 0);
+    Vector gravityForce(3);
+    Vector yAxis(0, -9.8, 0);
     float time = this->_timer->getSeconds();
-    float acceleration[3];
-    float dragForce[3];
+    Vector acceleration(3);
+    Vector dragForce(3);
+    Vector linearVelocity(this->_linearVelocity, 3);
+    Vector angularVelocity(this->_angularVelocity, 3);
 
     // Calculate the force of gravity
-    vertexMultiply(this->_mass, yAxis, gravityForce);
-    vertexAdd(gravityForce, accumulativeForce, accumulativeForce);
+    gravityForce = this->_mass * yAxis;
+    accumulativeForce += gravityForce;
 
     this->_calculateWheelForces(accumulativeForce, accumulativeMoment);
 
@@ -493,30 +496,32 @@ void Car::_calculateMovement() {
     // NOTE _mass ^ 2 here needs checking, but will do for now...
     float drag = (-1.0 / 391.0) * this->_mass * this->_mass 
         * this->_bodyArea * this->_dragCoefficient;
-    vertexMultiply(drag, this->_linearVelocity, dragForce);
-    vertexAdd(dragForce, accumulativeForce, accumulativeForce);
+    dragForce = drag * linearVelocity;
+    accumulativeForce += dragForce;
+
 
     // convert sum of forces into acceleration vector
-    vertexMultiply(1 / this->_mass, accumulativeForce, acceleration);
+    acceleration = (1.0 / this->_mass) * accumulativeForce;
 
     // Scale the force by time
-    vertexMultiply(time, acceleration, acceleration);
+    acceleration = acceleration * time;
 
     // Apply the force to the vector
-    vertexAdd(acceleration, this->_linearVelocity, this->_linearVelocity);
+    //vertexAdd(acceleration, this->_linearVelocity, this->_linearVelocity);
+    this->_linearVelocity[0] += acceleration[0];
+    this->_linearVelocity[1] += acceleration[1];
+    this->_linearVelocity[2] += acceleration[2];
 
     // Now we apply the moments to the angular velocity
-    float tmp[3];
-    this->_inertiaTensor.multiplyVector(this->_angularVelocity, tmp);
-    crossProduct(this->_angularVelocity, tmp, tmp);
-    vertexSub(accumulativeMoment, tmp, tmp);
-    vertexMultiply(time, tmp, tmp);
-    this->_inverseInertiaTensor.multiplyVector(tmp);
-    vertexAdd(this->_angularVelocity, tmp, this->_angularVelocity);
+    Vector tmp = angularVelocity ^ (this->_inertiaTensor * angularVelocity);
+    tmp = this->_inverseInertiaTensor * (time * (accumulativeMoment - tmp));
+    this->_angularVelocity[0] += tmp[0];
+    this->_angularVelocity[1] += tmp[1];
+    this->_angularVelocity[2] += tmp[2];
 
     // dampen the angular velocity - this is to correct for rotation friction of the
     // tyres, which i've not modelled properly yet
-    vertexMultiply(0.8, this->_angularVelocity, this->_angularVelocity);
+    vertexMultiply(0.9, this->_angularVelocity, this->_angularVelocity);
 
     // Now apply angular velocity to the orientation
     Quaternion tmpQ;
@@ -528,20 +533,16 @@ void Car::_calculateMovement() {
     this->_orientation.normalise();
 }
 
-void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumulator) {
+void Car::_calculateWheelForces(Vector & forceAccumulator, Vector & angularAccumulator) {
     float wheelPoint[3];
     float groundPoint[3];
-    //float tmpForce[3];
     Vector tmpForce(3);
-    float tmpVector[3];
     bool wheelOnGround[4];
     bool wheelBelowGround[4];
     int wheelOnGroundCount = 0;
-    //float gravityForce[3];
     Vector gravityForce(3);
-    //float yAxis[] = { 0, -9.8, 0 };
-    Vector yAxis(0, -9.8, 0);
-    //float forward[] = { 0, 0, 1 };
+    Vector yAxis(0, 1, 0);
+    float gravityAcceleration = -9.8;
     Vector forward(0, 0, 1);
     Vector center(this->_center, 3);
     Vector linearVelocity(this->_linearVelocity, 3);
@@ -560,21 +561,11 @@ void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumul
     // Find out which wheels are on the ground
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->getGroundContact(wheelPoint);
-
-        // Transform this point to world coords
         this->_matrix.multiplyVector(wheelPoint);
 
-        // Get the closest point on the track
-        findClosestPoint(this->_track->getDofs(), this->_track->getNDofs(), 
-                wheelPoint, groundPoint);
-
-        // check for NaN
-        if (isnan(groundPoint[0]) 
-                || isnan(groundPoint[1]) 
-                || isnan(groundPoint[2])) {
-            // Set the ground point to the wheel point
-            vertexCopy(wheelPoint, groundPoint);
-        }
+        groundPoint[0] = this->_closestGroundPoints[i][0];
+        groundPoint[1] = this->_closestGroundPoints[i][1];
+        groundPoint[2] = this->_closestGroundPoints[i][2];
 
         // If the ground point is >= wheel point, the car is on the ground
         // NOTE: we're giving the wheel a 5cm leaway there
@@ -592,8 +583,7 @@ void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumul
     }
 
     // Calculate the force of gravity
-    //vertexMultiply(this->_mass, yAxis, gravityForce);
-    gravityForce = this->_mass * yAxis;
+    gravityForce = this->_mass * gravityAcceleration * yAxis;
 
     // We will need a rotaton matrix for the orientation of the car
     this->_orientation.toRotationMatrix(orientation);
@@ -604,11 +594,18 @@ void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumul
     // COG
     for (int i = 0; i < 4; ++i) {
         if (wheelOnGround[i]) {
-            point = this->_wheels[i]->getWheelCenter();
-            vertexSub(this->_center, point, tmpVector);
-            distanceFromCOG[i] = 1.0 / vectorLength(tmpVector);
+            this->_wheels[i]->getGroundContact(groundPoint);
+            vGroundPoint = Vector(groundPoint, 3);
+
+            r = momentDistance(vGroundPoint, yAxis, center);
+
+            distanceFromCOG[i] = 1.0 / r.magnitude();
             totalDistanceFromCOG += distanceFromCOG[i];
         }
+    }
+
+    if (totalDistanceFromCOG > 0) {
+        forceAccumulator += -gravityForce;
     }
 
     // Add the forces for each wheel
@@ -624,21 +621,13 @@ void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumul
 
             tmpForce = -weightRatio * gravityForce;
 
-            forceAccumulator[0] += tmpForce[0];
-            forceAccumulator[1] += tmpForce[1];
-            forceAccumulator[2] += tmpForce[2];
-
             // And effect the angular momentum
             tmpForce = opposite * tmpForce;
 
             r = momentDistance(vGroundPoint, tmpForce, center);
             tmpForce = r ^ tmpForce;
-            angularAccumulator[0] += tmpForce[0];
-            angularAccumulator[1] += tmpForce[1];
-            angularAccumulator[2] += tmpForce[2];
-        }
-
-
+            angularAccumulator += tmpForce;
+        } 
 
         // Check if this is a powered wheel
         if (this->_wheels[i]->isPowered && wheelOnGround[i]) {
@@ -651,14 +640,12 @@ void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumul
             float torque = this->_engine.calculateTorque() / (2.0 * 0.3045);
             tmpForce = torque * tmpForce;
 
-            forceAccumulator[0] += tmpForce[0];
-            forceAccumulator[1] += tmpForce[1];
-            forceAccumulator[2] += tmpForce[2];
+            forceAccumulator += tmpForce;
 
             // Add this force to the rotational forces
             tmpForce = opposite * tmpForce;
             r = momentDistance(vPoint, tmpForce, center);
-            tmpForce = r ^ tmpForce;
+            //tmpForce = r ^ tmpForce;
 
             // TODO: this is very unstable at the moment
             //angularAccumulator[0] += tmpForce[0];
@@ -668,29 +655,39 @@ void Car::_calculateWheelForces(float * forceAccumulator, float * angularAccumul
 
         // Find the wheel vector using the wheel angle and the car's orientation
         // TODO: this is very simple, needs improving + back tyres have friction too
-        if (true || this->_wheels[i]->isSteering()) {
+        if (wheelOnGround[i] && this->_wheels[i]->isSteering()) {
             wheelMatrix.reset();
-            wheelMatrix.rotateY(this->_wheels[i]->getAngle());
+            wheelMatrix.rotateY(-this->_wheels[i]->getAngle());
             wheelMatrix.multiplyMatrix(&orientation);
 
             tmpForce = wheelMatrix * forward;
 
             // The forward is actually backwards and is the same length as _linearVel
             tmpForce = -linearVelocity.magnitude() * tmpForce;
-            tmpForce = this->_mass * tmpForce;
+            //tmpForce = this->_mass * tmpForce;
 
             // Find the L vector 
             Vector lVector = linearVelocity + tmpForce;
+            lVector = (lVector ) * this->_mass ;
 
             // Put the L vector back into car's local system
-            lVector = opposite * lVector * -1;
+            //lVector.print();
+
+            //forceAccumulator += lVector;
+
+
+            lVector = opposite * lVector;
+            this->_wheelVectors[i] = (lVector / lVector.magnitude()) + vGroundPoint;
+
+            //tmpForce = tmpForce * (linearVelocity.magnitude() * this->_mass);
+            //this->_wheelVectors[i] = (tmpForce / tmpForce.magnitude()) + vGroundPoint;
 
             r = momentDistance(vGroundPoint, lVector, center);
-            tmpForce = r ^ lVector;
+            tmpForce = vGroundPoint ^ lVector;
 
-            angularAccumulator[0] += tmpForce[0];
-            angularAccumulator[1] += tmpForce[1];
-            angularAccumulator[2] += tmpForce[2];
+            //this->_wheelVectors[i] = (tmpForce / tmpForce.magnitude()) + vGroundPoint;
+
+            angularAccumulator += tmpForce;
         }
     }
 }

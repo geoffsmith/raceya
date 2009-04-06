@@ -54,6 +54,10 @@ class Car {
     private:
         Wheel * _wheels[4];
 
+        Vector _wheelVectors[4];
+        Vector _closestGroundPoints[4];
+        void _updateGroundPoints();
+
         // Needs a reference to the track to do collision detection
         Track * _track;
 
@@ -134,7 +138,7 @@ class Car {
         void _calculateMovement();
 
         // Calculate the forces due to the wheels (contact with the ground and turning)
-        void _calculateWheelForces(float * forceAccumulator, float * angularAccumulator);
+        void _calculateWheelForces(Vector & forceAccumulator, Vector & angularAccumulator);
 
         // Calculate the inertia tensor using the body intertia constants
         void _calculateInertiaTensor();
