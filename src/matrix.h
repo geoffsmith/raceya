@@ -53,7 +53,7 @@ class Matrix {
         void transpose(Matrix & result);
 
         // Print out the matrix
-        void print();
+        void print() const;
 
         float* getMatrix();
 
@@ -67,6 +67,7 @@ class Matrix {
 // NOTE: Assumes square matrix of same order as vector
 inline Vector operator *(const Vector & v, const Matrix & m);
 inline Vector operator *(const Matrix & m, const Vector & v);
+inline Matrix operator*(const Matrix & m, const Matrix & m);
 
 /******************************************************************************
  * Inline definitions
@@ -95,6 +96,23 @@ inline Vector operator *(const Matrix & m, const Vector & v) {
             sum += m[j * m.order + i] * v[j];
         }
         result[i] = sum;
+    }
+    return result;
+}
+
+inline Matrix operator*(const Matrix & a, const Matrix & b) {
+    int order = min(a.order, b.order);
+    Matrix result = Matrix(order);
+    float sum;
+
+    for (int i = 0; i < order; ++i) {
+        for (int j = 0; j < order; ++j) {
+            sum = 0;
+            for (int k = 0; k < order; ++k) {
+                sum += a[i + k * a.order] * b[j * b.order + k];
+            }
+            result[j * order + i] = sum;
+        }
     }
     return result;
 }

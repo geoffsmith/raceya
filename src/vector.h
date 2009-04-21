@@ -85,11 +85,7 @@ inline Vector operator *(const float s, const Vector & v) {
 }
 
 inline Vector operator *(const Vector & v, const float s) {
-    Vector result(v.order);
-    for (int i = 0; i < v.order; ++i) {
-        result[i] = s * v[i];
-    }
-    return result;
+    return s * v;
 }
 
 inline float operator *(const Vector & a, const Vector & b) {

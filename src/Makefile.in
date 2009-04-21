@@ -59,7 +59,7 @@ am_raceya_OBJECTS = raceya-camera.$(OBJEXT) raceya-car.$(OBJEXT) \
 	raceya-texture.$(OBJEXT) raceya-ini.$(OBJEXT) \
 	raceya-opengl_state.$(OBJEXT) raceya-quaternion.$(OBJEXT) \
 	raceya-vector.$(OBJEXT) raceya-curve.$(OBJEXT) \
-	raceya-drive_systems.$(OBJEXT)
+	raceya-drive_systems.$(OBJEXT) raceya-rigid_body.$(OBJEXT)
 raceya_OBJECTS = $(am_raceya_OBJECTS)
 raceya_DEPENDENCIES =
 raceya_LINK = $(CXXLD) $(raceya_CXXFLAGS) $(CXXFLAGS) \
@@ -191,7 +191,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-raceya_SOURCES = camera.cpp car.cpp closest_point.cpp dof.cpp frame_timer.cpp frustum_culler.cpp hud.cpp jpeg.cpp lib.cpp logger.cpp main.cpp matrix.cpp shader.cpp track.cpp wheel.cpp camera.h car.h closest_point.h dof.h frame_timer.h frustum_culler.h hud.h jpeg.h lib.h logger.h main.h matrix.h shader.h track.h wheel.h car_parser.h car_parser.cpp texture.h texture.cpp ini.h ini.cpp opengl_state.h opengl_state.cpp quaternion.h quaternion.cpp vector.h vector.cpp curve.h curve.cpp drive_systems.h drive_systems.cpp
+raceya_SOURCES = camera.cpp car.cpp closest_point.cpp dof.cpp frame_timer.cpp frustum_culler.cpp hud.cpp jpeg.cpp lib.cpp logger.cpp main.cpp matrix.cpp shader.cpp track.cpp wheel.cpp camera.h car.h closest_point.h dof.h frame_timer.h frustum_culler.h hud.h jpeg.h lib.h logger.h main.h matrix.h shader.h track.h wheel.h car_parser.h car_parser.cpp texture.h texture.cpp ini.h ini.cpp opengl_state.h opengl_state.cpp quaternion.h quaternion.cpp vector.h vector.cpp curve.h curve.cpp drive_systems.h drive_systems.cpp rigid_body.h rigid_body.cpp
 raceya_LDADD = -lglut -lGLU -lGL -lSDL -lSDLmain -lSDL_ttf -lSDL_mixer -lSDL_image -ljpeg -lboost_filesystem-mt -lboost_system-mt -lboost_iostreams-mt -lftgl -lfreetype 
 raceya_LDFLAGS = -framework Cocoa $(SDL_LIBS) $(GL_LIBS)
 raceya_CXXFLAGS = $(SDL_CFLAGS) $(BOOST_CPPFLAGS) $(GL_CFLAGS) -Wall
@@ -279,6 +279,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-matrix.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-opengl_state.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-quaternion.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-rigid_body.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-shader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-texture.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/raceya-track.Po@am__quote@
@@ -620,6 +621,20 @@ raceya-drive_systems.obj: drive_systems.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='drive_systems.cpp' object='raceya-drive_systems.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-drive_systems.obj `if test -f 'drive_systems.cpp'; then $(CYGPATH_W) 'drive_systems.cpp'; else $(CYGPATH_W) '$(srcdir)/drive_systems.cpp'; fi`
+
+raceya-rigid_body.o: rigid_body.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -MT raceya-rigid_body.o -MD -MP -MF $(DEPDIR)/raceya-rigid_body.Tpo -c -o raceya-rigid_body.o `test -f 'rigid_body.cpp' || echo '$(srcdir)/'`rigid_body.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/raceya-rigid_body.Tpo $(DEPDIR)/raceya-rigid_body.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='rigid_body.cpp' object='raceya-rigid_body.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-rigid_body.o `test -f 'rigid_body.cpp' || echo '$(srcdir)/'`rigid_body.cpp
+
+raceya-rigid_body.obj: rigid_body.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -MT raceya-rigid_body.obj -MD -MP -MF $(DEPDIR)/raceya-rigid_body.Tpo -c -o raceya-rigid_body.obj `if test -f 'rigid_body.cpp'; then $(CYGPATH_W) 'rigid_body.cpp'; else $(CYGPATH_W) '$(srcdir)/rigid_body.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/raceya-rigid_body.Tpo $(DEPDIR)/raceya-rigid_body.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='rigid_body.cpp' object='raceya-rigid_body.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(raceya_CXXFLAGS) $(CXXFLAGS) -c -o raceya-rigid_body.obj `if test -f 'rigid_body.cpp'; then $(CYGPATH_W) 'rigid_body.cpp'; else $(CYGPATH_W) '$(srcdir)/rigid_body.cpp'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

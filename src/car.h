@@ -12,13 +12,15 @@
 #include "track.h"
 #include "dof.h"
 #include "quaternion.h"
-#include "frame_timer.h"
 #include "vector.h"
 #include "drive_systems.h"
+#include "rigid_body.h"
 
 class Dof;
+class Engine;
+class Gearbox;
 
-class Car {
+class Car : public RigidBody {
     public:
         Car();
         ~Car();
@@ -28,7 +30,7 @@ class Car {
         void handleKeyPress(SDL_Event &event);
 
         // Get a pointer to the player's position
-        float * getPosition();
+        Vector getPosition();
 
         float getRPM();
 
@@ -38,12 +40,13 @@ class Car {
         void setBody(Dof * dof);
         void setTrack(Track * track);
         void setWheel(Wheel * wheel, int index);
-        void setCenter(float * center);
-        void setInertia(float * inertia);
-        void setMass(float mass);
         void setBodyArea(float area);
         void setDragCoefficient(float coefficient);;
         void setEngine(Engine & engine);
+        void setGearbox(Gearbox & gearbox);
+
+        // Getters
+        Engine * getEngine();
 
         float * getVector();
 
@@ -76,13 +79,14 @@ class Car {
         float _modelScale;
 
         // Engine related variables
-        Engine _engine;
+        Engine * _engine;
         float _engineRPM;
         float _engineMaxRPM;
         bool _acceleratorPressed;
         float _acceleratorRPMSec;
 
         // Gear related variables
+        Gearbox * _gearbox;
         float _finalDriveAxisRatio;
         float * _gearRatios;
         int _numberOfGears;
@@ -91,33 +95,15 @@ class Car {
         float _engineGearUpRPM;
         float _engineGearDownRPM;
 
-        // A timer to help with the physics calculations
-        FrameTimer * _timer;
-
-        // Position
-        float _position[3];
-        float _linearVelocity[3];
-        float _angularVelocity[3];
-
-        // Moments of inertia
-        Matrix _inertiaTensor;
-        Matrix _inverseInertiaTensor;
-        float _inertia[3];
-
         // Drag coefficient and body area
         float _dragCoefficient;
         float _bodyArea;
 
-        // Center of gravity of the car
-        float _center[3];
-
-        // Mass of the car
-        float _mass;
 
         // The matrix representing the local coordinate system of the car
         float _localOrigin[3][3];
         // The quaternion representing the yaw, pitch and roll of the car
-        Quaternion _orientation;
+        //Quaternion _orientation;
 
         // Update the engine variables
         void _updateEngine();
@@ -125,8 +111,6 @@ class Car {
         void _updateComponents();
         // Update the car's steering
         void _updateSteering();
-        // Update hte transformation matrix
-        void _updateMatrix();
 
         // Return true of one of the wheels is on the ground
         bool _isOnGround();
@@ -139,15 +123,8 @@ class Car {
 
         // Calculate the forces due to the wheels (contact with the ground and turning)
         void _calculateWheelForces(Vector & forceAccumulator, Vector & angularAccumulator);
-
-        // Calculate the inertia tensor using the body intertia constants
-        void _calculateInertiaTensor();
-
-        // Calculate the impulse when the car hits the ground
-        float _calculateImpulseOnGround(Vector & r);
-
-        // the car's transformation matrix
-        Matrix _matrix;
+        // Generate the forces of the ground pushing up
+        void _generateGroundForces();
 
         Dof * _bodyDof;
 };

@@ -8,6 +8,7 @@
  */
 #include "camera.h"
 #include "lib.h"
+#include "vector.h"
 
 #include <OpenGL/gl.h>
 #include <iostream>
@@ -76,7 +77,7 @@ void Camera::viewTransform() {
     glRotatef(this->_currentYawAngle - 90, 0, 1, 0);
 
     // Translate so that the player's car is the focus
-    float * playerPosition = this->_playersCar->getPosition();
+    Vector playerPosition = this->_playersCar->getPosition();
     glTranslatef(-1 * playerPosition[0], -1 * playerPosition[1], -1 * playerPosition[2]);
 }
 

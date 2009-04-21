@@ -25,20 +25,23 @@ Quaternion::Quaternion(float w, float x, float y, float z) {
 
 void Quaternion::toRotationMatrix(Matrix & result) {
     result[0] = 1 - 2 * (this->y * this->y + this->z * this->z);
-    result[1] = 2 * (this->x * this->y - this->z * this->w);
-    result[2] = 2 * (this->x * this->z + this->y * this->w);
-    result[3] = 0;
-    result[4] = 2 * (this->x * this->y + this->z * this->w);
-    result[5] = 1 - 2 * (this->x * this->x + this->z * this->z);
-    result[6] = 2 * (this->y * this->z - this->x * this->w);
-    result[7] = 0;
-    result[8] = 2 * (this->x * this->z - this->y * this->w);
-    result[9] = 2 * (this->y * this->z + this->x * this->w);
-    result[10] = 1 - 2 * (this->x * this->x + this->y * this->y);
-    result[11] = 0;
+    result[4] = 2 * (this->x * this->y - this->z * this->w);
+    result[8] = 2 * (this->x * this->z + this->y * this->w);
     result[12] = 0;
+
+    result[1] = 2 * (this->x * this->y + this->z * this->w);
+    result[5] = 1 - 2 * (this->x * this->x + this->z * this->z);
+    result[9] = 2 * (this->y * this->z - this->x * this->w);
     result[13] = 0;
+
+    result[2] = 2 * (this->x * this->z - this->y * this->w);
+    result[6] = 2 * (this->y * this->z + this->x * this->w);
+    result[10] = 1 - 2 * (this->x * this->x + this->y * this->y);
     result[14] = 0;
+
+    result[3] = 0;
+    result[7] = 0;
+    result[11] = 0;
     result[15] = 1;
 }
 
@@ -87,10 +90,12 @@ void Quaternion::normalise() {
         this->y /= magnitude;
         this->z /= magnitude;
         this->w /= magnitude;
+    } else {
+        this->w = 1;
     }
 }
 
-void Quaternion::print() {
+void Quaternion::print() const {
     cout << "w: " << this->w << " q = { " << this->x << ", " << this->y << ", " << this->z << " }" << endl;
 }
 
@@ -117,4 +122,12 @@ void Quaternion::add(Quaternion & quaternion) {
     this->x += quaternion.x;
     this->y += quaternion.y;
     this->z += quaternion.z;
+}
+
+Quaternion & Quaternion::operator+=(const Quaternion & rhs) {
+    this->w += rhs.w;
+    this->x += rhs.x;
+    this->y += rhs.y;
+    this->z += rhs.z;
+    return *this;
 }

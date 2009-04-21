@@ -1,7 +1,7 @@
 #include "car_parser.h"
 #include "logger.h"
 #include "lib.h"
-#include "drive_systems.h"
+//#include "drive_systems.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -10,6 +10,9 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+
+class Engine;
+class Gearbox;
 
 using namespace std;
 using namespace boost;
@@ -183,4 +186,18 @@ void parseEngine(Ini & ini, Car * car, path carPath) {
 
     car->setEngine(engine);
     engine.print();
+
+    // Set up the gearbox
+    Gearbox gearbox;
+    int nGears = ini.getInt("/gearbox/gears");
+    gearbox.setNGears(nGears);
+    for (int i = 0; i < nGears; ++i) {
+        float ratio = ini.getFloat("/gearbox/gear", i, "/ratio");
+        gearbox.setGearRatio(i, ratio);
+    }
+
+    gearbox.setShiftRpms(
+            ini.getFloat("/engine/shifting/shift_up_rpm"),
+            ini.getFloat("/engine/shifting/shift_down_rpm"));
+    car->setGearbox(gearbox);
 }

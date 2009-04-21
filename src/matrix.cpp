@@ -59,7 +59,7 @@ void Matrix::reset() {
 }
 
 Matrix::~Matrix() {
-    //delete[] this->_matrix;
+    delete[] this->_matrix;
 }
 
 void Matrix::rotate(float angle, float * normal) {
@@ -279,10 +279,10 @@ void Matrix::multiplyMatrix(float * matrix) {
     this->multiplyMatrix(&tmp);
 }
 
-void Matrix::multiplyMatrix(Matrix *matrix) {
-    float *thisMatrix = this->_matrix;
+void Matrix::multiplyMatrix(Matrix * matrix) {
+    float * thisMatrix = this->_matrix;
     float sum;
-    float *result = new float[16];
+    float * result = new float[16];
     for (int i = 0; i < 4; ++i) {
         for (int j = 0; j < 4; ++j) {
             sum = 0;
@@ -294,7 +294,7 @@ void Matrix::multiplyMatrix(Matrix *matrix) {
     }
 
     // Swap to the new matrix
-    delete[] this->_matrix;
+    delete [] this->_matrix;
     this->_matrix = result;
 }
 
@@ -381,7 +381,7 @@ void Matrix::transpose(Matrix & result) {
     }
 }
 
-void Matrix::print() {
+void Matrix::print() const {
     cout << "inline: ";
     for (int i = 0; i < this->order * this->order; ++i) {
         cout << this->_matrix[i] << ", ";

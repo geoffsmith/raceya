@@ -32,6 +32,7 @@ class Ini {
         // Get an integer
         int getInt(string key);
         float getFloat(string key);
+        float getFloat(string key, int keyIndex, string restOfKey);
 
         // Query the data. Basically does a starts_with on each key in data and returns
         // a set of paths that match, but only at that path token length. i.e.
