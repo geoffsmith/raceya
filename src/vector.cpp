@@ -84,6 +84,13 @@ Vector & Vector::operator+=(const Vector & rhs) {
     return *this;
 }
 
+Vector & Vector::operator*=(const float scalar) {
+    for (int i = 0; i < this->order; ++i) {
+        this->_vector[i] *= scalar;
+    }
+    return *this;
+}
+
 void Vector::print() const {
     cout << "{ ";
     for (int i = 0; i < this->order; ++i) {
@@ -91,3 +98,5 @@ void Vector::print() const {
     }
     cout << "}" << endl;
 }
+
+

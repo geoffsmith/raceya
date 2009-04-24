@@ -11,6 +11,8 @@
 
 #include "vector.h"
 
+class Vector;
+
 #include <OpenGL/gl.h>
 
 class Matrix {
@@ -24,6 +26,7 @@ class Matrix {
         float& operator[] (const unsigned int index);
         float operator[] (const unsigned int index) const;
         Matrix & operator=(const Matrix & other);
+        Matrix & operator*=(const float scalar);
         void rotate(float angle, float * normal);
         void rotateY(float angle);
         void rotateX(float angle);
@@ -68,6 +71,7 @@ class Matrix {
 inline Vector operator *(const Vector & v, const Matrix & m);
 inline Vector operator *(const Matrix & m, const Vector & v);
 inline Matrix operator*(const Matrix & m, const Matrix & m);
+inline Matrix operator*(const Matrix & m, const float s);
 
 /******************************************************************************
  * Inline definitions
@@ -113,6 +117,14 @@ inline Matrix operator*(const Matrix & a, const Matrix & b) {
             }
             result[j * order + i] = sum;
         }
+    }
+    return result;
+}
+
+inline Matrix operator*(const Matrix & m, const float s) {
+    Matrix result = m;
+    for (int i = 0; i < m.order * m.order; ++i) {
+        result[0] *= s;
     }
     return result;
 }

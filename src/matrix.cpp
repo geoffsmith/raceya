@@ -396,3 +396,36 @@ void Matrix::print() const {
         cout << endl;
     }
 }
+
+/**
+ * I'm not particularly happy about this function being defined here, but seemed the only
+ * way of getting it to compile nicely without resorting to pointers
+ */
+Matrix Vector::toSkewSymmetric() {
+    // At the moment this only works for 3x3 matrices
+    if (this->order != 3) {
+        throw "Order not supported by toSkewSymmetric";
+    }
+
+    Matrix result(this->order);
+    result[0] = 0;
+    result[1] = this->_vector[2];
+    result[2] = -this->_vector[1];
+
+    result[3] = -this->_vector[2];
+    result[4] = 0;
+    result[5] = this->_vector[0];
+
+    result[6] = this->_vector[1];
+    result[7] = -this->_vector[0];
+    result[8] = 0;
+
+    return result;
+}
+
+Matrix & Matrix::operator*=(const float scalar) {
+    for (int i = 0; i < this->order * this->order; ++i) {
+        this->_matrix[i] *= scalar;
+    }
+    return *this;
+}

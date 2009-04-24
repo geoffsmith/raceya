@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+class Matrix;
+
 using namespace std;
 
 class Vector {
@@ -32,6 +34,10 @@ class Vector {
 
         Vector & operator/=(float s);
         Vector & operator+=(const Vector & rhs);
+        Vector & operator*=(const float scalar);
+
+        // Return a skew symmetric representation of this matrix
+        Matrix toSkewSymmetric();
 
         // Get the vector's magnitude
         float magnitude();
