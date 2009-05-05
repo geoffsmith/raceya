@@ -16,6 +16,9 @@ using namespace boost;
 using namespace boost::filesystem;
 namespace fs = boost::filesystem;
 
+dWorldID Track::worldId;
+dSpaceID Track::spaceId;
+
 Track::Track(string trackPath) {
     path currentDir("./");
     this->_path = trackPath;
@@ -33,6 +36,18 @@ Track::Track(string trackPath) {
 
     // Load and parse special.ini
     this->_loadSpecialIni();
+
+    dInitODE();
+
+    // Create an ODE world for the physics of this track and its objects
+    Track::worldId = dWorldCreate();
+
+    // We set a normal gravity, the ODE default is 0
+    dWorldSetGravity(Track::worldId, 0, -9.8, 0);
+
+    Track::spaceId = dHashSpaceCreate(0);
+
+    this->_initCollisionDetection();
 }
 
 Track::~Track() {
@@ -41,6 +56,47 @@ Track::~Track() {
         delete this->_dofs[i];
     }
     delete[] this->_dofs;
+
+    // Clean up ODE physics
+    dWorldDestroy(Track::worldId);
+}
+
+void Track::_initCollisionDetection() {
+    this->planeId = dCreatePlane(Track::spaceId, 0, 1, 0, 0);
+
+    // For each dof
+    for (unsigned int i = 0; i < this->_nDofs; ++i) {
+        // For each geob
+        for (int j = 0; j < this->_dofs[i]->getNGeobs(); ++j) {
+            Geob * geob = this->_dofs[i]->getGeob(j);
+
+            dTriMeshDataID meshId = dGeomTriMeshDataCreate();
+
+            // Convert geob vertices into dVector3s
+            dReal * vertices = new dReal[geob->nVertices * 4];
+            for (unsigned int k = 0; k < geob->nVertices; ++k) {
+                vertices[k * 4] = geob->vertices[k][0];
+                vertices[k * 4 + 1] = geob->vertices[k][1];
+                vertices[k * 4 + 2] = geob->vertices[k][2];
+                vertices[k * 4 + 3] = 1;
+            }
+
+            dTriIndex * indices = new dTriIndex[geob->nIndices];
+            for (int k = 0; k < geob->nIndices; ++k) {
+                indices[k] = geob->indices[k];
+            }
+
+            // Create the collision detection objects
+            dGeomTriMeshDataBuildSimple(meshId, vertices, geob->nVertices,
+                    indices, geob->nIndices);
+
+            // Create the geob
+            dCreateTriMesh(Track::spaceId, meshId, NULL, NULL, NULL);
+            
+            // TODO: epic memory leak here, we need to clean up all those indices and
+            // vertices once ODE has finished with them
+        }
+    }
 }
 
 void Track::_loadSpecialIni() {

@@ -56,14 +56,9 @@ Car::Car() {
     this->_localOrigin[2][1] = 0;
     this->_localOrigin[2][2] = -1;
 
-    /*
-    this->_angularVelocity[0] = 0;
-    this->_angularVelocity[1] = 0;
-    this->_angularVelocity[2] = 0;
-    */
+    this->timer = new FrameTimer(100);
 
-
-    this->initialiseRigidBody();
+    this->_initRigidBody();
 }
 
 Car::~Car() {
@@ -91,51 +86,11 @@ void Car::_updateSteering() {
 }
 
 void Car::_updateEngine() {
-    /*
-    // If the accelerator is pressed we increase the RPM be the accerelation coefficient
-    if (this->_acceleratorPressed) {
-        //this->_engineRPM += this->_acceleratorRPMSec * this->_timer->getSeconds();
-        this->_engine->getCurrentRpm() += this->_acceleratorRPMSec * this->_timer->getSeconds();
-    // ... otherwise we decrease the RPM
-    } else if (this->_engine->getCurrentRpm() > 0) {
-        //this->_engineRPM -= (this->_acceleratorRPMSec / 2.0) 
-            // this->_timer->getSeconds();
-        this->_engine->getCurrentRpm() -= (this->_acceleratorRPMSec / 2.0) 
-            * this->_timer->getSeconds();
-        // if this is negative, clamp to 0
-        if (this->_engine->getCurrentRpm() < 0) this->_engine->getCurrentRpm() = 0;
-    }
-
-    // Update the gears
-    this->_gearbox->doShift();
-    */
-
-    // Check if we need to shift up or down a gear
-    /*
-    if (this->_engineRPM >= this->_engineGearUpRPM 
-            && this->_currentGear < this->_numberOfGears - 1) {
-        ++this->_currentGear;
-        // and reset the RPM to the lower amount
-        // TODO, this should probably be more clever and match the speed
-        this->_engineRPM = this->_engineGearDownRPM + this->_acceleratorRPMSec;
-    }
-    
-    // Check if we need to shift down a gear, this will only shift down to 1 because 0 is
-    // reverse
-    if (this->_engineRPM <= this->_engineGearDownRPM && this->_currentGear > 1) {
-        --this->_currentGear;
-        this->_engineRPM = this->_engineGearUpRPM - this->_acceleratorRPMSec;
-    }
-    */
-
 }
 
 void Car::_updateComponents() {
     // Update the car's steering
     this->_updateSteering();
-
-    // Update the engine
-    this->_updateEngine();
 
     // Find out how much the engine has turned
     float engineTurns = this->_engine->getCurrentRpm() * this->timer->getSeconds() * 60.0;
@@ -147,47 +102,24 @@ void Car::_updateComponents() {
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->turn(wheelTurns * 360.0);
     }
-
-    // Add the gravity force
-    this->addForce(Vector(0, -9.8 * this->mass, 0));
-
-    /*
-    float * tmp;
-    tmp = this->_wheels[2]->getWheelCenter();
-    Vector v = Vector(tmp, 3);
-    this->_wheelVectors[2] = v;
-    this->addLocalForce(Vector(0, 2, 0), v);
-
-    tmp = this->_wheels[0]->getWheelCenter();
-    v = Vector(tmp, 3);
-    this->_wheelVectors[0] = v;
-    this->addLocalForce(Vector(0, 2, 0), v);
-    */
-
-    // Add the ground contact forces
-    //this->_generateGroundForces();
-
-    // Update the car's vector
-    this->calculate();
-
-    // Check for collision with the ground on this new position
-    this->_groundCollisionCorrection();
 }
 
 void * Car::update(void * _car) {
     Car * car = (Car *)_car;
-    int i = 0;
     float d;
     while (true) {
-        // Every 10th time, update the ground point
-        if (i % 10 == 0) {
-            car->_updateGroundPoints();
-            i = 0;
-        }
-        ++i;
 
         car->timer->newFrame();
-        car->_updateComponents();
+        //car->_updateComponents();
+        // TODO: Sort out this constant step business
+        car->_updateCollisionBox();
+        dWorldStep(Track::worldId, 0.005);
+
+        // Delete the joints
+        for (int i = 0; i < car->_nJoints; ++i) {
+            dJointDestroy(car->_joints[i]);
+        }
+
         d = car->timer->getTimeTillNext();
         SDL_Delay(d);
     }
@@ -196,9 +128,13 @@ void * Car::update(void * _car) {
 void Car::render() {
     glPushMatrix();
 
-    this->_mutex.lock();
-    glMultMatrixf(this->transformationMatrix.getMatrix());
-    this->_mutex.unlock();
+    const dReal * position = dBodyGetPosition(this->bodyId);
+    glTranslatef(position[0], position[1], position[2]);
+
+    // Get the car's rotation
+    const dReal * rotation = dBodyGetRotation(this->bodyId);
+    Matrix rotationMatrix(rotation, 3);
+    glMultMatrixf(rotationMatrix.getMatrix());
 
     this->_bodyDof->render(true);
 
@@ -273,7 +209,9 @@ void Car::handleKeyPress(SDL_Event &event) {
  * Getters / setters
  ******************************************************************************/
 Vector Car::getPosition() {
-    return this->position;
+    const dReal * position = dBodyGetPosition(this->bodyId);
+    Vector result(position[0], position[1], position[2]);
+    return result;
 }
 
 float Car::getRPM() {
@@ -286,7 +224,7 @@ float * Car::getWheelPosition() {
     result[1] = 1.434;
     result[2] = 0.342;
     // transform the vertex
-    this->transformationMatrix.multiplyVector(result);
+    //this->transformationMatrix.multiplyVector(result);
     return result;
 }
 
@@ -296,12 +234,11 @@ void Car::setBody(Dof * dof) {
 
 void Car::setTrack(Track * track) {
     this->_track = track;
+    dBodySetPosition(this->bodyId, 
+            this->_track->startPosition[0], 
+            this->_track->startPosition[1] + 4, 
+            this->_track->startPosition[2]);
 
-    // Set the start position to the position on the track
-    this->position = Vector(this->_track->startPosition, 3);
-
-    // Add to the position
-    this->position[1] += 4;
 }
 
 void Car::setWheel(Wheel * wheel, int index) {
@@ -334,187 +271,62 @@ void Car::setGearbox(Gearbox & gearbox) {
     this->_gearbox->setCar(this);
 }
 
+void Car::setDimensions(float height, float width, float length) {
+    dGeomBoxSetLengths(this->geomId, height, width, length);
+}
+
 Engine * Car::getEngine() {
     return this->_engine;
 }
 
-/******************************************************************************
- * Collision detection
- *****************************************************************************/
-void Car::_updateGroundPoints() {
-    float wheelPoint[3];
-    float groundPoint[3];
-    for (int i = 0; i < 4; ++i) {
-        this->_wheels[i]->getGroundContact(wheelPoint);
-
-        // Transform this point to world coords
-        this->transformationMatrix.multiplyVector(wheelPoint);
-
-        // Get the closest point on the track
-        findClosestPoint(this->_track->getDofs(), this->_track->getNDofs(), 
-                wheelPoint, groundPoint);
-
-        if (isnan(groundPoint[0]) 
-                || isnan(groundPoint[1]) 
-                || isnan(groundPoint[2])) {
-            // Set the ground point to the wheel point
-            vertexCopy(wheelPoint, groundPoint);
-        }
-        this->_closestGroundPoints[i] = Vector(groundPoint, 3);
-    }
+void Car::setCenter(float * center) {
 }
 
-void Car::_groundCollisionCorrection() {
-    float wheelPoints[4][3];
-    float groundPoints[4][3];
-    for (int i = 0; i < 4; ++i) {
-        this->_wheels[i]->getGroundContact(wheelPoints[i]);
-        this->transformationMatrix.multiplyVector(wheelPoints[i]);
-        groundPoints[i][0] = this->_closestGroundPoints[i][0];
-        groundPoints[i][1] = this->_closestGroundPoints[i][1];
-        groundPoints[i][2] = this->_closestGroundPoints[i][2];
-    }
 
-    // Go through the ground points and find the biggest negative difference
-    int largestIndex = 0;
-    float maxDifference = 1;
-    float difference;
-    for (int i = 0; i < 4; ++i) {
-        difference = wheelPoints[i][1] - groundPoints[i][1];
-        if (i == 0 || (difference < 0 && difference < maxDifference)) {
-            maxDifference = difference;
-            largestIndex = i;
-        }
-    }
+void Car::setMass(float mass, float * inertia) {
+    dMass newMass;
 
-    // If we have a wheel below the surface, we move the car up
-    if (maxDifference < 0) {
-        this->position[1] -= maxDifference;
-        this->_updateMatrices();
-    }
+    dMassSetParameters(&newMass, mass, 0, 0, 0,
+            inertia[0], inertia[1], inertia[2],
+            0, 0, 0);
 
-    Vector contactPoints[4];
-    Vector impulses[4];
-
-    Matrix inverseRotation(4);
-    this->rotationMatrix.invert(inverseRotation);
-    Matrix worldInertiaTensor = 
-        (this->rotationMatrix * this->inverseInertiaTensor) * inverseRotation;
-
-    // Check for collisions on the contact wheel
-    int count = 0;
-    //for (int i = 0; i < 4; ++i) {
-    for (int i = largestIndex; i < largestIndex + 1; ++i) {
-        // We need to redo the wheel points, in case there is a difference
-        this->_wheels[i]->getGroundContact(wheelPoints[i]);
-        this->transformationMatrix.multiplyVector(wheelPoints[i]);
-        difference = wheelPoints[i][1] - groundPoints[i][1];
-        if (difference > 0.05) {
-            this->_wheelVectors[i] = Vector(0, 0, 0);
-            impulses[i] = Vector(0, 0, 0);
-            contactPoints[i] = Vector(0, 0, 0);
-            continue;
-        }
-
-        float tmp[3];
-        this->_wheels[i]->getGroundContact(tmp);
-        Vector groundContact = Vector(tmp, 3);
-        Vector contactNormal = Vector(0, 1, 0);
-
-        Vector contact = this->rotationMatrix * groundContact;
-
-        Matrix impulseToTorque = contact.toSkewSymmetric();
-        Matrix deltaVelWorld = 
-            ((impulseToTorque * worldInertiaTensor) * impulseToTorque) * -1;
-
-        // We skip the conversion to world coordinates because they are othogonal to the
-        // contact coordinates
-        Matrix deltaVelocity = deltaVelWorld;
-
-        // Add the linear element
-        deltaVelocity[0] += 1.0 / this->mass;
-        deltaVelocity[4] += 1.0 / this->mass;
-        deltaVelocity[8] += 1.0 / this->mass;
-
-        // Invert to get the impulse needed per unit velocity
-        Matrix impulseMatrix;
-        deltaVelocity.invert(impulseMatrix);
-
-        // Get the car's velocity
-        Vector velocity = this->angularVelocity ^ contact;
-        velocity += this->linearVelocity;
-
-        // Coefficient of restitution
-        float restitution = 0.1; // Stable at 0.025
-        float velocityLimit = 2.5; // Millington 0.25
-        float velocityFromAcceleration = this->accelerationAtUpdate * contactNormal;
-        if (fabs(velocity[1]) < velocityLimit) {
-            restitution = 0;
-        }
-        float targetDeltaVelocity = 
-            -velocity[1] - restitution * (velocity[1] + velocityFromAcceleration);
-
-        // Find the target velocities to kill
-        cout << "Target delta velocity: ";
-        cout << targetDeltaVelocity << endl;
-        Vector velKill(-velocity[0], targetDeltaVelocity, -velocity[2]);
-        velKill *= 0.001;
-
-        Vector impulseContact = impulseMatrix * velKill;
-
-        cout << "Impulse: " << endl;
-        impulseContact.print();
-        impulses[i] = impulseContact;
-        contactPoints[i] = contact;
-
-        // Get the relative contact position in world coordinates
-        /*
-        
-        Vector torquePerUnitImpuse = contact ^ contactNormal;
-        Vector rotationPerUnitImpulse = worldInertiaTensor * torquePerUnitImpuse;
-        Vector velocityPerUnitImpulse = rotationPerUnitImpulse ^ contact;
-
-        // The angular component is the velocity per unit impulse in the up direction
-        float deltaVelocityPerImpulse = velocityPerUnitImpulse[1];
-        // ... and add the linear component
-        deltaVelocityPerImpulse += 1.0 / this->mass;
-        //cout << "Target delta velocity: " << targetDeltaVelocity << endl;
-
-        // Get the car's velocity
-        Vector velocity = this->angularVelocity ^ contact;
-        velocity += this->linearVelocity;
-
-        // Coefficient of restitution
-        float restitution = 0.1; // Stable at 0.025
-        float velocityLimit = 2.5; // Millington 0.25
-        float velocityFromAcceleration = this->accelerationAtUpdate * contactNormal;
-        if (fabs(velocity[1]) < velocityLimit) {
-            cout << "Resitution reset" << endl;
-            restitution = 0;
-        }
-        //float targetDeltaVelocity = -velocity[1] * (1 + restitution);
-        float targetDeltaVelocity = 
-            -velocity[1] - restitution * (velocity[1] + velocityFromAcceleration);
-        float tmpDV = targetDeltaVelocity / deltaVelocityPerImpulse;
-        Vector impulse = Vector(0, tmpDV, 0);
-        this->_wheelVectors[i] = (impulse / impulse.magnitude()) + groundContact;
-        impulses[i] = impulse;
-        contactPoints[i] = contact;
-        */
-        count++;
-        this->applyImpulse(impulses[i], contactPoints[i]);
-        this->_updateMatrices();
-    }
-    cout << "Count: " << count << endl;
-
-    // We've delayed adding the impulses to now, so that all the impulses are calculated
-    // from the same linear and angular velocities
-    for (int i = 0; i < 4; ++i) {
-    }
-
+    dBodySetMass(this->bodyId, &newMass);
 }
 
 /******************************************************************************
  * Physics stuff
  *****************************************************************************/
+void Car::_initRigidBody() {
+    // Set up the rigid body
+    this->bodyId = dBodyCreate(Track::worldId);
 
+    // Set up the collision detection box
+    this->geomId = dCreateBox(Track::spaceId, 0, 0, 0);
+
+    // Associate geom with body
+    dGeomSetBody(this->geomId, this->bodyId);
+}
+
+void Car::_updateCollisionBox() {
+
+    dContactGeom * contacts = new dContactGeom[4];
+    int result = dCollide(this->geomId, (dGeomID)Track::spaceId, 4, contacts, sizeof(dContactGeom));
+    this->_nJoints = result;
+    if (result  > 0) {
+        for (int i = 0; i < result; ++i) {
+            // Create the surface parameters
+            dSurfaceParameters params;
+            params.mode = dContactMu2 & dContactBounce;
+            params.mu = 10;
+            params.bounce = 0;
+
+            dContact contact;
+            contact.geom = contacts[i];
+            contact.surface = params;
+            dJointID jointId = dJointCreateContact(Track::worldId, 0, &contact);
+            dJointAttach(jointId, this->bodyId, 0);
+            this->_joints[i] = jointId;
+        }
+    }
+    delete [] contacts;
+}

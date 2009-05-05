@@ -14,6 +14,7 @@
 class Vector;
 
 #include <OpenGL/gl.h>
+#include <ode/ode.h>
 
 class Matrix {
     public:
@@ -21,6 +22,8 @@ class Matrix {
         Matrix(const Matrix & other);
         Matrix(GLfloat * input);
         Matrix(int order);
+        Matrix(const dReal * other, int order);
+
         ~Matrix();
         void reset();
         float& operator[] (const unsigned int index);
@@ -51,6 +54,7 @@ class Matrix {
 
         // Calculate the inverse of this matrix
         void invert(Matrix & matrix);
+        Matrix inverse();
 
         // Calculate the transport of this matrix
         void transpose(Matrix & result);

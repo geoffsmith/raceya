@@ -8,6 +8,8 @@
 #pragma once
 
 #include <string>
+#include <ode/ode.h>
+
 #include "dof.h"
 
 using namespace std;
@@ -28,6 +30,11 @@ class Track {
         // Start position
         float startPosition[3];
 
+        // The ODE world ID
+        static dWorldID worldId;
+        static dSpaceID spaceId;
+        dGeomID planeId;
+
     private:
         string _path;
         Dof ** _dofs;
@@ -41,4 +48,8 @@ class Track {
         // Load the special ini file which includes: grid positions, camera positions, 
         // high level track variables (sun position and colour)
         void Track::_loadSpecialIni();
+
+        // Initialise the collision detection, this uses the built in ODE collision 
+        // detection for now. 
+        void Track::_initCollisionDetection();
 };

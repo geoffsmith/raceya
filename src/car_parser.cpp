@@ -52,6 +52,7 @@ Car * parseCar(string carPathString) {
         car->setCenter(center);
     } 
 
+
     // Load the inertia
     if (carIniFile.hasKey("/body/inertia/x")) {
         tmp = carIniFile["/body/inertia/x"];
@@ -60,15 +61,15 @@ Car * parseCar(string carPathString) {
         inertia[1] = atof(tmp.c_str());
         tmp = carIniFile["/body/inertia/z"];
         inertia[2] = atof(tmp.c_str());
-        car->setInertia(inertia);
-        cout << "done iwth inertia" << endl;
+        //car->setInertia(inertia);
     } 
 
     // Load the mass
     if (carIniFile.hasKey("/body/mass")) {
         tmp = carIniFile["/body/mass"];
-        car->setMass(atof(tmp.c_str()));
+        car->setMass(atof(tmp.c_str()), inertia);
     }
+
 
     // Load the body surface area
     if (carIniFile.hasKey("/aero/body/area")) {
@@ -82,6 +83,11 @@ Car * parseCar(string carPathString) {
         car->setDragCoefficient(atof(tmp.c_str()));
     }
 
+    car->setDimensions(
+        carIniFile.getFloat("/body/height"),
+        carIniFile.getFloat("/body/width"),
+        carIniFile.getFloat("/body/length")
+    );
 
     // Load the wheels
     Wheel * wheel;

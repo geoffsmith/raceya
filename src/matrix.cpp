@@ -36,6 +36,17 @@ Matrix::Matrix(GLfloat *input) {
     }
 }
 
+Matrix::Matrix(const dReal * other, int order) {
+    this->order = 4;
+    this->_matrix = new float[this->order * this->order];
+    for (int i = 0; i < 3; ++i) { // rows
+        for (int j = 0; j < 4; ++j) { // columns
+            this->_matrix[j * 4 + i] = other[j + i * 4];
+        }
+    }
+    this->_matrix[15] = 1;
+}
+
 Matrix & Matrix::operator=(const Matrix & other) {
     this->order = other.order;
     this->_matrix = new float[this->order * this->order];
@@ -355,6 +366,13 @@ float Matrix::determinant() {
 }
 
 void Matrix::invert(Matrix & result) {
+    result = this->inverse();
+}
+
+Matrix Matrix::inverse() {
+    // Our result will have the same order as the current matrix
+    Matrix result(this->order);
+
     // Calculate the inverse of this matrix, using the adjoint method
     // First we need the determinant
     float determinant = this->determinant();
@@ -371,6 +389,8 @@ void Matrix::invert(Matrix & result) {
             }
         }
     }
+
+    return result;
 }
 
 void Matrix::transpose(Matrix & result) {

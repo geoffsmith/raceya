@@ -8,6 +8,9 @@
 #pragma once
 
 #include <SDL/SDL.h>
+#include <ode/ode.h>
+
+
 #include "wheel.h"
 #include "track.h"
 #include "dof.h"
@@ -15,12 +18,13 @@
 #include "vector.h"
 #include "drive_systems.h"
 #include "rigid_body.h"
+#include "frame_timer.h"
 
 class Dof;
 class Engine;
 class Gearbox;
 
-class Car : public RigidBody {
+class Car {
     public:
         Car();
         ~Car();
@@ -44,6 +48,9 @@ class Car : public RigidBody {
         void setDragCoefficient(float coefficient);;
         void setEngine(Engine & engine);
         void setGearbox(Gearbox & gearbox);
+        void setDimensions(float height, float width, float length);
+        void setCenter(float * center);
+        void setMass(float mass, float * inertia);
 
         // Getters
         Engine * getEngine();
@@ -53,6 +60,12 @@ class Car : public RigidBody {
         // Update the car's position and orientation at 1000Hz
         static void * update(void * car);
 
+        // The rigid body id
+        dBodyID bodyId;
+        // and collision box id
+        dGeomID geomId;
+
+        FrameTimer * timer;
 
     private:
         Wheel * _wheels[4];
@@ -127,4 +140,13 @@ class Car : public RigidBody {
         void _generateGroundForces();
 
         Dof * _bodyDof;
+
+        void _initRigidBody();
+
+        // Update the collision detection box
+        void _updateCollisionBox();
+
+        // The collision joints
+        int _nJoints;
+        dJointID _joints[4];
 };
