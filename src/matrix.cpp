@@ -44,6 +44,9 @@ Matrix::Matrix(const dReal * other, int order) {
             this->_matrix[j * 4 + i] = other[j + i * 4];
         }
     }
+    this->_matrix[3] = 0;
+    this->_matrix[7] = 0;
+    this->_matrix[11] = 0;
     this->_matrix[15] = 1;
 }
 

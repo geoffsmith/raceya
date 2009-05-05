@@ -1,3 +1,7 @@
+/*
+ * TODO:
+ * * Refactor to use ini convenience methods
+*/
 #include "car_parser.h"
 #include "logger.h"
 #include "lib.h"
@@ -98,12 +102,21 @@ Car * parseCar(string carPathString) {
         if (carIniFile.hasKey(s.str())) {
             p = (carPath / carIniFile[s.str()]).string();
             dof = new Dof(p, 0, false);
-            wheel = new Wheel(i, dof);
+            wheel = new Wheel(i, dof, car);
             car->setWheel(wheel, i);
         } else {
             cout << "Wheel not found: " << s.str() << endl;
             exit(1);
         }
+
+        // Get the wheel radius
+        wheel->setRadius(carIniFile.getFloat("/wheel", i, "/radius"));
+
+        // Set the mass and inertia
+        wheel->setMass(
+                carIniFile.getFloat("/wheel", i, "/mass"),
+                carIniFile.getFloat("/wheel", i, "/inertia")
+                );
 
         s.str("");
 

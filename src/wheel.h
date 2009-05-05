@@ -3,12 +3,19 @@
  */
 #pragma once
 
+#include <ode/ode.h>
+
 #include "dof.h"
 #include "matrix.h"
+#include "car.h"
+
+class Car;
+
 
 class Wheel {
     public:
-        Wheel(int position, Dof * dof);
+        Wheel(int position, Dof * dof, Car * car);
+        ~Wheel();
         void render();
 
         // Turn the wheel around its axis
@@ -24,12 +31,20 @@ class Wheel {
         // Get the center of the wheel
         float * getWheelCenter();
 
+        void setCarPosition(const float * position);
         void setCenter(float * center);
         void setBrakeDof(Dof * dof);
         void enableSteering();
         bool isSteering();
 
+        void setRadius(float radius);
+        void setMass(float mass, float inertia);
+
         bool isPowered;
+
+        dBodyID bodyId;
+        dGeomID geomId;
+        dJointID suspensionJointId;
 
     private:
         // The dof model representing the wheel

@@ -1,7 +1,8 @@
 #include "wheel.h"
 #include "lib.h"
+#include "track.h"
 
-Wheel::Wheel(int position, Dof * dof) {
+Wheel::Wheel(int position, Dof * dof, Car * car) {
     this->_dof = dof;
     this->_brakeDof = NULL;
     this->_rotation = 0;
@@ -11,24 +12,44 @@ Wheel::Wheel(int position, Dof * dof) {
 
     this->isPowered = false;
 
+    this->bodyId = dBodyCreate(Track::worldId);
+    this->geomId = dCreateCylinder(car->spaceId, 1, 1);
+    dGeomSetBody(this->geomId, this->bodyId);
+
+    this->suspensionJointId = dJointCreateSlider(Track::worldId, 0);
+    dJointAttach(this->suspensionJointId, this->bodyId, car->bodyId);
+}
+
+Wheel::~Wheel() {
+    dJointDestroy(this->suspensionJointId);
 }
 
 void Wheel::render() {
     glPushMatrix();
 
+    const dReal * position = dBodyGetPosition(this->bodyId);
+    glTranslatef(position[0], position[1], position[2]);
+
+    // Get the car's rotation
+    const dReal * rotation = dBodyGetRotation(this->bodyId);
+    Matrix rotationMatrix(rotation, 3);
+    glMultMatrixf(rotationMatrix.getMatrix());
+
+    /*
     glTranslatef(this->_wheelCenter[0], this->_wheelCenter[1], this->_wheelCenter[2]);
 
     // Rotate the wheel left / right, if steering is enabled
     if (this->_steering) {
         glRotatef(this->_wheelAngle, 0, -1, 0);
     }
+    */
 
     // Render the brake if there is one, this happens before we rotat the wheel but after
     // steering
-    if (this->_brakeDof != NULL) this->_brakeDof->render(true);
+    //if (this->_brakeDof != NULL) this->_brakeDof->render(true);
 
     // Rotate the wheel around the axis
-    glRotatef(this->_rotation, 1, 0, 0);
+    //glRotatef(this->_rotation, 1, 0, 0);
 
     this->_dof->render(true);
 
@@ -54,10 +75,26 @@ void Wheel::getGroundContact(float * point) {
     vertexCopy(this->_groundContact, point);
 }
 
+void Wheel::setCarPosition(const float * position) {
+    dBodySetPosition(this->bodyId, 
+            this->_wheelCenter[0] + position[0], 
+            this->_wheelCenter[1] + position[1], 
+            this->_wheelCenter[2] + position[2]);
+    //dJointSetSliderAnchor(this->suspensionJointId, 
+    //        this->_wheelCenter[0] + position[0], 
+    //        this->_wheelCenter[1] + position[1], 
+    //        this->_wheelCenter[2] + position[2]);
+    dJointSetSliderAxis(this->suspensionJointId, 0, 1, 0);
+    dJointSetSliderParam(this->suspensionJointId, dParamHiStop, 0);
+    dJointSetSliderParam(this->suspensionJointId, dParamLoStop, 0);
+}
+
 void Wheel::setCenter(float * center) {
     this->_wheelCenter[0] = center[0];
     this->_wheelCenter[1] = center[1];
     this->_wheelCenter[2] = center[2];
+
+    dBodySetPosition(this->bodyId, center[0], center[1], center[2]);
 
     // Calculate the lowest point for the wheel, now that we have a position
     Geob * geob;
@@ -98,4 +135,18 @@ bool Wheel::isSteering() {
 
 float * Wheel::getWheelCenter() {
     return this->_wheelCenter;
+}
+
+void Wheel::setRadius(float radius) {
+    dGeomCylinderSetParams(this->geomId, radius, 0.1);
+}
+
+void Wheel::setMass(float mass, float inertia) {
+    dMass newMass;
+
+    dMassSetParameters(&newMass, mass, 0, 0, 0,
+            inertia, inertia, inertia,
+            0, 0, 0);
+
+    dBodySetMass(this->bodyId, &newMass);
 }

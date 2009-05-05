@@ -113,7 +113,10 @@ void * Car::update(void * _car) {
         //car->_updateComponents();
         // TODO: Sort out this constant step business
         car->_updateCollisionBox();
+
+        car->mutex.lock();
         dWorldStep(Track::worldId, 0.005);
+        car->mutex.unlock();
 
         // Delete the joints
         for (int i = 0; i < car->_nJoints; ++i) {
@@ -127,6 +130,7 @@ void * Car::update(void * _car) {
 
 void Car::render() {
     glPushMatrix();
+    this->mutex.lock();
 
     const dReal * position = dBodyGetPosition(this->bodyId);
     glTranslatef(position[0], position[1], position[2]);
@@ -139,6 +143,7 @@ void Car::render() {
     this->_bodyDof->render(true);
 
     // rotate the front wheel according to the steering
+    /*
     this->_wheelsAngle = this->_steeringAngle;
     // Update the rotation of the front wheels
     for (int i = 0; i < 4; ++i) {
@@ -146,20 +151,17 @@ void Car::render() {
             this->_wheels[i]->setAngle(this->_wheelsAngle);
         }
     }
+    */
+
+    glPopMatrix();
 
     // Render the wheels
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->render();
-
-        glPushMatrix();
-        GLUquadric * quad = gluNewQuadric();
-        glTranslatef(this->_wheelVectors[i][0], this->_wheelVectors[i][1], this->_wheelVectors[i][2]);
-        gluSphere(quad, 0.25, 5, 5);
-        gluDeleteQuadric(quad);
-        glPopMatrix();
     }
 
-    glPopMatrix();
+    this->mutex.unlock();
+
 }
 
 void Car::handleKeyPress(SDL_Event &event) {
@@ -239,6 +241,11 @@ void Car::setTrack(Track * track) {
             this->_track->startPosition[1] + 4, 
             this->_track->startPosition[2]);
 
+    // Set the wheel positions
+    const dReal * position = dBodyGetPosition(this->bodyId);
+    for (int i = 0; i < 4; ++i) {
+        this->_wheels[i]->setCarPosition(position);
+    }
 }
 
 void Car::setWheel(Wheel * wheel, int index) {
@@ -300,20 +307,33 @@ void Car::_initRigidBody() {
     // Set up the rigid body
     this->bodyId = dBodyCreate(Track::worldId);
 
+    this->spaceId = dHashSpaceCreate(0);
+
     // Set up the collision detection box
-    this->geomId = dCreateBox(Track::spaceId, 0, 0, 0);
+    this->geomId = dCreateBox(0, 0, 0, 0);
 
     // Associate geom with body
     dGeomSetBody(this->geomId, this->bodyId);
 }
 
 void Car::_updateCollisionBox() {
+    // TODO: can this be done with fewer calls to dCollide? Would it make a difference?
 
     dContactGeom * contacts = new dContactGeom[4];
-    int result = dCollide(this->geomId, (dGeomID)Track::spaceId, 4, contacts, sizeof(dContactGeom));
-    this->_nJoints = result;
-    if (result  > 0) {
-        for (int i = 0; i < result; ++i) {
+    dContactGeom tmpContacts[1];
+    int count = 0;
+    for (int i = 0; i < 4; ++i) {
+        int result = dCollide(this->_wheels[i]->geomId, (dGeomID)Track::spaceId, 1, 
+                tmpContacts, sizeof(dContactGeom));
+        if (result > 0) {
+            contacts[count] = tmpContacts[0];
+            ++count;
+        }
+    }
+
+    this->_nJoints = count;
+    if (count  > 0) {
+        for (int i = 0; i < count; ++i) {
             // Create the surface parameters
             dSurfaceParameters params;
             params.mode = dContactMu2 & dContactBounce;
@@ -324,7 +344,8 @@ void Car::_updateCollisionBox() {
             contact.geom = contacts[i];
             contact.surface = params;
             dJointID jointId = dJointCreateContact(Track::worldId, 0, &contact);
-            dJointAttach(jointId, this->bodyId, 0);
+            dBodyID bodyId = dGeomGetBody(contacts[i].g1);
+            dJointAttach(jointId, bodyId, 0);
             this->_joints[i] = jointId;
         }
     }

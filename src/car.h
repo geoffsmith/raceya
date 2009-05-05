@@ -9,6 +9,7 @@
 
 #include <SDL/SDL.h>
 #include <ode/ode.h>
+#include <boost/interprocess/sync/interprocess_mutex.hpp>
 
 
 #include "wheel.h"
@@ -23,6 +24,7 @@
 class Dof;
 class Engine;
 class Gearbox;
+class Wheel;
 
 class Car {
     public:
@@ -64,8 +66,10 @@ class Car {
         dBodyID bodyId;
         // and collision box id
         dGeomID geomId;
+        dSpaceID spaceId;
 
         FrameTimer * timer;
+        interprocess_mutex mutex;
 
     private:
         Wheel * _wheels[4];
