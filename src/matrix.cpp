@@ -50,6 +50,15 @@ Matrix::Matrix(const dReal * other, int order) {
     this->_matrix[15] = 1;
 }
 
+void Matrix::getdMatrix3(dMatrix3 & result) {
+
+    for (int i = 0; i < 3; ++i) { // rows
+        for (int j = 0; j < 4; ++j) { // columns
+            result[j + i * 4] = this->_matrix[j * 4 + i];
+        }
+    }
+}
+
 Matrix & Matrix::operator=(const Matrix & other) {
     this->order = other.order;
     this->_matrix = new float[this->order * this->order];

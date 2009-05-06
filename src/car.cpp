@@ -83,14 +83,39 @@ void Car::_updateSteering() {
     if (fabs(this->_steeringAngle) > this->_maxSteeringAngle) {
         this->_steeringAngle = -1 * direction * this->_maxSteeringAngle;
     }
+
+
+    // rotate the front wheel according to the steering
+    this->_wheelsAngle = this->_steeringAngle;
+
+    // Update the rotation of the front wheels
+    for (int i = 0; i < 4; ++i) {
+        if (this->_wheels[i]->isSteering()) {
+            this->_wheels[i]->setAngle(this->_wheelsAngle);
+        }
+    }
 }
 
 void Car::_updateEngine() {
+    if (this->_acceleratorPressed) {
+        this->_engine->getCurrentRpm() += 
+            this->_acceleratorRPMSec * this->timer->getSeconds();
+    // ... otherwise we decrease the RPM
+    } else if (this->_engine->getCurrentRpm() > 0) {
+        this->_engine->getCurrentRpm() -= (this->_acceleratorRPMSec / 2.0)
+            * this->timer->getSeconds();
+        // if this is negative, clamp to 0
+        if (this->_engine->getCurrentRpm() < 0) this->_engine->getCurrentRpm() = 0;
+    }
+    this->_gearbox->doShift();
 }
 
 void Car::_updateComponents() {
     // Update the car's steering
     this->_updateSteering();
+
+    // And the engine
+    this->_updateEngine();
 
     // Find out how much the engine has turned
     float engineTurns = this->_engine->getCurrentRpm() * this->timer->getSeconds() * 60.0;
@@ -110,8 +135,9 @@ void * Car::update(void * _car) {
     while (true) {
 
         car->timer->newFrame();
-        //car->_updateComponents();
+        car->_updateComponents();
         // TODO: Sort out this constant step business
+        car->_addForces();
         car->_updateCollisionBox();
 
         car->mutex.lock();
@@ -141,17 +167,6 @@ void Car::render() {
     glMultMatrixf(rotationMatrix.getMatrix());
 
     this->_bodyDof->render(true);
-
-    // rotate the front wheel according to the steering
-    /*
-    this->_wheelsAngle = this->_steeringAngle;
-    // Update the rotation of the front wheels
-    for (int i = 0; i < 4; ++i) {
-        if (this->_wheels[i]->isSteering()) {
-            this->_wheels[i]->setAngle(this->_wheelsAngle);
-        }
-    }
-    */
 
     glPopMatrix();
 
@@ -191,10 +206,10 @@ void Car::handleKeyPress(SDL_Event &event) {
                     this->_currentSteering -= 1;
                     break;
                 case SDLK_z:
-                    this->_engineRPM += 100;
+                    this->_engine->setRpm(this->_engine->getCurrentRpm() + 100);
                     break;
                 case SDLK_x:
-                    this->_engineRPM -= 100;
+                    this->_engine->setRpm(this->_engine->getCurrentRpm() - 100);
                     break;
                 case SDLK_UP:
                     this->_acceleratorPressed = false;
@@ -300,6 +315,10 @@ void Car::setMass(float mass, float * inertia) {
     dBodySetMass(this->bodyId, &newMass);
 }
 
+int Car::getCurrentGear() {
+    return this->_gearbox->getCurrentGear();
+}
+
 /******************************************************************************
  * Physics stuff
  *****************************************************************************/
@@ -350,4 +369,61 @@ void Car::_updateCollisionBox() {
         }
     }
     delete [] contacts;
+}
+
+void Car::_addForces() {
+    // Apply wheel forces
+    for (int i = 0; i < 4; ++i) {
+        Wheel * wheel = this->_wheels[i];
+        const dReal * velocity = dBodyGetLinearVel(wheel->bodyId);
+        dVector3 velocityLocal;
+        dBodyVectorFromWorld(wheel->bodyId, velocity[0], velocity[1], velocity[2], velocityLocal);
+        //cout << "Vel: ";
+        //cout << velocityLocal[0] << ", " << velocityLocal[1] << ", " << velocityLocal[2] << endl;
+        dMass mass;
+        dBodyGetMass(this->_wheels[i]->bodyId, &mass);
+
+        // Add drive force to the driving wheels
+        if (wheel->isPowered) {
+            dBodyAddRelForce(wheel->bodyId, 0, 0, 
+                    2 * this->_gearbox->getCurrentRatio() * 
+                    this->_engine->calculateTorque() / (2.0 * 0.3045));
+        }
+
+        // Add the friction due to steering wheels
+        if (wheel->isSteering()) {
+            // Calculate a friction force which is perpendicular to direction of travel
+            // and relative to wheel angle and velocity
+            float force = 
+                50 * mass.mass * dLENGTH(velocity) * this->_wheels[i]->getAngle();
+            dBodyAddRelForce(this->_wheels[i]->bodyId, force, 0, 0);
+        }
+
+        // Add rolling friction
+        //float rollingFriction = 10 * mass.mass * velocityLocal[2];
+        // TODO: need to redo these squares, we're losing the sign...
+        float rollingFriction = 50;
+        dBodyAddRelForce(wheel->bodyId, 
+                -rollingFriction * velocityLocal[0] * velocityLocal[0],
+                -rollingFriction * velocityLocal[1] * velocityLocal[1],
+                -rollingFriction * velocityLocal[2] * velocityLocal[2]
+                );
+        
+    }
+
+    // Get the variables we need for the forces acting on the body
+    const dReal * bodyVelocity = dBodyGetLinearVel(this->bodyId);
+    dVector3 bodyVelocityLocal;
+    dBodyVectorFromWorld(this->bodyId, 
+            bodyVelocity[0], bodyVelocity[1], bodyVelocity[2], bodyVelocityLocal);
+
+    // Add aerodynamic drag
+    float aeroDrag = this->_dragCoefficient * this->_bodyArea;
+    dBodyAddRelForce(this->bodyId,
+            aeroDrag * bodyVelocityLocal[0] * bodyVelocityLocal[0],
+            aeroDrag * bodyVelocityLocal[1] * bodyVelocityLocal[1],
+            aeroDrag * bodyVelocityLocal[2] * bodyVelocityLocal[2]
+            );
+
+
 }

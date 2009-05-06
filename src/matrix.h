@@ -64,6 +64,8 @@ class Matrix {
 
         float* getMatrix();
 
+        void getdMatrix3(dMatrix3 & result);
+
         int order;
 
     private:

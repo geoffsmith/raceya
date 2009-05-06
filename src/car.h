@@ -56,6 +56,7 @@ class Car {
 
         // Getters
         Engine * getEngine();
+        int getCurrentGear();
 
         float * getVector();
 
@@ -149,6 +150,10 @@ class Car {
 
         // Update the collision detection box
         void _updateCollisionBox();
+
+        // Add the forces for this step
+        void _addForces();
+
 
         // The collision joints
         int _nJoints;

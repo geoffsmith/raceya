@@ -69,6 +69,9 @@ class Gearbox {
         // Get the current gear ratio
         float getCurrentRatio();
 
+        // Get the current gear
+        int getCurrentGear() { return this->_currentGear; }
+
         // Do a shift up / down if necessary based on the current engine rpm
         void doShift();
 
