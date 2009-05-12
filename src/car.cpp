@@ -98,16 +98,14 @@ void Car::_updateSteering() {
 }
 
 void Car::_updateEngine() {
+    // Accelerate if accelerator pressed, decelerate otherwise
     if (this->_acceleratorPressed) {
-        this->_engine->getCurrentRpm() += 
-            this->_acceleratorRPMSec * this->timer->getSeconds();
-    // ... otherwise we decrease the RPM
-    } else if (this->_engine->getCurrentRpm() > 0) {
-        this->_engine->getCurrentRpm() -= (this->_acceleratorRPMSec / 2.0)
-            * this->timer->getSeconds();
-        // if this is negative, clamp to 0
-        if (this->_engine->getCurrentRpm() < 0) this->_engine->getCurrentRpm() = 0;
+        this->_engine->accelerate(this->timer->getSeconds());
+    } else {
+        this->_engine->decelerate(this->timer->getSeconds());
     }
+
+    // Since we have a new RPM, do a shift
     this->_gearbox->doShift();
 }
 
@@ -427,19 +425,12 @@ void Car::_addForces() {
             dBodyAddRelForce(wheel->bodyId, 0, 0, power / 2.0);
         }
 
-        // Add the friction due to steering wheels
-        if (true || wheel->isSteering()) {
-            // Calculate a friction force which is perpendicular to direction of travel
-            // and relative to wheel angle and velocity
-            //float force = 
-            //    50 * mass.mass * dLENGTH(velocity) * this->_wheels[i]->getAngle();
-            //dBodyAddRelForce(wheel->bodyId, force, 0, 0);
+        // Add the lateral pacejka force
+        float lateralPacejka = wheel->calculateLateralPacejka();
 
-            float lateralPacejka = wheel->calculateLateralPacejka();
-
-            // We need to apply the lateral force 90 degrees to the wheel
-            dBodyAddRelForce(wheel->bodyId, lateralPacejka, 0, 0);
-        }
+        // We need to apply the lateral force 90 degrees to the wheel, the sign of the 
+        // lateral force will deal with direction
+        dBodyAddRelForce(wheel->bodyId, lateralPacejka, 0, 0);
 
         // Add rolling friction if the wheel is moving
         float rollingDrag = wheel->calculateRollingResitance();
@@ -451,5 +442,4 @@ void Car::_addForces() {
         }
         
     }
-    cout << endl;
 }

@@ -9,6 +9,7 @@ Engine::Engine() {
 
 void Engine::setMass(float mass) {
     this->_mass = mass;
+    this->_rpmDelta = 500;
 }
 
 void Engine::setRpm(float maxRpm, float idleRpm, float stallRpm, float startRpm) {
@@ -56,10 +57,33 @@ float Engine::getMaxRpm() {
     return this->_maxRpm;
 }
 
+float Engine::getIdleRpm() {
+    return this->_idleRpm;
+}
+
 float Engine::calculateTorque() {
     // Our torque equation here is torque * gear ratio * differential ratio * efficiency
     float torque = this->_torqueCurve[this->_currentRpm] * this->_maxTorque;
     return torque * this->_differentialRatio * 0.7;
+}
+
+void Engine::accelerate(float time) {
+    this->_currentRpm += this->_rpmDelta * time;
+
+    // make sure the rpm is capped at the maximum
+    // TODO: engine explodes
+    if (this->_currentRpm > this->_maxRpm) {
+        this->_currentRpm = this->_maxRpm;
+    }
+}
+
+void Engine::decelerate(float time) {
+    this->_currentRpm -= this->_rpmDelta * time;
+
+    // The lowest value at the moment is the idle RPM
+    if (this->_currentRpm < this->_idleRpm) {
+        this->_currentRpm = this->_idleRpm;
+    }
 }
 
 /******************************************************************************
@@ -85,6 +109,7 @@ Gearbox & Gearbox::operator=(const Gearbox & other) {
 
     this->_shiftDownRpm = other._shiftDownRpm;
     this->_shiftUpRpm = other._shiftUpRpm;
+    return *this;
 }
 
 void Gearbox::setNGears(int number) {
@@ -125,27 +150,41 @@ float Gearbox::getCurrentRatio() {
 }
 
 void Gearbox::doShift() {
-    float currentRpm = this->_car->getEngine()->getCurrentRpm();
+    Engine * engine = this->_car->getEngine();
+    float currentRpm = engine->getCurrentRpm();
     if (this->_currentGear == -1) {
         // If we have the min rpm, shift into first
-        if (currentRpm >= this->_shiftDownRpm) {
+        if (currentRpm > engine->getIdleRpm()) {
             this->_currentGear = 1;
+        }
+    } else if (this->_currentGear == 1) {
+        // Check if we need to shift down
+        if (currentRpm <= engine->getIdleRpm()) {
+            this->_currentGear = -1;
+        } else if (currentRpm >= this->_shiftUpRpm) {
+            this->_shiftUp();
         }
     } else {
         // Check if we need to shift down
         if (currentRpm <= this->_shiftDownRpm) {
-            --this->_currentGear;
-            this->_car->getEngine()->setRpm(this->_shiftUpRpm - 100);
-
-            // IF the new current gear is 0, we set to neutral
-            if (this->_currentGear == 0) {
-
-                this->_car->getEngine()->setRpm(this->_shiftDownRpm - 100);
-                this->_currentGear = -1;
-            }
-        } else if (currentRpm >= this->_shiftUpRpm && this->_currentGear < this->_nGears - 1) {
-            ++this->_currentGear;
-            this->_car->getEngine()->setRpm(this->_shiftDownRpm + 100);
+            this->_shiftDown();
+        } else if (currentRpm >= this->_shiftUpRpm 
+                && this->_currentGear < this->_nGears - 1) {
+            this->_shiftUp();
         }
     }
+}
+
+void Gearbox::_shiftDown() {
+    --this->_currentGear;
+
+    // Reset the RPM to the top of the range
+    this->_car->getEngine()->getCurrentRpm() = this->_shiftUpRpm - 100;
+}
+
+void Gearbox::_shiftUp() {
+    ++this->_currentGear;
+
+    // Reset the RPM to the bottom of the range
+    this->_car->getEngine()->getCurrentRpm() = this->_shiftDownRpm + 100;
 }

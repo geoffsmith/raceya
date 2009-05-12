@@ -272,14 +272,13 @@ float Wheel::calculateLateralPacejka() {
 
     float fy = d * sin(c * atan(b * (1.0 - e) * (slipDegrees + sh) + e * atan(b * (slipDegrees + sh)))) + sv;
 
-    cout << "Slip: " << slip << ", fy: " << fy << endl;
+    //cout << "Slip: " << slip << ", fy: " << fy << endl;
 
     if (isnan(fy)) {
         return 0;
     } else {
         return fy;
     }
-    //return 0;
 }
 
 
