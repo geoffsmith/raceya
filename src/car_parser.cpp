@@ -143,6 +143,7 @@ Car * parseCar(string carPathString) {
         s.str("");
 
         // Try and get the center of the wheel from the suspension
+        // TODO: refactor this to use the nice ini getters
         s << "/susp" << i << "/x";
         center[0] = atof(carIniFile[s.str()].c_str());
         s.str("");
@@ -162,20 +163,27 @@ Car * parseCar(string carPathString) {
 
         center[1] -= restLength;
 
-        // Add the roll center
-        /*
-        s << "/susp" << i << "/roll_center/x";
-        center[0] += atof(carIniFile[s.str()].c_str());
-        s.str("");
+        // Get the wheel rolling coefficient
+        wheel->setRollingCoefficient(carIniFile.getFloat("/wheel", i, "/rolling_coeff"));
 
-        s << "/susp" << i << "/roll_center/y";
-        center[1] += atof(carIniFile[s.str()].c_str());
-        s.str("");
-
-        s << "/susp" << i << "/roll_center/z";
-        center[2] += atof(carIniFile[s.str()].c_str());
-        s.str("");
-        */
+        // Get the lateral pacejka constants
+        wheel->setLateralPacejka(
+                carIniFile.getFloat("/pacejka/a0", 0),
+                carIniFile.getFloat("/pacejka/a1", 0),
+                carIniFile.getFloat("/pacejka/a2", 0),
+                carIniFile.getFloat("/pacejka/a3", 0),
+                carIniFile.getFloat("/pacejka/a4", 0),
+                carIniFile.getFloat("/pacejka/a5", 0),
+                carIniFile.getFloat("/pacejka/a6", 0),
+                carIniFile.getFloat("/pacejka/a7", 0),
+                carIniFile.getFloat("/pacejka/a8", 0),
+                carIniFile.getFloat("/pacejka/a9", 0),
+                carIniFile.getFloat("/pacejka/a10", 0),
+                carIniFile.getFloat("/pacejka/a111", 0),
+                carIniFile.getFloat("/pacejka/a12", 0),
+                carIniFile.getFloat("/pacejka/a13", 0),
+                carIniFile.getFloat("/pacejka/a14", 0)
+        );
 
         wheel->setCenter(center);
     }

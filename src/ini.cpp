@@ -187,8 +187,26 @@ float Ini::getFloat(string key) {
     return atof(value.c_str());
 }
 
+float Ini::getFloat(string key, float _default) {
+    if (this->hasKey(key)) {
+        return this->getFloat(key);
+    } else {
+        return _default;
+    }
+}
+
 float Ini::getFloat(string key, int keyIndex, string restOfKey) {
     stringstream s;
     s << key << keyIndex << restOfKey;
     return this->getFloat(s.str());
+}
+
+float Ini::getFloat(string key, int keyIndex, string restOfKey, float _default) {
+    stringstream s;
+    s << key << keyIndex << restOfKey;
+    if (this->hasKey(s.str())) {
+        return this->getFloat(s.str());
+    } else {
+        return _default;
+    }
 }

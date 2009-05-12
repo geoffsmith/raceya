@@ -40,6 +40,11 @@ void Engine::print() {
 }
 
 float & Engine::getCurrentRpm() {
+    // This is a hack really. The engine needs redesigning to allow for idling
+    if (this->_currentRpm < this->_idleRpm) {
+        this->_currentRpm = this->_idleRpm;
+    }
+
     return this->_currentRpm;
 }
 

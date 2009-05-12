@@ -62,10 +62,13 @@ Track::~Track() {
 }
 
 void Track::_initCollisionDetection() {
-    this->planeId = dCreatePlane(Track::spaceId, 0, 1, 0, 0);
-
     // For each dof
     for (unsigned int i = 0; i < this->_nDofs; ++i) {
+        // Check that this dof is collision material
+        if (!this->_dofs[i]->isSurface()) {
+            continue;
+        }
+
         // For each geob
         for (int j = 0; j < this->_dofs[i]->getNGeobs(); ++j) {
             Geob * geob = this->_dofs[i]->getGeob(j);

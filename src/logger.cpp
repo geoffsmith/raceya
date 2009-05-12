@@ -13,7 +13,7 @@ stringstream Logger::warn;
 stringstream Logger::debug;
 deque<string> Logger::debugLines;
 int Logger::size = 7;
-bool Logger::outputToConsole = true;
+bool Logger::outputToConsole = false;
 
 void Logger::maintain() {
     // Clear the older lines if there are too many

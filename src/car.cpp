@@ -3,6 +3,7 @@
 #include "lib.h"
 #include "frame_timer.h"
 #include "closest_point.h"
+#include "logger.h"
 
 #include <SDL/SDL.h>
 #include <OpenGL/gl.h>
@@ -253,7 +254,7 @@ void Car::setTrack(Track * track) {
     this->_track = track;
     dBodySetPosition(this->bodyId, 
             this->_track->startPosition[0], 
-            this->_track->startPosition[1] + 4, 
+            this->_track->startPosition[1] + 1, 
             this->_track->startPosition[2]);
 
     // Set the wheel positions
@@ -372,58 +373,83 @@ void Car::_updateCollisionBox() {
 }
 
 void Car::_addForces() {
+
+    // Get the variables we need for the forces acting on the body
+    const dReal * bodyVelocity = dBodyGetLinearVel(this->bodyId);
+    float speed = dLENGTH(bodyVelocity);
+    float aeroDragC;
+    float aeroDrag;
+    Vector direction;
+
+    // stop if speed is infinite (as happens at init, worth investigating TODO)
+    if (std::numeric_limits<float>::infinity() == speed) {
+        return;
+    }
+
+    if (speed > 0) {
+        direction = Vector( 
+                bodyVelocity[0] / speed, 
+                bodyVelocity[1] / speed, 
+                bodyVelocity[2] / speed );
+
+        // Add aerodynamic drag
+        aeroDragC = 0.5 * 1.29 *  this->_dragCoefficient * this->_bodyArea;
+        aeroDrag = -aeroDragC * speed * speed;
+
+        //cout << "Aero drag: " << aeroDrag << endl;
+        Logger::debug
+            << "Aero drag: " << aeroDrag 
+            << ", speed: " << speed 
+            << ", dragc: " << aeroDragC << endl;;
+
+
+        dBodyAddForce(this->bodyId,
+                aeroDrag * direction[0],
+                aeroDrag * direction[1],
+                aeroDrag * direction[2]
+                );
+
+    }
+
     // Apply wheel forces
     for (int i = 0; i < 4; ++i) {
         Wheel * wheel = this->_wheels[i];
         const dReal * velocity = dBodyGetLinearVel(wheel->bodyId);
         dVector3 velocityLocal;
-        dBodyVectorFromWorld(wheel->bodyId, velocity[0], velocity[1], velocity[2], velocityLocal);
-        //cout << "Vel: ";
-        //cout << velocityLocal[0] << ", " << velocityLocal[1] << ", " << velocityLocal[2] << endl;
+        dBodyVectorFromWorld(wheel->bodyId, 
+                velocity[0], velocity[1], velocity[2], velocityLocal);
         dMass mass;
         dBodyGetMass(this->_wheels[i]->bodyId, &mass);
 
         // Add drive force to the driving wheels
         if (wheel->isPowered) {
-            dBodyAddRelForce(wheel->bodyId, 0, 0, 
-                    2 * this->_gearbox->getCurrentRatio() * 
-                    this->_engine->calculateTorque() / (2.0 * 0.3045));
+            float power = this->_engine->calculateTorque() * this->_gearbox->getCurrentRatio() * 0.7 / 0.34;
+            dBodyAddRelForce(wheel->bodyId, 0, 0, power / 2.0);
         }
 
         // Add the friction due to steering wheels
-        if (wheel->isSteering()) {
+        if (true || wheel->isSteering()) {
             // Calculate a friction force which is perpendicular to direction of travel
             // and relative to wheel angle and velocity
-            float force = 
-                50 * mass.mass * dLENGTH(velocity) * this->_wheels[i]->getAngle();
-            dBodyAddRelForce(this->_wheels[i]->bodyId, force, 0, 0);
+            //float force = 
+            //    50 * mass.mass * dLENGTH(velocity) * this->_wheels[i]->getAngle();
+            //dBodyAddRelForce(wheel->bodyId, force, 0, 0);
+
+            float lateralPacejka = wheel->calculateLateralPacejka();
+
+            // We need to apply the lateral force 90 degrees to the wheel
+            dBodyAddRelForce(wheel->bodyId, lateralPacejka, 0, 0);
         }
 
-        // Add rolling friction
-        //float rollingFriction = 10 * mass.mass * velocityLocal[2];
-        // TODO: need to redo these squares, we're losing the sign...
-        float rollingFriction = 50;
-        dBodyAddRelForce(wheel->bodyId, 
-                -rollingFriction * velocityLocal[0] * velocityLocal[0],
-                -rollingFriction * velocityLocal[1] * velocityLocal[1],
-                -rollingFriction * velocityLocal[2] * velocityLocal[2]
-                );
+        // Add rolling friction if the wheel is moving
+        float rollingDrag = wheel->calculateRollingResitance();
+        if (rollingDrag > 0 && speed > 0) {
+            dBodyAddForce(wheel->bodyId,
+                    rollingDrag * -direction[0],
+                    rollingDrag * -direction[1],
+                    rollingDrag * -direction[2] );
+        }
         
     }
-
-    // Get the variables we need for the forces acting on the body
-    const dReal * bodyVelocity = dBodyGetLinearVel(this->bodyId);
-    dVector3 bodyVelocityLocal;
-    dBodyVectorFromWorld(this->bodyId, 
-            bodyVelocity[0], bodyVelocity[1], bodyVelocity[2], bodyVelocityLocal);
-
-    // Add aerodynamic drag
-    float aeroDrag = this->_dragCoefficient * this->_bodyArea;
-    dBodyAddRelForce(this->bodyId,
-            aeroDrag * bodyVelocityLocal[0] * bodyVelocityLocal[0],
-            aeroDrag * bodyVelocityLocal[1] * bodyVelocityLocal[1],
-            aeroDrag * bodyVelocityLocal[2] * bodyVelocityLocal[2]
-            );
-
-
+    cout << endl;
 }

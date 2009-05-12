@@ -2,7 +2,12 @@
 #include "lib.h"
 #include "track.h"
 
+#include <math.h>
+
+#define PI 3.14159265
+
 Wheel::Wheel(int position, Dof * dof, Car * car) {
+    this->_car = car;
     this->_dof = dof;
     this->_brakeDof = NULL;
     this->_rotation = 0;
@@ -19,6 +24,11 @@ Wheel::Wheel(int position, Dof * dof, Car * car) {
     //this->suspensionJointId = dJointCreateSlider(Track::worldId, 0);
     this->suspensionJointId = dJointCreatePiston(Track::worldId, 0);
     dJointAttach(this->suspensionJointId, this->bodyId, car->bodyId);
+
+    // Initialise the lateral pacejka constants with 15 0s
+    this->_lateralPacejka = std::vector<float>(15, 0);
+    // ... and longitudinal with 13 0s
+    this->_longPacejka = std::vector<float>(13, 0);
 }
 
 Wheel::~Wheel() {
@@ -63,8 +73,6 @@ void Wheel::turn(float turn) {
 }
 
 void Wheel::setAngle(float angle) {
-
-    float difference = angle - this->_wheelAngle;
     this->_wheelAngle = -angle * 0.0174532925;
 
     dJointSetPistonParam(this->suspensionJointId, dParamHiStop2, this->_wheelAngle);
@@ -166,4 +174,131 @@ void Wheel::setMass(float mass, float inertia) {
             0, 0, 0);
 
     dBodySetMass(this->bodyId, &newMass);
+}
+
+void Wheel::setRollingCoefficient(float coefficient) {
+    this->_rollingCoefficient = coefficient;
+}
+
+float Wheel::calculateRollingResitance() {
+    // TODO: the weight on a wheel should actually be variable
+    dMass mass;
+    dBodyGetMass(this->_car->bodyId, &mass);
+
+    return this->_rollingCoefficient * (mass.mass / 4.0) * 9.8;
+}
+
+void Wheel::setLateralPacejka(float a0, float a1, float a2, float a3, float a4, float a5,
+                float a6, float a7, float a8, float a9, float a10, float a11, float a12,
+                float a13, float a14) {
+    this->_lateralPacejka[0] = a0;
+    this->_lateralPacejka[1] = a1;
+    this->_lateralPacejka[2] = a2;
+    this->_lateralPacejka[3] = a3;
+    this->_lateralPacejka[4] = a4;
+    this->_lateralPacejka[5] = a5;
+    this->_lateralPacejka[6] = a6;
+    this->_lateralPacejka[7] = a7;
+    this->_lateralPacejka[8] = a8;
+    this->_lateralPacejka[9] = a9;
+    this->_lateralPacejka[10] = a10;
+    this->_lateralPacejka[11] = a11;
+    this->_lateralPacejka[12] = a12;
+    this->_lateralPacejka[13] = a13;
+    this->_lateralPacejka[14] = a14;
+}
+
+void Wheel::setLongPacejka(float b0, float b1, float b2, float b3, float b4, float b5,
+        float b6, float b7, float b8, float b9, float b10, float b11, float b12) {
+    this->_longPacejka[0] = b0;
+    this->_longPacejka[1] = b1;
+    this->_longPacejka[2] = b2;
+    this->_longPacejka[3] = b3;
+    this->_longPacejka[4] = b4;
+    this->_longPacejka[5] = b5;
+    this->_longPacejka[6] = b6;
+    this->_longPacejka[7] = b7;
+    this->_longPacejka[8] = b8;
+    this->_longPacejka[9] = b9;
+    this->_longPacejka[10] = b10;
+    this->_longPacejka[11] = b11;
+    this->_longPacejka[12] = b12;
+}
+
+float Wheel::calculateLateralPacejka() {
+    // We'll need the car's mass for weight on wheels
+    dMass mass;
+    dBodyGetMass(this->_car->bodyId, &mass);
+    float fz = (mass.mass * 9.8 / 4.0) / 1000.0;
+
+    // and we need the slip angle
+    const dReal * worldVelocity = dBodyGetLinearVel(this->bodyId);
+    dVector3 localVelocity;
+    dBodyVectorFromWorld(this->bodyId, 
+            worldVelocity[0], worldVelocity[1], worldVelocity[2], localVelocity);
+    Vector localVelocityV(localVelocity[0], localVelocity[1], localVelocity[2]);
+    Vector wheelDirection(0, 0, 1);
+
+    // If the localVelocity is 0, the slip calculation makes no sense and we set it to 0
+    float slip = 0;
+    slip = -atan(localVelocity[0] / localVelocityV[2]);
+
+    // The Pacejka formulae use degrees
+    float slipDegrees = slip * 180.0 / PI;
+    //slipDegrees = 0;
+
+    float camber = 0.33;
+
+
+    float c = this->_lateralPacejka[0];
+
+    // Peak lateral friction coefficient
+    float uyp = this->_lateralPacejka[1] * fz + this->_lateralPacejka[2];
+
+    // normal force times coefficient of friction
+    float d = uyp * fz;
+
+    float e = this->_lateralPacejka[6] * fz + this->_lateralPacejka[7];
+
+    float lateralStiffness = this->_lateralPacejka[3] 
+        * sin(2.0 * atan(fz / this->_lateralPacejka[4])) 
+        * (1.0 - this->_lateralPacejka[5] * fabs(camber));
+    float b = lateralStiffness / (c * d);
+
+    float sh = this->_lateralPacejka[8] * camber + this->_lateralPacejka[9] * fz + 
+        this->_lateralPacejka[10];
+    float sv = this->_lateralPacejka[11] * camber * fz + this->_lateralPacejka[12] * fz 
+        + this->_lateralPacejka[13];
+
+    float fy = d * sin(c * atan(b * (1.0 - e) * (slipDegrees + sh) + e * atan(b * (slipDegrees + sh)))) + sv;
+
+    cout << "Slip: " << slip << ", fy: " << fy << endl;
+
+    if (isnan(fy)) {
+        return 0;
+    } else {
+        return fy;
+    }
+    //return 0;
+}
+
+
+float Wheel::calculateLongPacejka() {
+    // We'll need the car's mass for weight on wheels
+    /*
+    dMass mass;
+    dBodyGetMass(this->_car->bodyId, &mass);
+    float fz = (mass.mass * 9.8 / 4.0) / 1000.0;
+    float slip = 0;
+
+    float c = this->_longPacejka[0];
+    float up = this->_longPacejka[1] * fz + this->_longPacejka[2];
+    float d = up * fz;
+    float b = ((this->_longPacejka[3] * fz * fz + this->_longPacejka[4] * fz)* exp(-this->_longPacejka[5] * fz))
+        /
+        (c * d);
+    float e = this->_longPacejka[6] * fz * fz + this->_longPacejka[7] * fz + this->_longPacejka[8];
+    float sh = this->_longPacejka[9] * fz + this->_longPacejka[10];
+    float fx = d * sin(c * atan(b * (1 - e) * (slip + sh) + e * atan(b * (slip + sh)))) + sv;
+    */
 }
