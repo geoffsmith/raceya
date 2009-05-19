@@ -249,7 +249,6 @@ float Wheel::calculateLateralPacejka() {
 
     float camber = 0.33;
 
-
     float c = this->_lateralPacejka[0];
 
     // Peak lateral friction coefficient
@@ -267,12 +266,24 @@ float Wheel::calculateLateralPacejka() {
 
     float sh = this->_lateralPacejka[8] * camber + this->_lateralPacejka[9] * fz + 
         this->_lateralPacejka[10];
-    float sv = this->_lateralPacejka[11] * camber * fz + this->_lateralPacejka[12] * fz 
+
+    // NOTE: 14 -> 112 - this is rubbish, though the alternative is variable per constant
+    // which isn't very pretty either.
+    float sv = (this->_lateralPacejka[11] * fz + this->_lateralPacejka[14]) * camber * fz
+        + this->_lateralPacejka[12] * fz 
         + this->_lateralPacejka[13];
 
-    float fy = d * sin(c * atan(b * (1.0 - e) * (slipDegrees + sh) + e * atan(b * (slipDegrees + sh)))) + sv;
+    float fy = d 
+        * sin(c * atan(b * (1.0 - e) * (slipDegrees + sh) 
+                    + e * atan(b * (slipDegrees + sh)))) + sv;
 
-    //cout << "Slip: " << slip << ", fy: " << fy << endl;
+    cout << "Slip: " << slipDegrees << ", fy: " << fy << endl;
+    /*
+    cout << "Fz: " << fz << endl;
+    cout << "up: " << uyp << ", c: " << c << ", d: " << d << endl;
+    cout << "e: " << e << ", b: " << b << ", sh: " << sh << ", sv: " << sv << endl;
+    cout << "stiff: " << lateralStiffness << endl;
+    */
 
     if (isnan(fy)) {
         return 0;

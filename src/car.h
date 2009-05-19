@@ -58,6 +58,10 @@ class Car {
         Engine * getEngine();
         int getCurrentGear();
 
+        // Calculate the current speed from the car body's velocity vector. Speed should
+        // be in m/s
+        float getSpeed();
+
         float * getVector();
 
         // Update the car's position and orientation at 1000Hz
@@ -98,10 +102,7 @@ class Car {
 
         // Engine related variables
         Engine * _engine;
-        float _engineRPM;
-        float _engineMaxRPM;
         bool _acceleratorPressed;
-        float _acceleratorRPMSec;
 
         // Gear related variables
         Gearbox * _gearbox;

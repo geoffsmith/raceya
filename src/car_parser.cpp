@@ -182,7 +182,7 @@ Car * parseCar(string carPathString) {
                 carIniFile.getFloat("/pacejka/a111", 0),
                 carIniFile.getFloat("/pacejka/a12", 0),
                 carIniFile.getFloat("/pacejka/a13", 0),
-                carIniFile.getFloat("/pacejka/a14", 0)
+                carIniFile.getFloat("/pacejka/a112", 0)
         );
 
         wheel->setCenter(center);

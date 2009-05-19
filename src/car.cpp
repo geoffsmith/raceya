@@ -26,10 +26,7 @@ Car::Car() {
     this->_maxSteeringAngle = 60; // degrees
 
     // Set up the engine
-    this->_engineRPM = 0;
-    this->_engineMaxRPM = 9000;
     this->_acceleratorPressed = false;
-    this->_acceleratorRPMSec = 500;
 
     // Set up the gears
     this->_finalDriveAxisRatio = 3.46;
@@ -224,6 +221,11 @@ void Car::handleKeyPress(SDL_Event &event) {
 /*******************************************************************************
  * Getters / setters
  ******************************************************************************/
+float Car::getSpeed() {
+    const dReal * bodyVelocity = dBodyGetLinearVel(this->bodyId);
+    return dLENGTH(bodyVelocity);
+}
+
 Vector Car::getPosition() {
     const dReal * position = dBodyGetPosition(this->bodyId);
     Vector result(position[0], position[1], position[2]);
@@ -421,7 +423,10 @@ void Car::_addForces() {
 
         // Add drive force to the driving wheels
         if (wheel->isPowered) {
-            float power = this->_engine->calculateTorque() * this->_gearbox->getCurrentRatio() * 0.7 / 0.34;
+            float power = 
+                this->_engine->calculateTorque() * this->_gearbox->getCurrentRatio() 
+                / 0.34;
+            Logger::debug << "Torque: " << this->_engine->calculateTorque() << ", power: " << power << endl;
             dBodyAddRelForce(wheel->bodyId, 0, 0, power / 2.0);
         }
 
@@ -435,10 +440,14 @@ void Car::_addForces() {
         // Add rolling friction if the wheel is moving
         float rollingDrag = wheel->calculateRollingResitance();
         if (rollingDrag > 0 && speed > 0) {
+            dBodyAddRelForce(wheel->bodyId, 0, 0, -rollingDrag * (speed / fabs(speed)));
+
+            /*
             dBodyAddForce(wheel->bodyId,
                     rollingDrag * -direction[0],
                     rollingDrag * -direction[1],
                     rollingDrag * -direction[2] );
+                    */
         }
         
     }
