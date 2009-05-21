@@ -407,13 +407,6 @@ void Car::_addForces() {
         aeroDragC = 0.5 * 1.29 *  this->_dragCoefficient * this->_bodyArea;
         aeroDrag = -aeroDragC * speed * speed;
 
-        //cout << "Aero drag: " << aeroDrag << endl;
-        Logger::debug
-            << "Aero drag: " << aeroDrag 
-            << ", speed: " << speed 
-            << ", dragc: " << aeroDragC << endl;;
-
-
         dBodyAddForce(this->bodyId,
                 aeroDrag * direction[0],
                 aeroDrag * direction[1],
@@ -425,23 +418,9 @@ void Car::_addForces() {
     // Apply wheel forces
     for (int i = 0; i < 4; ++i) {
         Wheel * wheel = this->_wheels[i];
-        const dReal * velocity = dBodyGetLinearVel(wheel->bodyId);
-        dVector3 velocityLocal;
-        dBodyVectorFromWorld(wheel->bodyId, 
-                velocity[0], velocity[1], velocity[2], velocityLocal);
-        dMass mass;
-        dBodyGetMass(this->_wheels[i]->bodyId, &mass);
 
-        // Add drive force to the driving wheels
-        if (wheel->isPowered) {
-            float power = 
-                this->_engine->calculateTorque() * this->_gearbox->getCurrentRatio() 
-                / 0.34;
-            //Logger::debug << "Torque: " << this->_engine->calculateTorque() << ", power: " << power << endl;
-            //dBodyAddRelForce(wheel->bodyId, 0, 0, power / 2.0);
-
-        }
-
+        // Update the rotation of the wheel. If this wheel is powered it will calculate
+        // the torque on the wheel due to the engine forces etc.
         wheel->updateRotation();
 
         // Add the lateral pacejka force
@@ -449,27 +428,10 @@ void Car::_addForces() {
 
         // We need to apply the lateral force 90 degrees to the wheel, the sign of the 
         // lateral force will deal with direction
-
-        // TODO: this does some strange things on initialisation. drags the car to its
-        // left
         dBodyAddRelForce(wheel->bodyId, lateralPacejka, 0, 0);
 
         float longPacejka = wheel->calculateLongPacejka();
-        //std::cout << "Long force: " << longPacejka << std::endl;
         dBodyAddRelForce(wheel->bodyId, 0, 0, longPacejka);
-
-        // Add rolling friction if the wheel is moving
-        float rollingDrag = wheel->calculateRollingResitance();
-        if (rollingDrag > 0 && speed > 0) {
-            //dBodyAddRelForce(wheel->bodyId, 0, 0, -rollingDrag * (speed / fabs(speed)));
-
-            /*
-            dBodyAddForce(wheel->bodyId,
-                    rollingDrag * -direction[0],
-                    rollingDrag * -direction[1],
-                    rollingDrag * -direction[2] );
-                    */
-        }
         
     }
 }
