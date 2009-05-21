@@ -5,6 +5,7 @@
 using namespace std;
 
 Engine::Engine() {
+    this->accelerator = 0;
 }
 
 void Engine::setMass(float mass) {
@@ -24,6 +25,10 @@ void Engine::setRpm(float maxRpm, float idleRpm, float stallRpm, float startRpm)
 
 void Engine::setRpm(float rpm) {
     this->_currentRpm = rpm;
+
+    if (this->_currentRpm < this->_idleRpm) {
+        this->_currentRpm = this->_idleRpm;
+    }
 }
 
 void Engine::setDifferential(float ratio) {
@@ -61,10 +66,23 @@ float Engine::getIdleRpm() {
     return this->_idleRpm;
 }
 
+float Engine::getDifferential() {
+    return this->_differentialRatio;
+}
+
 float Engine::calculateTorque() {
     // Our torque equation here is torque * gear ratio * differential ratio * efficiency
     float torque = this->_torqueCurve[this->_currentRpm] * this->_maxTorque;
     return torque * this->_differentialRatio * 0.7;
+}
+
+float Engine::calculateTorque(float rpm) {
+    // The torque is not defined under the min RPM so we make sure it is at least that
+    if (rpm < this->_stallRpm) {
+        rpm = this->_stallRpm;
+    }
+
+    return this->_torqueCurve[rpm] * this->accelerator;
 }
 
 void Engine::accelerate(float time) {
@@ -84,6 +102,14 @@ void Engine::decelerate(float time) {
     if (this->_currentRpm < this->_idleRpm) {
         this->_currentRpm = this->_idleRpm;
     }
+}
+
+void Engine::pressAccelerator() {
+    this->accelerator = 1.0;
+}
+
+void Engine::releaseAccelerator() {
+    this->accelerator = 0.0;
 }
 
 /******************************************************************************
@@ -154,12 +180,12 @@ void Gearbox::doShift() {
     float currentRpm = engine->getCurrentRpm();
     if (this->_currentGear == -1) {
         // If we have the min rpm, shift into first
-        if (currentRpm > engine->getIdleRpm()) {
+        if (currentRpm >= engine->getIdleRpm()) {
             this->_currentGear = 1;
         }
     } else if (this->_currentGear == 1) {
         // Check if we need to shift down
-        if (currentRpm <= engine->getIdleRpm()) {
+        if (currentRpm < engine->getIdleRpm()) {
             this->_currentGear = -1;
         } else if (currentRpm >= this->_shiftUpRpm) {
             this->_shiftUp();

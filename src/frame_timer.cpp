@@ -42,6 +42,10 @@ float FrameTimer::getSeconds() {
     return (this->_currentFrame - this->_lastFrame) / (float)this->_ticksPerSecond;
 }
 
+float FrameTimer::getTargetSeconds() {
+    return 1.0 / this->_targetFPS;
+}
+
 float FrameTimer::getMinutes() {
     return this->getSeconds() / 60.0;
 }

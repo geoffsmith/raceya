@@ -54,7 +54,7 @@ Car::Car() {
     this->_localOrigin[2][1] = 0;
     this->_localOrigin[2][2] = -1;
 
-    this->timer = new FrameTimer(100);
+    this->timer = new FrameTimer(200);
 
     this->_initRigidBody();
 }
@@ -96,11 +96,13 @@ void Car::_updateSteering() {
 
 void Car::_updateEngine() {
     // Accelerate if accelerator pressed, decelerate otherwise
+    /*
     if (this->_acceleratorPressed) {
         this->_engine->accelerate(this->timer->getSeconds());
     } else {
         this->_engine->decelerate(this->timer->getSeconds());
     }
+    */
 
     // Since we have a new RPM, do a shift
     this->_gearbox->doShift();
@@ -113,6 +115,7 @@ void Car::_updateComponents() {
     // And the engine
     this->_updateEngine();
 
+    /*
     // Find out how much the engine has turned
     float engineTurns = this->_engine->getCurrentRpm() * this->timer->getSeconds() * 60.0;
     // And divide by current gear ratio
@@ -123,6 +126,7 @@ void Car::_updateComponents() {
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->turn(wheelTurns * 360.0);
     }
+    */
 }
 
 void * Car::update(void * _car) {
@@ -137,7 +141,7 @@ void * Car::update(void * _car) {
         car->_updateCollisionBox();
 
         car->mutex.lock();
-        dWorldStep(Track::worldId, 0.005);
+        dWorldStep(Track::worldId, car->timer->getTargetSeconds());
         car->mutex.unlock();
 
         // Delete the joints
@@ -188,6 +192,7 @@ void Car::handleKeyPress(SDL_Event &event) {
                     break;
                 case SDLK_UP:
                     this->_acceleratorPressed = true;
+                    this->_engine->pressAccelerator();
                 default:
                     break;
             }
@@ -201,14 +206,9 @@ void Car::handleKeyPress(SDL_Event &event) {
                 case SDLK_RIGHT:
                     this->_currentSteering -= 1;
                     break;
-                case SDLK_z:
-                    this->_engine->setRpm(this->_engine->getCurrentRpm() + 100);
-                    break;
-                case SDLK_x:
-                    this->_engine->setRpm(this->_engine->getCurrentRpm() - 100);
-                    break;
                 case SDLK_UP:
                     this->_acceleratorPressed = false;
+                    this->_engine->releaseAccelerator();
                 default:
                     break;
             }
@@ -223,7 +223,14 @@ void Car::handleKeyPress(SDL_Event &event) {
  ******************************************************************************/
 float Car::getSpeed() {
     const dReal * bodyVelocity = dBodyGetLinearVel(this->bodyId);
-    return dLENGTH(bodyVelocity);
+
+    // convert to the car's space so we can take out the Z component
+    dVector3 result;
+    dBodyVectorFromWorld(
+            this->bodyId, 
+            bodyVelocity[0], bodyVelocity[1], bodyVelocity[2],
+            result);
+    return result[2];
 }
 
 Vector Car::getPosition() {
@@ -300,6 +307,10 @@ void Car::setDimensions(float height, float width, float length) {
 
 Engine * Car::getEngine() {
     return this->_engine;
+}
+
+Gearbox * Car::getGearbox() {
+    return this->_gearbox;
 }
 
 void Car::setCenter(float * center) {
@@ -426,21 +437,31 @@ void Car::_addForces() {
             float power = 
                 this->_engine->calculateTorque() * this->_gearbox->getCurrentRatio() 
                 / 0.34;
-            Logger::debug << "Torque: " << this->_engine->calculateTorque() << ", power: " << power << endl;
-            dBodyAddRelForce(wheel->bodyId, 0, 0, power / 2.0);
+            //Logger::debug << "Torque: " << this->_engine->calculateTorque() << ", power: " << power << endl;
+            //dBodyAddRelForce(wheel->bodyId, 0, 0, power / 2.0);
+
         }
+
+        wheel->updateRotation();
 
         // Add the lateral pacejka force
         float lateralPacejka = wheel->calculateLateralPacejka();
 
         // We need to apply the lateral force 90 degrees to the wheel, the sign of the 
         // lateral force will deal with direction
+
+        // TODO: this does some strange things on initialisation. drags the car to its
+        // left
         dBodyAddRelForce(wheel->bodyId, lateralPacejka, 0, 0);
+
+        float longPacejka = wheel->calculateLongPacejka();
+        //std::cout << "Long force: " << longPacejka << std::endl;
+        dBodyAddRelForce(wheel->bodyId, 0, 0, longPacejka);
 
         // Add rolling friction if the wheel is moving
         float rollingDrag = wheel->calculateRollingResitance();
         if (rollingDrag > 0 && speed > 0) {
-            dBodyAddRelForce(wheel->bodyId, 0, 0, -rollingDrag * (speed / fabs(speed)));
+            //dBodyAddRelForce(wheel->bodyId, 0, 0, -rollingDrag * (speed / fabs(speed)));
 
             /*
             dBodyAddForce(wheel->bodyId,

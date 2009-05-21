@@ -46,15 +46,20 @@ void Hud::_renderStats() {
     gearText << "Gear: " << this->_playersCar->getCurrentGear();
     this->_renderText(gearText.str(), 10, this->_height - 50 - skip, this->_font, "gear");
 
+    // print the speed
+    stringstream speedText;
+    speedText << "Speed: " << this->_playersCar->getSpeed() * 60 * 60 * 0.000621371192;
+    this->_renderText(speedText.str(), 10, this->_height - 50 - skip * 2, this->_font, "speed");
+
 
     fpsText << "FPS: ";
     fpsText << FrameTimer::timer.getCurrentFPS();
-    this->_renderText(fpsText.str(), 10, this->_height - 50 - skip * 2, this->_font, "fps");
+    this->_renderText(fpsText.str(), 10, this->_height - 50 - skip * 3, this->_font, "fps");
 
     fpsText.str("");
     fpsText << "Average FPS: ";
     fpsText << FrameTimer::timer.getAverageFPS();
-    this->_renderText(fpsText.str(), 10, this->_height - 50 - skip * 3, this->_font, "afps");
+    this->_renderText(fpsText.str(), 10, this->_height - 50 - skip * 4, this->_font, "afps");
 }
 
 void Hud::_renderConsole() {

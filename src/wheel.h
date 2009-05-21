@@ -66,6 +66,10 @@ class Wheel {
         dGeomID geomId;
         dJointID suspensionJointId;
 
+        // Update the angular velocity of the wheel based on the various torques acting
+        // on the wheel such as engine, brakes and rolling resitance
+        void updateRotation();
+
     private:
         // The dof model representing the wheel
         Dof * _dof;
@@ -73,7 +77,7 @@ class Wheel {
         Dof * _brakeDof;
 
         // Pointer to the car this wheel is attached to
-        Car * _car;
+        Car * car;
 
         // The current rotation of the wheel
         float _rotation;
@@ -100,4 +104,16 @@ class Wheel {
         // The lateral pacejka constants for this tyre
         std::vector<float> _lateralPacejka;
         std::vector<float> _longPacejka;
+
+        // The angular velocity and rotation of the wheel. We use our own here because
+        // we're only interesting in the angular velocity in the wheel's plane of 
+        // symmetry.
+        float angularVelocity;
+        float rotation;
+
+        // We need the inertia for the drive system calculations
+        float inertia;
+
+        // The radius is needed for wheel rotation / angular velocity calculations
+        float radius;
 };

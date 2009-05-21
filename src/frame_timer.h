@@ -24,6 +24,9 @@ class FrameTimer {
         // ... and minutes
         float getMinutes();
 
+        // Get the target step size in seconds
+        float getTargetSeconds();
+
         // Singleton class
         static FrameTimer timer;
 

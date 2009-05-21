@@ -8,6 +8,8 @@
 
 #include "vector.h"
 
+#define PI 3.14159265
+
 using namespace std;
 
 void read_obj(const char *filename, GLfloat (*vertices)[3], GLfloat (*textures)[2], GLfloat (*normals)[3]);
@@ -54,3 +56,7 @@ Vector momentDistance(Vector & a, Vector & vector, Vector & cog);
 
 // Flip a SDL_Surface horizontally
 void horizontalFlipSurface(SDL_Surface * surface);
+
+inline float rad_2_deg(float radians) {
+    return radians * 180.0 / PI;
+}

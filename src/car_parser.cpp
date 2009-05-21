@@ -185,6 +185,22 @@ Car * parseCar(string carPathString) {
                 carIniFile.getFloat("/pacejka/a112", 0)
         );
 
+        wheel->setLongPacejka(
+                carIniFile.getFloat("/pacejka/b0", 0),
+                carIniFile.getFloat("/pacejka/b1", 0),
+                carIniFile.getFloat("/pacejka/b2", 0),
+                carIniFile.getFloat("/pacejka/b3", 0),
+                carIniFile.getFloat("/pacejka/b4", 0),
+                carIniFile.getFloat("/pacejka/b5", 0),
+                carIniFile.getFloat("/pacejka/b6", 0),
+                carIniFile.getFloat("/pacejka/b7", 0),
+                carIniFile.getFloat("/pacejka/b8", 0),
+                carIniFile.getFloat("/pacejka/b9", 0),
+                carIniFile.getFloat("/pacejka/b10", 0),
+                carIniFile.getFloat("/pacejka/b11", 0),
+                carIniFile.getFloat("/pacejka/b12", 0)
+        );
+
         wheel->setCenter(center);
     }
 

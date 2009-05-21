@@ -56,6 +56,7 @@ class Car {
 
         // Getters
         Engine * getEngine();
+        Gearbox * getGearbox();
         int getCurrentGear();
 
         // Calculate the current speed from the car body's velocity vector. Speed should

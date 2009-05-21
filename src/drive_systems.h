@@ -25,6 +25,7 @@ class Engine {
         float getStallRpm();
         float getMaxRpm();
         float getIdleRpm();
+        float getDifferential();
 
         // These functions adjust the engine RPM based on an elapsed time period. Either
         // with the accelerator pressed or not. If the accelerator was pressed, the RPM
@@ -34,6 +35,13 @@ class Engine {
 
         // Calculate the torque produced by the engine at this time
         float calculateTorque();
+
+        // Calculate the torque for a particular RPM
+        float calculateTorque(float rpm);
+
+        // Functions to set the accelerator to being pressed or not
+        void pressAccelerator();
+        void releaseAccelerator();
 
         void print();
 
@@ -70,6 +78,10 @@ class Engine {
         // TODO: This is a very simplified model, in reality there is feedback from the 
         // rest of the system, driven by engine torque
         float _rpmDelta;
+
+        // The value between 0 and 1 of how much the accelerator is pressed. This is used
+        // to linearly scale the torque produced by the engine.
+        float accelerator;
 };
 
 class Gearbox {

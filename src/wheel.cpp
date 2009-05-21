@@ -4,16 +4,16 @@
 
 #include <math.h>
 
-#define PI 3.14159265
-
 Wheel::Wheel(int position, Dof * dof, Car * car) {
-    this->_car = car;
+    this->car = car;
     this->_dof = dof;
     this->_brakeDof = NULL;
     this->_rotation = 0;
     this->_position = position;
     this->_wheelAngle = 0;
     this->_steering = false;
+    this->angularVelocity = 0;
+    this->rotation = 0;
 
     this->isPowered = false;
 
@@ -60,7 +60,7 @@ void Wheel::render() {
     //if (this->_brakeDof != NULL) this->_brakeDof->render(true);
 
     // Rotate the wheel around the axis
-    //glRotatef(this->_rotation, 1, 0, 0);
+    glRotatef(rad_2_deg(this->rotation), 1, 0, 0);
 
     this->_dof->render(true);
 
@@ -164,9 +164,12 @@ float * Wheel::getWheelCenter() {
 
 void Wheel::setRadius(float radius) {
     dGeomCylinderSetParams(this->geomId, radius, 0.1);
+    this->radius = radius;
 }
 
 void Wheel::setMass(float mass, float inertia) {
+    this->inertia = inertia;
+
     dMass newMass;
 
     dMassSetParameters(&newMass, mass, 0, 0, 0,
@@ -183,7 +186,7 @@ void Wheel::setRollingCoefficient(float coefficient) {
 float Wheel::calculateRollingResitance() {
     // TODO: the weight on a wheel should actually be variable
     dMass mass;
-    dBodyGetMass(this->_car->bodyId, &mass);
+    dBodyGetMass(this->car->bodyId, &mass);
 
     return this->_rollingCoefficient * (mass.mass / 4.0) * 9.8;
 }
@@ -228,7 +231,7 @@ void Wheel::setLongPacejka(float b0, float b1, float b2, float b3, float b4, flo
 float Wheel::calculateLateralPacejka() {
     // We'll need the car's mass for weight on wheels
     dMass mass;
-    dBodyGetMass(this->_car->bodyId, &mass);
+    dBodyGetMass(this->car->bodyId, &mass);
     float fz = (mass.mass * 9.8 / 4.0) / 1000.0;
 
     // and we need the slip angle
@@ -277,7 +280,7 @@ float Wheel::calculateLateralPacejka() {
         * sin(c * atan(b * (1.0 - e) * (slipDegrees + sh) 
                     + e * atan(b * (slipDegrees + sh)))) + sv;
 
-    cout << "Slip: " << slipDegrees << ", fy: " << fy << endl;
+    //cout << "Slip: " << slipDegrees << ", fy: " << fy << endl;
     /*
     cout << "Fz: " << fz << endl;
     cout << "up: " << uyp << ", c: " << c << ", d: " << d << endl;
@@ -288,27 +291,102 @@ float Wheel::calculateLateralPacejka() {
     if (isnan(fy)) {
         return 0;
     } else {
-        return fy;
+        return fy ;
     }
 }
 
 
 float Wheel::calculateLongPacejka() {
     // We'll need the car's mass for weight on wheels
-    /*
     dMass mass;
-    dBodyGetMass(this->_car->bodyId, &mass);
+    dBodyGetMass(this->car->bodyId, &mass);
     float fz = (mass.mass * 9.8 / 4.0) / 1000.0;
+
+    // The slip is calculate as the difference between the wheel's angular velocity
+    // and the speed of the car
+    float carSpeed = this->car->getSpeed();
+
     float slip = 0;
+
+    if (carSpeed != 0) {
+        slip = (this->angularVelocity * this->radius - carSpeed) / fabs(carSpeed);
+    } else {
+        slip = 1.0;
+    }
+
+    //std::cout << "Longitudinal slip: " << slip << ", speed: " << carSpeed << endl;
 
     float c = this->_longPacejka[0];
     float up = this->_longPacejka[1] * fz + this->_longPacejka[2];
     float d = up * fz;
-    float b = ((this->_longPacejka[3] * fz * fz + this->_longPacejka[4] * fz)* exp(-this->_longPacejka[5] * fz))
+    float b = ((this->_longPacejka[3] * fz * fz + this->_longPacejka[4] * fz) * exp(-this->_longPacejka[5] * fz))
         /
         (c * d);
     float e = this->_longPacejka[6] * fz * fz + this->_longPacejka[7] * fz + this->_longPacejka[8];
     float sh = this->_longPacejka[9] * fz + this->_longPacejka[10];
+    float sv = this->_longPacejka[11] * fz + this->_longPacejka[12];
     float fx = d * sin(c * atan(b * (1 - e) * (slip + sh) + e * atan(b * (slip + sh)))) + sv;
-    */
+
+    if (isnan(fx)) {
+        std::cout << "Fx is nan, c: " << c << ", d: " << d << std::endl;
+        return 0;
+    } else {
+        return fx;
+    }
+}
+
+void Wheel::updateRotation() {
+    float time = this->car->timer->getTargetSeconds();
+
+    // If the wheel is powered by the engine, we calculate the various torques on the 
+    // wheel, if not we work out the angular velocity from the car's speed
+    if (this->isPowered) {
+        // The current gear ratio
+        float gear = this->car->getGearbox()->getCurrentRatio();
+        float differential = this->car->getEngine()->getDifferential();
+
+        // First we find the RPM of the engine based on the previous angular velocity
+        float rpm = this->angularVelocity * gear * differential * 60.0 / (2.0 * PI);
+        this->car->getEngine()->setRpm(rpm);
+
+        // Then we look up the torque for this RPM
+        float engineTorque = this->car->getEngine()->calculateTorque(rpm);
+
+        // Then we push the torque back through the drive system to get a new torque on the 
+        // wheel
+        float torque = engineTorque * gear * differential * 0.7;
+
+        // Now we add the rolling coefficient using the load on the wheel, but only if the
+        // wheel is actually turning
+        if (fabs(this->angularVelocity) > 0) {
+            dMass mass;
+            dBodyGetMass(this->car->bodyId, &mass);
+            float load = mass.mass * 9.8 / 4.0;
+
+            // torque gets added in the opposite direction to the angular velocity
+            float sign = -fabs(this->angularVelocity) / this->angularVelocity;
+
+            // TODO We need something here to stop and oscillation at low speeds
+            //torque += sign * load * this->_rollingCoefficient;
+        }
+
+        // Now we update the angular velocity with the acceleration due to torque in this 
+        // timeframe. The timeframe is a 1/10th of a second at the moment. TODO we need to
+        // link this time frame to a global
+        this->angularVelocity += (torque / this->inertia) * time;
+        //std::cout << "Angular velocity: " << this->angularVelocity << std::endl;
+    } else {
+        this->angularVelocity = this->car->getSpeed() / this->radius;
+    }
+
+    // Update the wheels rotation
+    this->rotation += this->angularVelocity * time;
+
+    // Keep the wheel between 0 and 2 * PI to prevent overflow. This assumes that there
+    // isn't a whole rotation in a single time period NOTE fix this assumption
+    if (this->rotation < 0) {
+        this->rotation += 2 * PI;
+    } else if (this->rotation > 2 * PI) {
+        this->rotation -= 2 * PI;
+    }
 }

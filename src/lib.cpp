@@ -9,7 +9,6 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 
-#define PI 3.14159265
 
 using namespace std;
 
