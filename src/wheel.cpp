@@ -14,6 +14,7 @@ Wheel::Wheel(int position, Dof * dof, Car * car) {
     this->_steering = false;
     this->angularVelocity = 0;
     this->rotation = 0;
+    this->braking = 0;
 
     this->isPowered = false;
 
@@ -177,6 +178,10 @@ void Wheel::setMass(float mass, float inertia) {
             0, 0, 0);
 
     dBodySetMass(this->bodyId, &newMass);
+}
+
+void Wheel::setMaxBrakeTorque(float torque) {
+    this->maxBrakeTorque = torque;
 }
 
 void Wheel::setRollingCoefficient(float coefficient) {
@@ -379,6 +384,10 @@ void Wheel::updateRotation() {
         this->angularVelocity = this->car->getSpeed() / this->radius;
     }
 
+    // Add brake torque
+    // TODO this doesn't work at low speeds, needs tweaking (oscillation probably)
+    this->angularVelocity += (this->calculateBrakeTorque() / this->inertia) * time;
+
     // Update the wheels rotation
     this->rotation += this->angularVelocity * time;
 
@@ -389,4 +398,20 @@ void Wheel::updateRotation() {
     } else if (this->rotation > 2 * PI) {
         this->rotation -= 2 * PI;
     }
+}
+
+void Wheel::applyBrake(float amount) {
+    this->braking = amount;
+}
+
+float Wheel::calculateBrakeTorque() {
+    // If there is no angular velocity, there's no point in braking
+    if (fabs(this->angularVelocity) < 0.0000001) return 0;
+
+    // The braking effect will be in the opposite direction to the current velocity
+    float sign = this->angularVelocity / fabs(this->angularVelocity);
+
+    // The torque is calculated by amount of braking currently applied (0..1) and the
+    // make braking torque
+    return this->braking  * this->maxBrakeTorque * -sign;
 }

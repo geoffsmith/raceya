@@ -41,6 +41,7 @@ class Wheel {
         void setRadius(float radius);
         void setMass(float mass, float inertia);
         void setRollingCoefficient(float coefficient);
+        void setMaxBrakeTorque(float torque);
 
         // Set the lateral Pacejka constants
         void setLateralPacejka(float a0, float a1, float a2, float a3, float a4, float a5,
@@ -69,6 +70,14 @@ class Wheel {
         // Update the angular velocity of the wheel based on the various torques acting
         // on the wheel such as engine, brakes and rolling resitance
         void updateRotation();
+
+        // Apply an amount of braking to this wheel. This should be a value between 0 
+        // and 1
+        void applyBrake(float amount);
+        float braking;
+
+        // Calculate the torque generated on the wheel by the brakes
+        float calculateBrakeTorque();
 
     private:
         // The dof model representing the wheel
@@ -116,4 +125,7 @@ class Wheel {
 
         // The radius is needed for wheel rotation / angular velocity calculations
         float radius;
+
+        // The maximum torque produced by the brakes
+        float maxBrakeTorque;
 };

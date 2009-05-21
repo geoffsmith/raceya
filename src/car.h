@@ -160,4 +160,8 @@ class Car {
         // The collision joints
         int _nJoints;
         dJointID _joints[4];
+
+        // Press and release brakes
+        void pressBrake();
+        void releaseBrake();
 };

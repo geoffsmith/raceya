@@ -193,6 +193,10 @@ void Car::handleKeyPress(SDL_Event &event) {
                 case SDLK_UP:
                     this->_acceleratorPressed = true;
                     this->_engine->pressAccelerator();
+                    break;
+                case SDLK_DOWN:
+                    this->pressBrake();
+                    break;
                 default:
                     break;
             }
@@ -209,6 +213,10 @@ void Car::handleKeyPress(SDL_Event &event) {
                 case SDLK_UP:
                     this->_acceleratorPressed = false;
                     this->_engine->releaseAccelerator();
+                    break;
+                case SDLK_DOWN:
+                    this->releaseBrake();
+                    break;
                 default:
                     break;
             }
@@ -329,6 +337,18 @@ void Car::setMass(float mass, float * inertia) {
 
 int Car::getCurrentGear() {
     return this->_gearbox->getCurrentGear();
+}
+
+void Car::pressBrake() {
+    for (int i = 0; i < 4; ++i) {
+        this->_wheels[i]->applyBrake(0.5);
+    }
+}
+
+void Car::releaseBrake() {
+    for (int i = 0; i < 4; ++i) {
+        this->_wheels[i]->applyBrake(0.0);
+    }
 }
 
 /******************************************************************************

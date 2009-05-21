@@ -163,6 +163,9 @@ Car * parseCar(string carPathString) {
 
         center[1] -= restLength;
 
+        // Set the max brake torque
+        wheel->setMaxBrakeTorque(carIniFile.getFloat("/wheel", i, "/max_braking"));
+
         // Get the wheel rolling coefficient
         wheel->setRollingCoefficient(carIniFile.getFloat("/wheel", i, "/rolling_coeff"));
 
