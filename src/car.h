@@ -10,6 +10,7 @@
 #include <SDL/SDL.h>
 #include <ode/ode.h>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
+#include <vector>
 
 
 #include "wheel.h"
@@ -63,7 +64,7 @@ class Car {
         // be in m/s
         float getSpeed();
 
-        float * getVector();
+        void getVector(vector<float> & result);
 
         // Update the car's position and orientation at 1000Hz
         static void * update(void * car);

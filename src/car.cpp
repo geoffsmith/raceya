@@ -284,8 +284,13 @@ void Car::setWheel(Wheel * wheel, int index) {
 }
 
 
-float * Car::getVector() {
-    return this->_localOrigin[0];
+void Car::getVector(vector<float> & result) {
+    result = vector<float>(3);
+    dVector3 tmp;
+    dBodyVectorToWorld(this->bodyId, 0, 0, 1, tmp);
+    result[0] = tmp[0];
+    result[1] = tmp[1];
+    result[2] = tmp[2];
 }
 
 

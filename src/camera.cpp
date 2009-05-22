@@ -41,7 +41,12 @@ void Camera::_calculateYawAngle() {
     float targetAngle;
     float workingAngle;
 
-    vertexCopy(this->_playersCar->getVector(), carXAxis);
+    //vertexCopy(this->_playersCar->getVector(), carXAxis);
+    vector<float> v;
+    this->_playersCar->getVector(v);
+    carXAxis[0] = v[0];
+    carXAxis[1] = v[1];
+    carXAxis[2] = v[2];
 
     carAngle = angleInPlane(xUnit, carXAxis, zUnit, xUnit);
 
