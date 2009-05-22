@@ -79,7 +79,7 @@ float Engine::calculateTorque() {
 float Engine::calculateTorque(float rpm) {
     // The torque is not defined under the min RPM so we make sure it is at least that
     if (rpm < this->_stallRpm) {
-        rpm = this->_stallRpm;
+        rpm = 4500;
     }
 
     return this->_torqueCurve[rpm] * this->accelerator;

@@ -45,6 +45,13 @@ Car * parseCar(string carPathString) {
         dof = new Dof((carPath / carIniFile["/body/model/file"]).string(), 0, false);
         car->setBody(dof);
     }
+
+    // Load the brake model
+    if (carIniFile.hasKey("/body/model_braking_l/file")) {
+        dof = new Dof(
+                (carPath / carIniFile["/body/model_braking_l/file"]).string(), 0, false);
+        car->setBrakeModel(dof);
+    }
     
     // Load the car center of gravity
     if (carIniFile.hasKey("/aero/body/center")) {

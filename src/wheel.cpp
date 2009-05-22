@@ -247,13 +247,18 @@ float Wheel::calculateLateralPacejka() {
     Vector localVelocityV(localVelocity[0], localVelocity[1], localVelocity[2]);
     Vector wheelDirection(0, 0, 1);
 
+    // if the local velocity is too small, we ignore any lateral forces. This is a bit of
+    // a hack but hopefully should hold up alright
+    if (localVelocity[0] * localVelocity[0] 
+            + localVelocity[2] * localVelocity[2] < 0.05) {
+        return 0;
+    }
+
     // If the localVelocity is 0, the slip calculation makes no sense and we set it to 0
-    float slip = 0;
-    slip = -atan(localVelocity[0] / localVelocityV[2]);
+    float slip = -atan(localVelocity[0] / localVelocity[2]);
 
     // The Pacejka formulae use degrees
     float slipDegrees = slip * 180.0 / PI;
-    //slipDegrees = 0;
 
     float camber = 0.33;
 

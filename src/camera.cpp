@@ -21,7 +21,6 @@ Camera::Camera(Car * playersCar) {
 
     // Initialise the two rotations and distance
     this->_distance = 7;
-    this->_rotationX = -80;
     this->_rotationY = 30;
     this->_rotationDelta = 10;
 
@@ -41,7 +40,6 @@ void Camera::_calculateYawAngle() {
     float targetAngle;
     float workingAngle;
 
-    //vertexCopy(this->_playersCar->getVector(), carXAxis);
     vector<float> v;
     this->_playersCar->getVector(v);
     carXAxis[0] = v[0];
@@ -91,10 +89,10 @@ void Camera::handleKeyPress(SDL_Event &event) {
         case SDL_KEYUP:
             switch (event.key.keysym.sym) {
                 case SDLK_j:
-                    this->_rotationX -= this->_rotationDelta;
+                    this->_targetYawAngle -= this->_rotationDelta;
                     break;
                 case SDLK_l:
-                    this->_rotationX += this->_rotationDelta;
+                    this->_targetYawAngle += this->_rotationDelta;
                     break;
                 case SDLK_i:
                     this->_rotationY += this->_rotationDelta;

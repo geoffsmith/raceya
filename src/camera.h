@@ -20,7 +20,6 @@ class Camera {
     private:
         // At the moment the camera moves around the origin, so we need distance an rotations
         float _distance;
-        float _rotationX;
         float _rotationY;
         float _rotationDelta;
 

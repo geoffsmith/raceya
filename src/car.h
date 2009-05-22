@@ -54,6 +54,7 @@ class Car {
         void setDimensions(float height, float width, float length);
         void setCenter(float * center);
         void setMass(float mass, float * inertia);
+        void setBrakeModel(Dof * brake);
 
         // Getters
         Engine * getEngine();
@@ -148,6 +149,10 @@ class Car {
         void _generateGroundForces();
 
         Dof * _bodyDof;
+
+        // The model for the brake lights
+        Dof * brakeModel;
+        bool brakePressed;
 
         void _initRigidBody();
 

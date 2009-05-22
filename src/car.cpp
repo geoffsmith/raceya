@@ -57,6 +57,9 @@ Car::Car() {
     this->timer = new FrameTimer(200);
 
     this->_initRigidBody();
+
+    this->brakeModel = NULL;
+    this->brakePressed = false;
 }
 
 Car::~Car() {
@@ -168,6 +171,11 @@ void Car::render() {
 
     this->_bodyDof->render(true);
 
+    // Render the brake model if we have one and brake is pressed
+    if (this->brakePressed && this->brakeModel != NULL) {
+        this->brakeModel->render(true);
+    }
+
     glPopMatrix();
 
     // Render the wheels
@@ -265,6 +273,10 @@ void Car::setBody(Dof * dof) {
     this->_bodyDof = dof;
 }
 
+void Car::setBrakeModel(Dof * brake) {
+    this->brakeModel = brake;
+}
+
 void Car::setTrack(Track * track) {
     this->_track = track;
     dBodySetPosition(this->bodyId, 
@@ -345,12 +357,14 @@ int Car::getCurrentGear() {
 }
 
 void Car::pressBrake() {
+    this->brakePressed = true;
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->applyBrake(0.5);
     }
 }
 
 void Car::releaseBrake() {
+    this->brakePressed = false;
     for (int i = 0; i < 4; ++i) {
         this->_wheels[i]->applyBrake(0.0);
     }
@@ -450,6 +464,7 @@ void Car::_addForces() {
 
         // Add the lateral pacejka force
         float lateralPacejka = wheel->calculateLateralPacejka();
+        std::cout << "lat: " << lateralPacejka << std::endl;
 
         // We need to apply the lateral force 90 degrees to the wheel, the sign of the 
         // lateral force will deal with direction
@@ -459,4 +474,5 @@ void Car::_addForces() {
         dBodyAddRelForce(wheel->bodyId, 0, 0, longPacejka);
         
     }
+    std::cout << std::endl;
 }
