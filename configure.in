@@ -16,6 +16,7 @@ BOOST_REQUIRE(1.37.0)
 
 dnl Check for OpenGL
 AX_CHECK_GL
+AX_CHECK_GLU
 
 
 AC_OUTPUT(Makefile src/Makefile)

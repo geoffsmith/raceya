@@ -51,27 +51,24 @@ Track::Track(string trackPath) {
 }
 
 Track::~Track() {
-    // Clean up the dof objects
-    for (unsigned int i = 0; i < this->_nDofs; ++i) {
-        delete this->_dofs[i];
-    }
-    delete[] this->_dofs;
-
     // Clean up ODE physics
     dWorldDestroy(Track::worldId);
 }
 
 void Track::_initCollisionDetection() {
     // For each dof
-    for (unsigned int i = 0; i < this->_nDofs; ++i) {
+    BOOST_FOREACH(Dof dof, this->dofs) {
+
+    //for (unsigned int i = 0; i < this->_nDofs; ++i) {
+
         // Check that this dof is collision material
-        if (!this->_dofs[i]->isSurface()) {
+        if (!dof.isSurface()) {
             continue;
         }
 
         // For each geob
-        for (int j = 0; j < this->_dofs[i]->getNGeobs(); ++j) {
-            Geob * geob = this->_dofs[i]->getGeob(j);
+        for (int j = 0; j < dof.getNGeobs(); ++j) {
+            Geob * geob = dof.getGeob(j);
 
             dTriMeshDataID meshId = dGeomTriMeshDataCreate();
 
@@ -212,30 +209,19 @@ void Track::_loadGeometryIni() {
             delete tmpDof;
         }
     }
-
-    // Now copy this all into an old school array for speed
-    this->_nDofs = dofs.size();
-    this->_dofs = new Dof *[this->_nDofs];
-    for (unsigned int i = 0; i < this->_nDofs; ++i) {
-        this->_dofs[i] = dofs[i];
-    }
 }
 
 void Track::render() {
-    int count = 0;
-    int total = 0;
     // We do this in two passes, first for non-transparent, then for transparent
-    for (unsigned int i = 0; i < this->_nDofs; ++i) {
-        if (!(this->_dofs[i]->isTransparent())) {
-            count += this->_dofs[i]->render();
+    BOOST_FOREACH(Dof dof, this->dofs) {
+        if (!(dof.isTransparent())) {
+            dof.render();
         }
-        total++;
-    }    
+    }
 
-    for (unsigned int i = 0; i < this->_nDofs; ++i) {
-        if (this->_dofs[i]->isTransparent()) {
-            count += this->_dofs[i]->render();
+    BOOST_FOREACH(Dof dof, this->dofs) {
+        if (dof.isTransparent()) {
+            dof.render();
         }
-        total++;
-    }    
+    }
 }

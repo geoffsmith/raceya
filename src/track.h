@@ -9,6 +9,8 @@
 
 #include <string>
 #include <ode/ode.h>
+#include <boost/foreach.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 #include "dof.h"
 
@@ -23,10 +25,6 @@ class Track {
         // Render a track
         void render();
 
-        // Getters
-        Dof ** getDofs() { return this->_dofs; }
-        unsigned int getNDofs() { return this->_nDofs; }
-
         // Start position
         float startPosition[3];
 
@@ -40,7 +38,7 @@ class Track {
 
         //Dof ** _dofs;
         //unsigned int _nDofs;
-        ptr_vector<Dof> dofs;
+        boost::ptr_vector<Dof> dofs;
 
         // Load the geometry.ini file which points to the globs.
         // NOTE: this is ultra simplified at the moment and will almost certainly need 

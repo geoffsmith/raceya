@@ -1,6 +1,9 @@
 /* config.h.  Generated from config.h.in by configure.  */
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
+/* Define to 1 if you have the <GL/glu.h> header file. */
+#define HAVE_GL_GLU_H 1
+
 /* Define to 1 if you have the <GL/gl.h> header file. */
 #define HAVE_GL_GL_H 1
 
@@ -9,6 +12,9 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
+
+/* Define to 1 if you have the <OpenGL/glu.h> header file. */
+#define HAVE_OPENGL_GLU_H 1
 
 /* Define to 1 if you have the <OpenGL/gl.h> header file. */
 #define HAVE_OPENGL_GL_H 1
@@ -36,6 +42,9 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
+
+/* Use nonstandard varargs form for the GLU tesselator callback */
+/* #undef HAVE_VARARGS_GLU_TESSCB */
 
 /* Define to 1 if you have the <windows.h> header file. */
 /* #undef HAVE_WINDOWS_H */
