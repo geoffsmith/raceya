@@ -290,14 +290,6 @@ float Wheel::calculateLateralPacejka() {
         * sin(c * atan(b * (1.0 - e) * (slipDegrees + sh) 
                     + e * atan(b * (slipDegrees + sh)))) + sv;
 
-    //cout << "Slip: " << slipDegrees << ", fy: " << fy << endl;
-    /*
-    cout << "Fz: " << fz << endl;
-    cout << "up: " << uyp << ", c: " << c << ", d: " << d << endl;
-    cout << "e: " << e << ", b: " << b << ", sh: " << sh << ", sv: " << sv << endl;
-    cout << "stiff: " << lateralStiffness << endl;
-    */
-
     if (isnan(fy)) {
         return 0;
     } else {
@@ -312,33 +304,23 @@ float Wheel::calculateLongPacejka() {
     dBodyGetMass(this->car->bodyId, &mass);
     float fz = (mass.mass * 9.8 / 4.0) / 1000.0;
 
-    // The slip is calculate as the difference between the wheel's angular velocity
-    // and the speed of the car
-    float carSpeed = this->car->getSpeed();
-
-    float slip = 0;
-
-    if (carSpeed != 0) {
-        slip = (this->angularVelocity * this->radius - carSpeed) / fabs(carSpeed);
-    } else {
-        slip = 1.0;
-    }
-
-    //std::cout << "Longitudinal slip: " << slip << ", speed: " << carSpeed << endl;
+    float slip = this->calculateSlip();
 
     float c = this->_longPacejka[0];
     float up = this->_longPacejka[1] * fz + this->_longPacejka[2];
     float d = up * fz;
-    float b = ((this->_longPacejka[3] * fz * fz + this->_longPacejka[4] * fz) * exp(-this->_longPacejka[5] * fz))
+    float b = ((this->_longPacejka[3] * fz * fz + this->_longPacejka[4] * fz) 
+        * exp(-this->_longPacejka[5] * fz))
         /
         (c * d);
-    float e = this->_longPacejka[6] * fz * fz + this->_longPacejka[7] * fz + this->_longPacejka[8];
+    float e = this->_longPacejka[6] * fz * fz + this->_longPacejka[7] * fz 
+        + this->_longPacejka[8];
     float sh = this->_longPacejka[9] * fz + this->_longPacejka[10];
     float sv = this->_longPacejka[11] * fz + this->_longPacejka[12];
-    float fx = d * sin(c * atan(b * (1 - e) * (slip + sh) + e * atan(b * (slip + sh)))) + sv;
+    float fx = d * sin(c * atan(b * (1 - e) * (slip + sh) + e * atan(b * (slip + sh)))) 
+        + sv;
 
     if (isnan(fx)) {
-        std::cout << "Fx is nan, c: " << c << ", d: " << d << std::endl;
         return 0;
     } else {
         return fx;
@@ -384,13 +366,11 @@ void Wheel::updateRotation() {
         // timeframe. The timeframe is a 1/10th of a second at the moment. TODO we need to
         // link this time frame to a global
         this->angularVelocity += (torque / this->inertia) * time;
-        //std::cout << "Angular velocity: " << this->angularVelocity << std::endl;
     } else {
         this->angularVelocity = this->car->getSpeed() / this->radius;
     }
 
     // Add brake torque
-    // TODO this doesn't work at low speeds, needs tweaking (oscillation probably)
     this->angularVelocity += (this->calculateBrakeTorque() / this->inertia) * time;
 
     // Update the wheels rotation
@@ -419,4 +399,13 @@ float Wheel::calculateBrakeTorque() {
     // The torque is calculated by amount of braking currently applied (0..1) and the
     // make braking torque
     return this->braking  * this->maxBrakeTorque * -sign;
+}
+
+float Wheel::calculateSlip() {
+    float carSpeed = this->car->getSpeed();
+    float slip = 0;
+    if (carSpeed != 0) {
+        slip = (this->angularVelocity * this->radius - carSpeed) / fabs(carSpeed);
+    } 
+    return slip;
 }

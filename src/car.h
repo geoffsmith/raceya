@@ -79,8 +79,11 @@ class Car {
         FrameTimer * timer;
         interprocess_mutex mutex;
 
+        // Get the average slip from the drive wheels
+        float maxSlip();
+
     private:
-        Wheel * _wheels[4];
+        vector<Wheel *> wheels;
 
         Vector _wheelVectors[4];
         Vector _closestGroundPoints[4];

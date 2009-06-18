@@ -37,8 +37,10 @@ class Track {
 
     private:
         string _path;
-        Dof ** _dofs;
-        unsigned int _nDofs;
+
+        //Dof ** _dofs;
+        //unsigned int _nDofs;
+        ptr_vector<Dof> dofs;
 
         // Load the geometry.ini file which points to the globs.
         // NOTE: this is ultra simplified at the moment and will almost certainly need 

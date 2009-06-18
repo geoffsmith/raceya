@@ -220,7 +220,7 @@ Car * parseCar(string carPathString) {
 }
 
 void parseEngine(Ini & ini, Car * car, path carPath) {
-    Engine engine;
+    Engine engine(car);
 
     // Get the engine variables
     engine.setMass(ini.getFloat("/engine/mass"));

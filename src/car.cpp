@@ -10,10 +10,15 @@
 #include <OpenGL/glu.h>
 #include <iostream>
 #include <math.h>
+#include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
+#include <boost/lambda/if.hpp>
+#include <boost/foreach.hpp>
 
 #define PI 3.14159265
 
 using namespace std;
+using namespace boost::lambda;
 
 Car::Car() {
     this->_modelScale = 1;
@@ -90,9 +95,9 @@ void Car::_updateSteering() {
     this->_wheelsAngle = this->_steeringAngle;
 
     // Update the rotation of the front wheels
-    for (int i = 0; i < 4; ++i) {
-        if (this->_wheels[i]->isSteering()) {
-            this->_wheels[i]->setAngle(this->_wheelsAngle);
+    BOOST_FOREACH (Wheel * wheel, this->wheels) {
+        if (wheel->isSteering()) {
+            wheel->setAngle(this->_wheelsAngle);
         }
     }
 }
@@ -117,19 +122,6 @@ void Car::_updateComponents() {
 
     // And the engine
     this->_updateEngine();
-
-    /*
-    // Find out how much the engine has turned
-    float engineTurns = this->_engine->getCurrentRpm() * this->timer->getSeconds() * 60.0;
-    // And divide by current gear ratio
-    float wheelTurns = engineTurns / this->_gearRatios[this->_currentGear];
-    // ... and divide by the final drive axis ratio
-    wheelTurns = wheelTurns / this->_finalDriveAxisRatio;
-    // ... and turn the wheels
-    for (int i = 0; i < 4; ++i) {
-        this->_wheels[i]->turn(wheelTurns * 360.0);
-    }
-    */
 }
 
 void * Car::update(void * _car) {
@@ -179,9 +171,7 @@ void Car::render() {
     glPopMatrix();
 
     // Render the wheels
-    for (int i = 0; i < 4; ++i) {
-        this->_wheels[i]->render();
-    }
+    std::for_each(this->wheels.begin(), this->wheels.end(), bind(&Wheel::render, _1));
 
     this->mutex.unlock();
 
@@ -286,13 +276,12 @@ void Car::setTrack(Track * track) {
 
     // Set the wheel positions
     const dReal * position = dBodyGetPosition(this->bodyId);
-    for (int i = 0; i < 4; ++i) {
-        this->_wheels[i]->setCarPosition(position);
-    }
+    std::for_each(this->wheels.begin(), this->wheels.end(), 
+            bind(&Wheel::setCarPosition, _1, position));
 }
 
 void Car::setWheel(Wheel * wheel, int index) {
-    this->_wheels[index] = wheel;
+    this->wheels.push_back(wheel);
 }
 
 
@@ -315,7 +304,7 @@ void Car::setDragCoefficient(float coefficient) {
 }
 
 void Car::setEngine(Engine & engine) {
-    this->_engine = new Engine();
+    this->_engine = new Engine(this);
     *(this->_engine) = engine;
     this->_engine->print();
 }
@@ -358,16 +347,14 @@ int Car::getCurrentGear() {
 
 void Car::pressBrake() {
     this->brakePressed = true;
-    for (int i = 0; i < 4; ++i) {
-        this->_wheels[i]->applyBrake(0.5);
-    }
+    std::for_each(this->wheels.begin(), this->wheels.end(), 
+            bind(&Wheel::applyBrake, _1, 0.5));
 }
 
 void Car::releaseBrake() {
     this->brakePressed = false;
-    for (int i = 0; i < 4; ++i) {
-        this->_wheels[i]->applyBrake(0.0);
-    }
+    std::for_each(this->wheels.begin(), this->wheels.end(), 
+            bind(&Wheel::applyBrake, _1, 0));
 }
 
 /******************************************************************************
@@ -392,8 +379,9 @@ void Car::_updateCollisionBox() {
     dContactGeom * contacts = new dContactGeom[4];
     dContactGeom tmpContacts[1];
     int count = 0;
-    for (int i = 0; i < 4; ++i) {
-        int result = dCollide(this->_wheels[i]->geomId, (dGeomID)Track::spaceId, 1, 
+
+    BOOST_FOREACH (Wheel * wheel, this->wheels) {
+        int result = dCollide(wheel->geomId, (dGeomID)Track::spaceId, 1, 
                 tmpContacts, sizeof(dContactGeom));
         if (result > 0) {
             contacts[count] = tmpContacts[0];
@@ -455,16 +443,13 @@ void Car::_addForces() {
     }
 
     // Apply wheel forces
-    for (int i = 0; i < 4; ++i) {
-        Wheel * wheel = this->_wheels[i];
-
+    BOOST_FOREACH (Wheel * wheel, this->wheels) {
         // Update the rotation of the wheel. If this wheel is powered it will calculate
         // the torque on the wheel due to the engine forces etc.
         wheel->updateRotation();
 
         // Add the lateral pacejka force
         float lateralPacejka = wheel->calculateLateralPacejka();
-        std::cout << "lat: " << lateralPacejka << std::endl;
 
         // We need to apply the lateral force 90 degrees to the wheel, the sign of the 
         // lateral force will deal with direction
@@ -474,5 +459,16 @@ void Car::_addForces() {
         dBodyAddRelForce(wheel->bodyId, 0, 0, longPacejka);
         
     }
-    std::cout << std::endl;
+}
+
+float Car::maxSlip() {
+    // Get the average slip of the driving wheelsH
+    float max = -10000;
+    BOOST_FOREACH (Wheel * wheel, this->wheels) {
+        if (wheel->isPowered) { 
+            float slip = wheel->calculateSlip();
+            if (slip > max) max = slip;
+        }
+    }
+    return max;
 }

@@ -191,7 +191,6 @@ void Track::_loadGeometryIni() {
 
     // Load the dof files using the paths and flags
     vector<Dof *> dofs;
-    Dof * tmpDof;
     map<string, string>::iterator it;
     int currentFlags;
     for (it = dofFiles.begin(); it != dofFiles.end(); ++it) {
@@ -203,11 +202,12 @@ void Track::_loadGeometryIni() {
         }
 
         // Attempt to create a dof
-        tmpDof = new Dof(it->second, currentFlags);
+        Dof * tmpDof = new Dof(it->second, currentFlags);
 
         // Check that it loaded properly, if so add it to the list
         if (tmpDof->isValid) {
-            dofs.push_back(tmpDof);
+            //dofs.push_back(tmpDof);
+            this->dofs.push_back(tmpDof);
         } else {
             delete tmpDof;
         }
