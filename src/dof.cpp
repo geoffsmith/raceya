@@ -98,7 +98,6 @@ Dof::~Dof() {
 }
 
 void Dof::_parseMats(ifstream * file) {
-    Mat * mat;
     int length;
     char token[5];
     char fileString[255];
@@ -111,14 +110,12 @@ void Dof::_parseMats(ifstream * file) {
     // Read the MAT0 chunk length
     file->read((char *)&length, sizeof(int));
     // .. and the number of MAT0s
-    file->read((char *)&(this->_nMats), sizeof(int));
+    int numberMats;
+    file->read((char *)&(numberMats), sizeof(int));
 
     // Create all the mats
-    this->_mats = new Mat[this->_nMats];
-
-    // Create all the mats
-    for (int i = 0; i < this->_nMats; ++i) {
-        mat = &(this->_mats[i]);
+    for (int i = 0; i < numberMats; ++i) {
+        Mat * mat = new Mat();
 
         // read the token
         file->read(token, 4);
@@ -190,6 +187,8 @@ void Dof::_parseMats(ifstream * file) {
                 file->seekg(length, ios::cur);
             }
         } while (strcmp(token, "MEND") != 0);
+
+        this->mats.push_back(mat);
     }
 }
 
@@ -323,19 +322,17 @@ void Dof::_parseGeobs(ifstream * file) {
     }
 }
 
-void Dof::_renderGeob(Geob & geob, Mat * & previousMat) {
-    Mat * mat;
+void Dof::_renderGeob(Geob & geob) {
     int burstCount, burstStart;
     int stop;
 
-    if (geob.material < this->_nMats) {
-        mat = &(this->_mats[geob.material]);
-    } else {
+    try {
+        Mat & mat = this->mats.at(geob.material)
+        this->loadMaterial(mat);
+    } catch (std::out_of_range ex) {
         Logger::warn << "Error loading material, skipping..." << endl;
         return;
     }
-
-    this->loadMaterial(mat);
 
     // Bind to VAO
     //glBindVertexArrayAPPLE(geob->vao);
@@ -435,16 +432,11 @@ void Dof::loadMaterial(Mat * mat) {
 
 int Dof::render(bool overrideFrustrumTest) {
     int count = 0;
-    Mat * mat;
-    Mat * previousMat = NULL;
-    Shader * shader;
 
     // First we render the sky
     BOOST_FOREACH(Geob & geob, this->geobs) {
-    //for (int i = 0; i < this->_nGeobs; ++i) {
-        //geob = &(this->_geobs[i]);
-        mat = &(this->_mats[geob.material]);
-        shader = mat->shader;
+        Mat & mat = this->mats[geob.material];
+        Shader * shader = mat->shader;
 
         if (shader != NULL && shader->isSky) {
             // We need to set up the project to be able to manage sky
@@ -459,7 +451,7 @@ int Dof::render(bool overrideFrustrumTest) {
             glMatrixMode(GL_MODELVIEW);
             glPushMatrix();
 
-            this->_renderGeob(geob, previousMat);
+            this->_renderGeob(geob);
 
             glPopMatrix();
             glMatrixMode(GL_PROJECTION);
@@ -470,16 +462,14 @@ int Dof::render(bool overrideFrustrumTest) {
 
     // second we render the non-transparent geobs
     BOOST_FOREACH(Geob & geob, this->geobs) {
-    //for (int i = 0; i < this->_nGeobs; ++i) {
-        //geob = &(this->_geobs[i]);
-        mat = &(this->_mats[geob.material]);
+        Mat & mat = this->mats[geob.materal];
 
-        if (!mat->isTransparent()) {
+        if (!mat.isTransparent()) {
             // Check if we need to render this geob
             if (overrideFrustrumTest || 
                     ViewFrustumCulling::culler->testObject(geob.boundingBox)) {
                 // call the previously created display list
-                this->_renderGeob(geob, previousMat);
+                this->_renderGeob(geob);
                 ++count;
             }
         }
@@ -487,16 +477,14 @@ int Dof::render(bool overrideFrustrumTest) {
 
     // .. Now we render the transparent geobs
     BOOST_FOREACH(Geob & geob, this->geobs) {
-    //for (int i = 0; i < this->_nGeobs; ++i) {
-        //geob = &(this->_geobs[i]);
-        mat = &(this->_mats[geob.material]);
+        Mat mat = this.mats[geob.material];
 
-        if (mat->isTransparent()) {
+        if (mat.isTransparent()) {
             // Check if we need to render this geob
             if (overrideFrustrumTest ||
                     ViewFrustumCulling::culler->testObject(geob.boundingBox)) {
                 // call the previously created display list
-                this->_renderGeob(geob, previousMat);
+                this->_renderGeob(geob);
                 ++count;
             }
         }
@@ -506,8 +494,8 @@ int Dof::render(bool overrideFrustrumTest) {
 
 bool Dof::isTransparent() {
     BOOST_FOREACH(Geob & geob, this->geobs) {
-        Mat * mat = &(this->_mats[geob.material]);
-        if (mat->isTransparent()) {
+        Mat & mat = this.mats[geob.material];
+        if (mat.isTransparent()) {
             return true;
         }
     }
@@ -518,7 +506,7 @@ boost::ptr_list<Geob> & Dof::getGeobs() {
     return this->geobs;
 }
 
-Mat * Dof::getMats() { return this->_mats; }
+boost::prt_vector<Mat> * Dof::getMats() { return this->mats; }
 int Dof::getNMats() { return this->_nMats; }
 
 /****************************************************************************************

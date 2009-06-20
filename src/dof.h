@@ -165,7 +165,7 @@ class Dof {
         // This DOFs display list
         void _createDisplayLists();
         // Render a geob, will only change material if previous Mat != the current one
-        void _renderGeob(Geob & geob, Mat * & previousMat = NULL);
+        void _renderGeob(Geob & geob);
 
         // The bounding box for the dof
         void _calculateBoundingBox();

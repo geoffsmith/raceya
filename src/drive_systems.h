@@ -11,7 +11,7 @@ class Car;
 
 class Engine {
     public:
-        Engine();
+        Engine(Car * car);
 
         // Setters
         void setMass(float mass);
@@ -46,6 +46,8 @@ class Engine {
         void print();
 
     private:
+        Car * car;
+
         // The engine mass
         float _mass;
 
@@ -82,6 +84,12 @@ class Engine {
         // The value between 0 and 1 of how much the accelerator is pressed. This is used
         // to linearly scale the torque produced by the engine.
         float accelerator;
+
+        // A value between 0..1 that serves as traction control. It works by damping the 
+        // accelerator value. If the slip is too high, this is reduced, if it is too low
+        // it is increased.
+        float tractionControl;
+        float tractionControlDelta;
 };
 
 class Gearbox {

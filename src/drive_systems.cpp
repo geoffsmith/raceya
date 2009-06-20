@@ -4,8 +4,11 @@
 
 using namespace std;
 
-Engine::Engine() {
+Engine::Engine(Car * car) {
     this->accelerator = 0;
+    this->car = car;
+    this->tractionControl = 1;
+    this->tractionControlDelta = 0.05;
 }
 
 void Engine::setMass(float mass) {
@@ -82,7 +85,18 @@ float Engine::calculateTorque(float rpm) {
         rpm = 4500;
     }
 
-    return this->_torqueCurve[rpm] * this->accelerator;
+
+    // Calculate the traction control needed
+    float slip = this->car->maxSlip();
+    if (slip > 0.8 && this->tractionControl > 0) {
+        this->tractionControl -= this->tractionControlDelta;
+    } else if (slip < 0.8 && this->tractionControl < 1) {
+        this->tractionControl += this->tractionControlDelta;
+    }
+
+    std::cout << "slip: " << slip << ", traction: " << this->tractionControl << std::endl;
+
+    return this->_torqueCurve[rpm] * this->accelerator ;
 }
 
 void Engine::accelerate(float time) {

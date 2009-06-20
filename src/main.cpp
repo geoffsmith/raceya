@@ -200,12 +200,14 @@ int main(int argc, char** argv) {
     //drawContext = SDL_SetVideoMode(screenWidth, screenHeight, bpp, SDL_OPENGL | SDL_HWSURFACE | SDL_DOUBLEBUF);
     drawContext = SDL_SetVideoMode(screenWidth, screenHeight, bpp, SDL_OPENGL);
 
-    reshape(screenWidth, screenHeight);
-
     if (drawContext == 0) {
         cout << "Failed to initialise video" << endl;
         exit(1);
     }
+
+    std::cout << "GL Error: " << glGetError() << std::endl;
+
+    reshape(screenWidth, screenHeight);
 
     // Check that we have all the extensions we need
     checkExtensions();

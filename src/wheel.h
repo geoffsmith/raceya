@@ -79,6 +79,9 @@ class Wheel {
         // Calculate the torque generated on the wheel by the brakes
         float calculateBrakeTorque();
 
+        // Calculate the longitudinal slip
+        float calculateSlip();
+
     private:
         // The dof model representing the wheel
         Dof * _dof;

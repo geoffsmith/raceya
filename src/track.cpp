@@ -58,7 +58,6 @@ Track::~Track() {
 void Track::initCollisionDetection() {
     // For each dof
     BOOST_FOREACH(Dof & dof, this->dofs) {
-
         // Check that this dof is collision material
         if (!dof.isSurface()) {
             continue;

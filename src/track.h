@@ -9,6 +9,8 @@
 
 #include <string>
 #include <ode/ode.h>
+#include <boost/foreach.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 #include "dof.h"
 
