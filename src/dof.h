@@ -31,8 +31,7 @@ int parseString(ifstream * file, char * buffer);
 
 class Dof;
 
-
-// This should either be a struct or have proper encapsulation. Not sure which yet.
+// This should either be a struct or have proper encapsulation. Not sure which yet
 class Geob {
     public:
         Geob();

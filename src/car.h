@@ -2,7 +2,6 @@
  * Class representing a car. This includes (so far) its rendering, animation and movement.
  *
  * TODO:
- *  * Use a turning circle to calculate the car's rotation
  *  * Clean up memory, this will be important when there are opponents
  */
 #pragma once
@@ -10,8 +9,8 @@
 #include <SDL/SDL.h>
 #include <ode/ode.h>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 #include <vector>
-
 
 #include "wheel.h"
 #include "track.h"
@@ -83,7 +82,7 @@ class Car {
         float maxSlip();
 
     private:
-        vector<Wheel *> wheels;
+        boost::ptr_vector<Wheel> wheels;
 
         Vector _wheelVectors[4];
         Vector _closestGroundPoints[4];
