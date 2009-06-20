@@ -327,7 +327,7 @@ void Dof::_renderGeob(Geob & geob) {
     int stop;
 
     try {
-        Mat & mat = this->mats.at(geob.material)
+        Mat & mat = this->mats.at(geob.material);
         this->loadMaterial(mat);
     } catch (std::out_of_range ex) {
         Logger::warn << "Error loading material, skipping..." << endl;
@@ -379,27 +379,27 @@ void Dof::_renderGeob(Geob & geob) {
     }
 }
 
-void Dof::loadMaterial(Mat * mat) {
-    if (mat->shader != NULL) {
+void Dof::loadMaterial(Mat & mat) {
+    if (mat.shader != NULL) {
         // Set up culling
-        OpenGLState::global.setCulling(mat->shader->layers[0]->culling);
+        OpenGLState::global.setCulling(mat.shader->layers[0]->culling);
 
         // Set up the alpha function
-        OpenGLState::global.setAlpha(mat->shader->layers[0]->alphaFunction, 
-                mat->shader->layers[0]->alphaValue);
+        OpenGLState::global.setAlpha(mat.shader->layers[0]->alphaFunction, 
+                mat.shader->layers[0]->alphaValue);
 
         // Set up the texture layer
         list<ShaderLayer *> layers;
-        for (int i = 0; i < mat->shader->nLayers; ++i) {
-            layers.push_back(mat->shader->layers[i]);
+        for (int i = 0; i < mat.shader->nLayers; ++i) {
+            layers.push_back(mat.shader->layers[i]);
         }
         OpenGLState::global.setTextures(&layers);
     }
 
-    if (mat->shader != NULL) { 
+    if (mat.shader != NULL) { 
         // Skip if we have a shader
-    } else if (mat->nTextures > 0 && mat->textures[0] != NULL) {
-        Texture * texture = mat->textures[0];
+    } else if (mat.nTextures > 0 && mat.textures[0] != NULL) {
+        Texture * texture = mat.textures[0];
         OpenGLState::global.setTexture(texture->texture);
     } else {
         glDisable(GL_TEXTURE_2D);
@@ -436,7 +436,7 @@ int Dof::render(bool overrideFrustrumTest) {
     // First we render the sky
     BOOST_FOREACH(Geob & geob, this->geobs) {
         Mat & mat = this->mats[geob.material];
-        Shader * shader = mat->shader;
+        Shader * shader = mat.shader;
 
         if (shader != NULL && shader->isSky) {
             // We need to set up the project to be able to manage sky
@@ -462,7 +462,7 @@ int Dof::render(bool overrideFrustrumTest) {
 
     // second we render the non-transparent geobs
     BOOST_FOREACH(Geob & geob, this->geobs) {
-        Mat & mat = this->mats[geob.materal];
+        Mat & mat = this->mats[geob.material];
 
         if (!mat.isTransparent()) {
             // Check if we need to render this geob
@@ -477,7 +477,7 @@ int Dof::render(bool overrideFrustrumTest) {
 
     // .. Now we render the transparent geobs
     BOOST_FOREACH(Geob & geob, this->geobs) {
-        Mat mat = this.mats[geob.material];
+        Mat mat = this->mats[geob.material];
 
         if (mat.isTransparent()) {
             // Check if we need to render this geob
@@ -494,7 +494,7 @@ int Dof::render(bool overrideFrustrumTest) {
 
 bool Dof::isTransparent() {
     BOOST_FOREACH(Geob & geob, this->geobs) {
-        Mat & mat = this.mats[geob.material];
+        Mat & mat = this->mats[geob.material];
         if (mat.isTransparent()) {
             return true;
         }
@@ -506,8 +506,7 @@ boost::ptr_list<Geob> & Dof::getGeobs() {
     return this->geobs;
 }
 
-boost::prt_vector<Mat> * Dof::getMats() { return this->mats; }
-int Dof::getNMats() { return this->_nMats; }
+boost::ptr_vector<Mat> & Dof::getMats() { return this->mats; }
 
 /****************************************************************************************
  * Bounding box and collision detection
@@ -589,7 +588,7 @@ Geob::~Geob() {
 void Geob::generateVAO() {
     Mat * mat;
 
-    if (this->material < this->dof->getNMats()) {
+    if (this->material < this->dof->getMats().size()) {
         mat = &(this->dof->getMats()[this->material]);
     } else {
         Logger::warn << "Error loading material, skipping..." << endl;

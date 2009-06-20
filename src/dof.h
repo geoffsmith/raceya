@@ -18,6 +18,7 @@
 #include <OpenGL/glu.h>
 #include <string>
 #include <boost/ptr_container/ptr_list.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 // Utility function to load vector
 template <class T> void parseVector(ifstream * file, T * vector, int length);
@@ -31,11 +32,12 @@ int parseString(ifstream * file, char * buffer);
 class Dof;
 
 
+// This should either be a struct or have proper encapsulation. Not sure which yet.
 class Geob {
     public:
         Geob();
         ~Geob();
-        int material;
+        unsigned int material;
         int nIndices;
         unsigned short * indices;
         unsigned int nVertices;
@@ -116,8 +118,7 @@ class Dof {
 
         boost::ptr_list<Geob> & getGeobs();
 
-        Mat * getMats();
-        int getNMats();
+        boost::ptr_vector<Mat> & getMats();
 
         bool isValid; 
 
@@ -125,7 +126,7 @@ class Dof {
         bool isSurface();
 
         // Set up the material for OpenGL
-        void loadMaterial(Mat * mat);
+        void loadMaterial(Mat & mat);
 
     private:
         std::string _filePath;
@@ -133,14 +134,8 @@ class Dof {
         // Geometrical objects
         boost::ptr_list<Geob> geobs;
 
-        //Geob * _geobs;
-        //int _nGeobs;
-
         // Material objects
-        boost::prt_vector<Mat> mats;
-
-        //Mat * _mats;
-        //int _nMats;
+        boost::ptr_vector<Mat> mats;
 
         // Some objects are small enough that all the geobs can be drawn in two display
         // lists, one for transparent and one for non-transparent. This also lets us
