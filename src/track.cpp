@@ -7,11 +7,11 @@
 #include <unistd.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/foreach.hpp>
 #include <iostream>
 #include <vector>
 #include <fstream>
 
-using namespace std;
 using namespace boost;
 using namespace boost::filesystem;
 namespace fs = boost::filesystem;
@@ -21,7 +21,7 @@ dSpaceID Track::spaceId;
 
 Track::Track(string trackPath) {
     path currentDir("./");
-    this->_path = trackPath;
+    this->iniPath = trackPath;
 
     // try to load shaders
     Shader::parseShaderFile((currentDir / trackPath / "track.shd").string().c_str());
@@ -32,10 +32,10 @@ Track::Track(string trackPath) {
         return;
     }
 
-    this->_loadGeometryIni();
+    this->loadGeometryIni();
 
     // Load and parse special.ini
-    this->_loadSpecialIni();
+    this->loadSpecialIni();
 
     dInitODE();
 
@@ -47,51 +47,44 @@ Track::Track(string trackPath) {
 
     Track::spaceId = dHashSpaceCreate(0);
 
-    this->_initCollisionDetection();
+    this->initCollisionDetection();
 }
 
 Track::~Track() {
-    // Clean up the dof objects
-    for (unsigned int i = 0; i < this->_nDofs; ++i) {
-        delete this->_dofs[i];
-    }
-    delete[] this->_dofs;
-
     // Clean up ODE physics
     dWorldDestroy(Track::worldId);
 }
 
-void Track::_initCollisionDetection() {
+void Track::initCollisionDetection() {
     // For each dof
-    for (unsigned int i = 0; i < this->_nDofs; ++i) {
+    BOOST_FOREACH(Dof & dof, this->dofs) {
+
         // Check that this dof is collision material
-        if (!this->_dofs[i]->isSurface()) {
+        if (!dof.isSurface()) {
             continue;
         }
 
         // For each geob
-        for (int j = 0; j < this->_dofs[i]->getNGeobs(); ++j) {
-            Geob * geob = this->_dofs[i]->getGeob(j);
-
+        BOOST_FOREACH(Geob & geob, dof.getGeobs()) {
             dTriMeshDataID meshId = dGeomTriMeshDataCreate();
 
             // Convert geob vertices into dVector3s
-            dReal * vertices = new dReal[geob->nVertices * 4];
-            for (unsigned int k = 0; k < geob->nVertices; ++k) {
-                vertices[k * 4] = geob->vertices[k][0];
-                vertices[k * 4 + 1] = geob->vertices[k][1];
-                vertices[k * 4 + 2] = geob->vertices[k][2];
+            dReal * vertices = new dReal[geob.nVertices * 4];
+            for (unsigned int k = 0; k < geob.nVertices; ++k) {
+                vertices[k * 4] = geob.vertices[k][0];
+                vertices[k * 4 + 1] = geob.vertices[k][1];
+                vertices[k * 4 + 2] = geob.vertices[k][2];
                 vertices[k * 4 + 3] = 1;
             }
 
-            dTriIndex * indices = new dTriIndex[geob->nIndices];
-            for (int k = 0; k < geob->nIndices; ++k) {
-                indices[k] = geob->indices[k];
+            dTriIndex * indices = new dTriIndex[geob.nIndices];
+            for (int k = 0; k < geob.nIndices; ++k) {
+                indices[k] = geob.indices[k];
             }
 
             // Create the collision detection objects
-            dGeomTriMeshDataBuildSimple(meshId, vertices, geob->nVertices,
-                    indices, geob->nIndices);
+            dGeomTriMeshDataBuildSimple(meshId, vertices, geob.nVertices,
+                    indices, geob.nIndices);
 
             // Create the geob
             dCreateTriMesh(Track::spaceId, meshId, NULL, NULL, NULL);
@@ -102,10 +95,10 @@ void Track::_initCollisionDetection() {
     }
 }
 
-void Track::_loadSpecialIni() {
+void Track::loadSpecialIni() {
     string value;
     path currentDir("./");
-    Ini ini((currentDir / this->_path / "special.ini").string());
+    Ini ini((currentDir / this->iniPath / "special.ini").string());
 
     // Get the starting position
     value = ini["/grid/pos0/from/x"];
@@ -116,7 +109,7 @@ void Track::_loadSpecialIni() {
     this->startPosition[2] = atof(value.c_str());
 }
 
-void Track::_loadGeometryIni() { 
+void Track::loadGeometryIni() { 
     bool nextTagIsObjectName = true;
     bool foundObjects = false;
     string currentObject;
@@ -127,7 +120,7 @@ void Track::_loadGeometryIni() {
     map<string, int> flags;
     map<string, string> dofFiles;
     path currentDir("./");
-    ifstream file((currentDir / this->_path / "geometry.ini").string().c_str());
+    ifstream file((currentDir / this->iniPath / "geometry.ini").string().c_str());
     if (!file.is_open()) {
         Logger::debug << "Error opening geometry.ini" << endl;
         return;
@@ -177,8 +170,7 @@ void Track::_loadGeometryIni() {
             if (filenameParts[1] != "dof") continue;
 
             // Load this file because it is a DOF file
-            dofFiles[currentObject] = 
-                (currentDir / this->_path / parts[1]).string();
+            dofFiles[currentObject] = (currentDir / this->iniPath / parts[1]).string();
         } else if (parts[0] == "flags") {
             // Convert the flags to an int
             int f = atoi(parts[1].c_str());
@@ -190,8 +182,6 @@ void Track::_loadGeometryIni() {
     file.close();
 
     // Load the dof files using the paths and flags
-    vector<Dof *> dofs;
-    Dof * tmpDof;
     map<string, string>::iterator it;
     int currentFlags;
     for (it = dofFiles.begin(); it != dofFiles.end(); ++it) {
@@ -203,39 +193,26 @@ void Track::_loadGeometryIni() {
         }
 
         // Attempt to create a dof
-        tmpDof = new Dof(it->second, currentFlags);
+        Dof * tmpDof = new Dof(it->second, currentFlags);
+
+        tmpDof->isTransparent();
 
         // Check that it loaded properly, if so add it to the list
         if (tmpDof->isValid) {
-            dofs.push_back(tmpDof);
+            this->dofs.push_back(tmpDof);
         } else {
             delete tmpDof;
         }
     }
-
-    // Now copy this all into an old school array for speed
-    this->_nDofs = dofs.size();
-    this->_dofs = new Dof *[this->_nDofs];
-    for (unsigned int i = 0; i < this->_nDofs; ++i) {
-        this->_dofs[i] = dofs[i];
-    }
 }
 
 void Track::render() {
-    int count = 0;
-    int total = 0;
     // We do this in two passes, first for non-transparent, then for transparent
-    for (unsigned int i = 0; i < this->_nDofs; ++i) {
-        if (!(this->_dofs[i]->isTransparent())) {
-            count += this->_dofs[i]->render();
-        }
-        total++;
+    BOOST_FOREACH(Dof & dof, this->dofs) {
+        if (!dof.isTransparent()) dof.render();
     }    
 
-    for (unsigned int i = 0; i < this->_nDofs; ++i) {
-        if (this->_dofs[i]->isTransparent()) {
-            count += this->_dofs[i]->render();
-        }
-        total++;
+    BOOST_FOREACH(Dof & dof, this->dofs) {
+        if (dof.isTransparent()) dof.render();
     }    
 }

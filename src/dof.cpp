@@ -10,6 +10,7 @@
 #include <SDL/SDL_image.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/foreach.hpp>
 #include <math.h>
 
 using namespace std;
@@ -27,8 +28,6 @@ Dof::Dof(string filePath, int flags, bool perGeobDisplayList) {
     buffer[4] = NULL;
     this->isValid = false;
 
-    this->_geobs = NULL;
-    
     // Load the file
     ifstream file(this->_filePath.c_str());
     if (!file.is_open()) {
@@ -69,9 +68,16 @@ Dof::Dof(string filePath, int flags, bool perGeobDisplayList) {
     file.close();
 
     // Generate VAOs
+    std::for_each(
+            this->geobs.begin(), 
+            this->geobs.end(), 
+            std::mem_fun_ref(&Geob::generateVAO));
+
+    /*
     for (int i = 0; i < this->_nGeobs; ++i) {
         this->_geobs[i].generateVAO();
     }
+    */
     
     // Calculate bounding box
     this->_calculateBoundingBox();
@@ -80,9 +86,15 @@ Dof::Dof(string filePath, int flags, bool perGeobDisplayList) {
     this->isValid = true;
 }
 
+Dof::Dof(const Dof & dof) {
+    throw "Dof copy constructor";
+}
+
+Dof & Dof::operator=(const Dof & dof) {
+    throw "Dof assignment operator";
+}
+
 Dof::~Dof() {
-    // Delete the geobs
-    if (this->_geobs != NULL) delete[] this->_geobs;
 }
 
 void Dof::_parseMats(ifstream * file) {
@@ -182,24 +194,25 @@ void Dof::_parseMats(ifstream * file) {
 }
 
 void Dof::_parseGeobs(ifstream * file) {
-    Geob * geob;
-    int geobChunkLength, geobLength;
-    int length, chunkLength;
+    int length;
     char token[5];
 
     // We need to add a null to the token so that we can print and compare the string
     token[4] = NULL;
 
+    int geobChunkLength;
     file->read((char *)&geobChunkLength, sizeof(int));
 
-    file->read((char *)&(this->_nGeobs), sizeof(int));
+    int numberGeobs;
+    file->read((char *)&(numberGeobs), sizeof(int));
 
     // Create a number of geob instances
-    this->_geobs = new Geob[this->_nGeobs];
+    //this->_geobs = new Geob[this->_nGeobs];
 
     // Create all the geobs
-    for (int i = 0; i < this->_nGeobs; ++i) {
-        geob = &(this->_geobs[i]);
+    for (int i = 0; i < numberGeobs; ++i) {
+        //geob = &(this->_geobs[i]);
+        Geob * geob = new Geob();
         geob->dof = this;
 
         // read the token, this should be GOB1
@@ -209,6 +222,7 @@ void Dof::_parseGeobs(ifstream * file) {
         }
 
         // Get this geob's length
+        int geobLength;
         file->read((char *)&geobLength, sizeof(int));
 
         // Now we parse a number of object component attributes
@@ -216,6 +230,7 @@ void Dof::_parseGeobs(ifstream * file) {
             // Read the next token
             file->read(token, 4);
             // .. and its chunk length (if token is not GEND)
+            int chunkLength;
             if (strcmp(token, "GEND") != 0) {
                 file->read((char *)&chunkLength, sizeof(int));
             }
@@ -302,16 +317,19 @@ void Dof::_parseGeobs(ifstream * file) {
                 break;
             }
         } while (strcmp(token, "GEND") != 0);
+
+        // Add to the list of geobs
+        this->geobs.push_back(geob);
     }
 }
 
-void Dof::_renderGeob(Geob * geob, Mat * & previousMat) {
+void Dof::_renderGeob(Geob & geob, Mat * & previousMat) {
     Mat * mat;
     int burstCount, burstStart;
     int stop;
 
-    if (geob->material < this->_nMats) {
-        mat = &(this->_mats[geob->material]);
+    if (geob.material < this->_nMats) {
+        mat = &(this->_mats[geob.material]);
     } else {
         Logger::warn << "Error loading material, skipping..." << endl;
         return;
@@ -321,16 +339,16 @@ void Dof::_renderGeob(Geob * geob, Mat * & previousMat) {
 
     // Bind to VAO
     //glBindVertexArrayAPPLE(geob->vao);
-    glBindBuffer(GL_ARRAY_BUFFER, geob->vertexVBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geob->indexVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, geob.vertexVBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geob.indexVBO);
     glVertexPointer(3, GL_FLOAT, 0, (GLvoid*)((char*)NULL));
     glNormalPointer(GL_FLOAT, 0, 
-            (GLvoid*)((char*)NULL + geob->nVertices * 3 * sizeof(float)));
+            (GLvoid*)((char*)NULL + geob.nVertices * 3 * sizeof(float)));
 
     for (int i = 0; i < OpenGLState::global.lastUsedTextures; ++i) {
 
         glClientActiveTexture(GL_TEXTURE0 + i);
-        glTexCoordPointer(2, GL_FLOAT, 0, (GLvoid*)((char*)NULL + geob->nVertices * 3 * sizeof(float) + geob->nNormals * 3 * sizeof(float)));
+        glTexCoordPointer(2, GL_FLOAT, 0, (GLvoid*)((char*)NULL + geob.nVertices * 3 * sizeof(float) + geob.nNormals * 3 * sizeof(float)));
     }
 
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -338,9 +356,9 @@ void Dof::_renderGeob(Geob * geob, Mat * & previousMat) {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
 
-    for (int j = 0; j < geob->nBursts; ++j) {
-        burstCount = geob->burstsCount[j] / 3;
-        burstStart = geob->burstStarts[j] / 3;
+    for (int j = 0; j < geob.nBursts; ++j) {
+        burstCount = geob.burstsCount[j] / 3;
+        burstStart = geob.burstStarts[j] / 3;
 
         // NOTE: I would have expected the burst material to be valid here, but it 
         // doesn't seem to work. Not sure what it's for...
@@ -350,10 +368,10 @@ void Dof::_renderGeob(Geob * geob, Mat * & previousMat) {
         // going on there... 
         // It only happens with some tracks, so it might be a bug in a track 
         // generator.
-        stop = min(burstStart + burstCount, geob->nIndices) - burstStart;
+        stop = min(burstStart + burstCount, geob.nIndices) - burstStart;
 
         // Do some sanity checks
-        if (burstStart > geob->nIndices) {
+        if (burstStart > geob.nIndices) {
             cout << "Error start past indices" << endl;
             continue;
         }
@@ -417,15 +435,15 @@ void Dof::loadMaterial(Mat * mat) {
 
 int Dof::render(bool overrideFrustrumTest) {
     int count = 0;
-    Geob * geob;
     Mat * mat;
     Mat * previousMat = NULL;
     Shader * shader;
 
     // First we render the sky
-    for (int i = 0; i < this->_nGeobs; ++i) {
-        geob = &(this->_geobs[i]);
-        mat = &(this->_mats[geob->material]);
+    BOOST_FOREACH(Geob & geob, this->geobs) {
+    //for (int i = 0; i < this->_nGeobs; ++i) {
+        //geob = &(this->_geobs[i]);
+        mat = &(this->_mats[geob.material]);
         shader = mat->shader;
 
         if (shader != NULL && shader->isSky) {
@@ -451,16 +469,15 @@ int Dof::render(bool overrideFrustrumTest) {
     }
 
     // second we render the non-transparent geobs
-    for (int i = 0; i < this->_nGeobs; ++i) {
-        geob = &(this->_geobs[i]);
-        mat = &(this->_mats[geob->material]);
-
-        //if (mat->name != "herbe04") continue;
+    BOOST_FOREACH(Geob & geob, this->geobs) {
+    //for (int i = 0; i < this->_nGeobs; ++i) {
+        //geob = &(this->_geobs[i]);
+        mat = &(this->_mats[geob.material]);
 
         if (!mat->isTransparent()) {
             // Check if we need to render this geob
             if (overrideFrustrumTest || 
-                    ViewFrustumCulling::culler->testObject(geob->boundingBox)) {
+                    ViewFrustumCulling::culler->testObject(geob.boundingBox)) {
                 // call the previously created display list
                 this->_renderGeob(geob, previousMat);
                 ++count;
@@ -469,17 +486,15 @@ int Dof::render(bool overrideFrustrumTest) {
     }
 
     // .. Now we render the transparent geobs
-    for (int i = 0; i < this->_nGeobs; ++i) {
-        geob = &(this->_geobs[i]);
-        mat = &(this->_mats[geob->material]);
-
-        //cout << "Name: " << mat->name << endl;
-        //if (mat->name != "herbe04.tga") continue;
+    BOOST_FOREACH(Geob & geob, this->geobs) {
+    //for (int i = 0; i < this->_nGeobs; ++i) {
+        //geob = &(this->_geobs[i]);
+        mat = &(this->_mats[geob.material]);
 
         if (mat->isTransparent()) {
             // Check if we need to render this geob
             if (overrideFrustrumTest ||
-                    ViewFrustumCulling::culler->testObject(geob->boundingBox)) {
+                    ViewFrustumCulling::culler->testObject(geob.boundingBox)) {
                 // call the previously created display list
                 this->_renderGeob(geob, previousMat);
                 ++count;
@@ -490,12 +505,8 @@ int Dof::render(bool overrideFrustrumTest) {
 }
 
 bool Dof::isTransparent() {
-    Mat * mat;
-    Geob * geob;
-    for (int i = 0; i < this->_nGeobs; ++i) {
-        geob = &(this->_geobs[i]);
-        mat = &(this->_mats[geob->material]);
-
+    BOOST_FOREACH(Geob & geob, this->geobs) {
+        Mat * mat = &(this->_mats[geob.material]);
         if (mat->isTransparent()) {
             return true;
         }
@@ -503,12 +514,8 @@ bool Dof::isTransparent() {
     return false;
 }
 
-Geob * Dof::getGeob(unsigned int index) {
-    return &(this->_geobs[index]);
-}
-
-int Dof::getNGeobs() {
-    return this->_nGeobs;
+boost::ptr_list<Geob> & Dof::getGeobs() {
+    return this->geobs;
 }
 
 Mat * Dof::getMats() { return this->_mats; }
@@ -518,36 +525,37 @@ int Dof::getNMats() { return this->_nMats; }
  * Bounding box and collision detection
  ***************************************************************************************/
 void Dof::_calculateBoundingBox() {
-    Geob * geob;
+    //Geob * geob;
     float * vertex;
     // The first vertex is always set, so we have a starting point
     bool firstVertex;
 
     // Go through each geob and each vertex to find the min / max points for each
     // axis
-    for (int i = 0; i < this->_nGeobs; ++i) {
-        geob = &(this->_geobs[i]);
+    BOOST_FOREACH(Geob & geob, this->geobs) {
+    //for (int i = 0; i < this->_nGeobs; ++i) {
+        //geob = &(this->_geobs[i]);
         firstVertex = true;
-        for (int j = 0; j < geob->nIndices; ++j) {
-            vertex = geob->vertices[geob->indices[j]];
+        for (int j = 0; j < geob.nIndices; ++j) {
+            vertex = geob.vertices[geob.indices[j]];
 
             // If this is the first vertex, set the bounds
             if (firstVertex) {
-                geob->boundingBox[0] = vertex[0];
-                geob->boundingBox[1] = vertex[0];
-                geob->boundingBox[2] = vertex[1];
-                geob->boundingBox[3] = vertex[1];
-                geob->boundingBox[4] = vertex[2];
-                geob->boundingBox[5] = vertex[2];
+                geob.boundingBox[0] = vertex[0];
+                geob.boundingBox[1] = vertex[0];
+                geob.boundingBox[2] = vertex[1];
+                geob.boundingBox[3] = vertex[1];
+                geob.boundingBox[4] = vertex[2];
+                geob.boundingBox[5] = vertex[2];
                 firstVertex = false;
             } else {
                 // Now check if the vertex expands any of the bounds
-                if (geob->boundingBox[0] > vertex[0]) geob->boundingBox[0] = vertex[0];
-                if (geob->boundingBox[1] < vertex[0]) geob->boundingBox[1] = vertex[0];
-                if (geob->boundingBox[2] > vertex[1]) geob->boundingBox[2] = vertex[1];
-                if (geob->boundingBox[3] < vertex[1]) geob->boundingBox[3] = vertex[1];
-                if (geob->boundingBox[4] > vertex[2]) geob->boundingBox[4] = vertex[2];
-                if (geob->boundingBox[5] < vertex[2]) geob->boundingBox[5] = vertex[2];
+                if (geob.boundingBox[0] > vertex[0]) geob.boundingBox[0] = vertex[0];
+                if (geob.boundingBox[1] < vertex[0]) geob.boundingBox[1] = vertex[0];
+                if (geob.boundingBox[2] > vertex[1]) geob.boundingBox[2] = vertex[1];
+                if (geob.boundingBox[3] < vertex[1]) geob.boundingBox[3] = vertex[1];
+                if (geob.boundingBox[4] > vertex[2]) geob.boundingBox[4] = vertex[2];
+                if (geob.boundingBox[5] < vertex[2]) geob.boundingBox[5] = vertex[2];
             }
         }
     }
@@ -633,6 +641,8 @@ Shader * Geob::getShader() {
 Mat::Mat() {
     this->shader = NULL;
 }
+
+Mat::~Mat() {}
 
 bool Mat::isTransparent() {
     if (this->blendMode > 0) {

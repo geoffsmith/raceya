@@ -23,10 +23,6 @@ class Track {
         // Render a track
         void render();
 
-        // Getters
-        Dof ** getDofs() { return this->_dofs; }
-        unsigned int getNDofs() { return this->_nDofs; }
-
         // Start position
         float startPosition[3];
 
@@ -36,20 +32,21 @@ class Track {
         dGeomID planeId;
 
     private:
-        string _path;
-        Dof ** _dofs;
-        unsigned int _nDofs;
+        string iniPath;
+
+        // List of dof objects which make up the track model
+        boost::ptr_list<Dof> dofs;
 
         // Load the geometry.ini file which points to the globs.
         // NOTE: this is ultra simplified at the moment and will almost certainly need 
         // expanding. It just looks for lines with a dof file and loads it.
-        void _loadGeometryIni();
+        void loadGeometryIni();
 
         // Load the special ini file which includes: grid positions, camera positions, 
         // high level track variables (sun position and colour)
-        void Track::_loadSpecialIni();
+        void Track::loadSpecialIni();
 
         // Initialise the collision detection, this uses the built in ODE collision 
         // detection for now. 
-        void Track::_initCollisionDetection();
+        void Track::initCollisionDetection();
 };

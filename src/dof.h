@@ -17,8 +17,7 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <string>
-
-using namespace std;
+#include <boost/ptr_container/ptr_list.hpp>
 
 // Utility function to load vector
 template <class T> void parseVector(ifstream * file, T * vector, int length);
@@ -73,7 +72,7 @@ class Mat {
         ~Mat();
         bool isTransparent();
 
-        string name;
+        std::string name;
         float ambient[4];
         float diffuse[4];
         float specular[4];
@@ -102,8 +101,12 @@ class Mat {
 
 class Dof {
     public:
-        Dof(string filePath, int flags, bool perGeobDisplayList = true);
+        Dof(std::string filePath, int flags, bool perGeobDisplayList = true);
         ~Dof();
+
+        // These haven't been properly implemented so just throw at the moment
+        Dof(const Dof & dof);
+        Dof & operator=(const Dof & dof);
 
         // Render the dof
         int render(bool overrideFrustrumTest = false);
@@ -111,8 +114,7 @@ class Dof {
         // Return true if one of the materials is transparent
         bool isTransparent();
 
-        Geob * getGeob(unsigned int index);
-        int getNGeobs();
+        boost::ptr_list<Geob> & getGeobs();
 
         Mat * getMats();
         int getNMats();
@@ -126,15 +128,19 @@ class Dof {
         void loadMaterial(Mat * mat);
 
     private:
-        string _filePath;
+        std::string _filePath;
 
         // Geometrical objects
-        Geob * _geobs;
-        int _nGeobs;
+        boost::ptr_list<Geob> geobs;
+
+        //Geob * _geobs;
+        //int _nGeobs;
 
         // Material objects
-        Mat * _mats;
-        int _nMats;
+        boost::prt_vector<Mat> mats;
+
+        //Mat * _mats;
+        //int _nMats;
 
         // Some objects are small enough that all the geobs can be drawn in two display
         // lists, one for transparent and one for non-transparent. This also lets us
@@ -154,12 +160,12 @@ class Dof {
         void _parseMats(ifstream * file);
 
         // Load a texture
-        void _loadTexture(string name, Texture * texture);
+        void _loadTexture(std::string name, Texture * texture);
 
         // This DOFs display list
         void _createDisplayLists();
         // Render a geob, will only change material if previous Mat != the current one
-        void _renderGeob(Geob * geob, Mat * & previousMat = NULL);
+        void _renderGeob(Geob & geob, Mat * & previousMat = NULL);
 
         // The bounding box for the dof
         void _calculateBoundingBox();

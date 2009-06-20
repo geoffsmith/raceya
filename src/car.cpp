@@ -464,7 +464,6 @@ void Car::_addForces() {
 
         // Add the lateral pacejka force
         float lateralPacejka = wheel->calculateLateralPacejka();
-        std::cout << "lat: " << lateralPacejka << std::endl;
 
         // We need to apply the lateral force 90 degrees to the wheel, the sign of the 
         // lateral force will deal with direction

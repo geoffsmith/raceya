@@ -4,7 +4,7 @@
  */
 #pragma once
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 #include "car.h"
 
 class Camera {

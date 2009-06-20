@@ -2,13 +2,13 @@
 #include "lib.h"
 #include <iostream>
 #include <string>
+#include <boost/foreach.hpp>
 
 using namespace std;
 
 static string winner;
 
 void findClosestPoint(Dof ** dofs, unsigned int nDofs, float * point, float * closestPoint) {
-    Geob * geob;
     float tmpPoint[3];
     float tmpDistance;
     float closestDistance;
@@ -24,25 +24,28 @@ void findClosestPoint(Dof ** dofs, unsigned int nDofs, float * point, float * cl
         // If this dof is not a surface we skip
         if (!dofs[dofIndex]->isSurface()) continue;
 
+        BOOST_FOREACH(Geob & geob, dofs[dofIndex]->getGeobs()) {
+            /*
         for (int geobIndex = 0; 
                 geobIndex < dofs[dofIndex]->getNGeobs(); 
                 ++geobIndex) {
-            geob = dofs[dofIndex]->getGeob(geobIndex);
+                */
+            //Geob & geob = dofs[dofIndex]->getGeob(geobIndex);
 
-            for (int burst = 0; burst < geob->nBursts; burst++) {
-                burstCount = geob->burstsCount[burst] / 3;
-                burstStart = geob->burstStarts[burst] / 3;
+            for (int burst = 0; burst < geob.nBursts; burst++) {
+                burstCount = geob.burstsCount[burst] / 3;
+                burstStart = geob.burstStarts[burst] / 3;
 
-                stop = min(burstStart + burstCount, geob->nIndices);
+                stop = min(burstStart + burstCount, geob.nIndices);
 
                 // Check each triangle
                 for (int triangleIndex = burstStart; 
                         triangleIndex < stop;
                         triangleIndex += 3) {
                     findClosestPointInTriangle(
-                            geob->vertices[geob->indices[triangleIndex]],
-                            geob->vertices[geob->indices[triangleIndex + 1]],
-                            geob->vertices[geob->indices[triangleIndex + 2]],
+                            geob.vertices[geob.indices[triangleIndex]],
+                            geob.vertices[geob.indices[triangleIndex + 1]],
+                            geob.vertices[geob.indices[triangleIndex + 2]],
                             point,
                             tmpPoint);
 

@@ -3,6 +3,7 @@
 #include "track.h"
 
 #include <math.h>
+#include <boost/foreach.hpp>
 
 Wheel::Wheel(int position, Dof * dof, Car * car) {
     this->car = car;
@@ -123,20 +124,20 @@ void Wheel::setCenter(float * center) {
     dBodySetPosition(this->bodyId, center[0], center[1], center[2]);
 
     // Calculate the lowest point for the wheel, now that we have a position
-    Geob * geob;
-    for (int geobIndex = 0; geobIndex < this->_dof->getNGeobs(); ++geobIndex) {
-        geob = this->_dof->getGeob(geobIndex);
+    bool first = false;
+    BOOST_FOREACH(Geob & geob, this->_dof->getGeobs()) {
         // Get the lowest vertex
-        for (unsigned int i = 0; i < geob->nVertices; ++i) {
+        for (unsigned int i = 0; i < geob.nVertices; ++i) {
             // If this is the first vertex, we set it regardless
-            if (geobIndex == 0 && i == 0) {
-                vertexCopy(geob->vertices[i], this->_groundContact);
+            if (first) {
+                vertexCopy(geob.vertices[i], this->_groundContact);
+                first = false;
                 continue;
             }
 
             // Otherwise we check to see if it is lower
-            if (geob->vertices[i][1] < this->_groundContact[1]) {
-                vertexCopy(geob->vertices[i], this->_groundContact);
+            if (geob.vertices[i][1] < this->_groundContact[1]) {
+                vertexCopy(geob.vertices[i], this->_groundContact);
             }
         }
     }
@@ -371,10 +372,10 @@ void Wheel::updateRotation() {
         if (fabs(this->angularVelocity) > 0) {
             dMass mass;
             dBodyGetMass(this->car->bodyId, &mass);
-            float load = mass.mass * 9.8 / 4.0;
+            //float load = mass.mass * 9.8 / 4.0;
 
             // torque gets added in the opposite direction to the angular velocity
-            float sign = -fabs(this->angularVelocity) / this->angularVelocity;
+            //float sign = -fabs(this->angularVelocity) / this->angularVelocity;
 
             // TODO We need something here to stop and oscillation at low speeds
             //torque += sign * load * this->_rollingCoefficient;
