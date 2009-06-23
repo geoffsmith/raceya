@@ -106,7 +106,7 @@ void initObjects() {
     car->setTrack(track);
 
     // Create the camera, pointing at the player's car
-    camera = new Camera(car);
+    camera = new Camera(*car);
 
     // Create the HUD
     hud = new Hud(car, screenWidth, screenHeight);

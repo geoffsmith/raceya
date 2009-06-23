@@ -5,8 +5,7 @@
 #include <math.h>
 #include <boost/foreach.hpp>
 
-Wheel::Wheel(int position, Dof * dof, Car * car) {
-    this->car = car;
+Wheel::Wheel(int position, Dof * dof, Car & c) : car(c) {
     this->_dof = dof;
     this->_brakeDof = NULL;
     this->_rotation = 0;
@@ -20,12 +19,12 @@ Wheel::Wheel(int position, Dof * dof, Car * car) {
     this->isPowered = false;
 
     this->bodyId = dBodyCreate(Track::worldId);
-    this->geomId = dCreateCylinder(car->spaceId, 1, 1);
+    this->geomId = dCreateCylinder(this->car.spaceId, 1, 1);
     dGeomSetBody(this->geomId, this->bodyId);
 
     //this->suspensionJointId = dJointCreateSlider(Track::worldId, 0);
     this->suspensionJointId = dJointCreatePiston(Track::worldId, 0);
-    dJointAttach(this->suspensionJointId, this->bodyId, car->bodyId);
+    dJointAttach(this->suspensionJointId, this->bodyId, this->car.bodyId);
 
     // Initialise the lateral pacejka constants with 15 0s
     this->_lateralPacejka = std::vector<float>(15, 0);
@@ -192,7 +191,7 @@ void Wheel::setRollingCoefficient(float coefficient) {
 float Wheel::calculateRollingResitance() {
     // TODO: the weight on a wheel should actually be variable
     dMass mass;
-    dBodyGetMass(this->car->bodyId, &mass);
+    dBodyGetMass(this->car.bodyId, &mass);
 
     return this->_rollingCoefficient * (mass.mass / 4.0) * 9.8;
 }
@@ -237,7 +236,7 @@ void Wheel::setLongPacejka(float b0, float b1, float b2, float b3, float b4, flo
 float Wheel::calculateLateralPacejka() {
     // We'll need the car's mass for weight on wheels
     dMass mass;
-    dBodyGetMass(this->car->bodyId, &mass);
+    dBodyGetMass(this->car.bodyId, &mass);
     float fz = (mass.mass * 9.8 / 4.0) / 1000.0;
 
     // and we need the slip angle
@@ -302,7 +301,7 @@ float Wheel::calculateLateralPacejka() {
 float Wheel::calculateLongPacejka() {
     // We'll need the car's mass for weight on wheels
     dMass mass;
-    dBodyGetMass(this->car->bodyId, &mass);
+    dBodyGetMass(this->car.bodyId, &mass);
     float fz = (mass.mass * 9.8 / 4.0) / 1000.0;
 
     float slip = this->calculateSlip();
@@ -329,21 +328,21 @@ float Wheel::calculateLongPacejka() {
 }
 
 void Wheel::updateRotation() {
-    float time = this->car->timer->getTargetSeconds();
+    float time = this->car.timer->getTargetSeconds();
 
     // If the wheel is powered by the engine, we calculate the various torques on the 
     // wheel, if not we work out the angular velocity from the car's speed
     if (this->isPowered) {
         // The current gear ratio
-        float gear = this->car->getGearbox()->getCurrentRatio();
-        float differential = this->car->getEngine()->getDifferential();
+        float gear = this->car.getGearbox().getCurrentRatio();
+        float differential = this->car.getEngine().getDifferential();
 
         // First we find the RPM of the engine based on the previous angular velocity
         float rpm = this->angularVelocity * gear * differential * 60.0 / (2.0 * PI);
-        this->car->getEngine()->setRpm(rpm);
+        this->car.getEngine().setRpm(rpm);
 
         // Then we look up the torque for this RPM
-        float engineTorque = this->car->getEngine()->calculateTorque(rpm);
+        float engineTorque = this->car.getEngine().calculateTorque(rpm);
 
         // Then we push the torque back through the drive system to get a new torque on the 
         // wheel
@@ -353,7 +352,7 @@ void Wheel::updateRotation() {
         // wheel is actually turning
         if (fabs(this->angularVelocity) > 0) {
             dMass mass;
-            dBodyGetMass(this->car->bodyId, &mass);
+            dBodyGetMass(this->car.bodyId, &mass);
             //float load = mass.mass * 9.8 / 4.0;
 
             // torque gets added in the opposite direction to the angular velocity
@@ -368,7 +367,7 @@ void Wheel::updateRotation() {
         // link this time frame to a global
         this->angularVelocity += (torque / this->inertia) * time;
     } else {
-        this->angularVelocity = this->car->getSpeed() / this->radius;
+        this->angularVelocity = this->car.getSpeed() / this->radius;
     }
 
     // Add brake torque
@@ -403,7 +402,7 @@ float Wheel::calculateBrakeTorque() {
 }
 
 float Wheel::calculateSlip() {
-    float carSpeed = this->car->getSpeed();
+    float carSpeed = this->car.getSpeed();
     float slip = 0;
     if (carSpeed != 0) {
         slip = (this->angularVelocity * this->radius - carSpeed) / fabs(carSpeed);

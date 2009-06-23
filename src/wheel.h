@@ -12,10 +12,9 @@
 
 class Car;
 
-
 class Wheel {
     public:
-        Wheel(int position, Dof * dof, Car * car);
+        Wheel(int position, Dof * dof, Car & car);
         ~Wheel();
         void render();
 
@@ -89,7 +88,7 @@ class Wheel {
         Dof * _brakeDof;
 
         // Pointer to the car this wheel is attached to
-        Car * car;
+        Car & car;
 
         // The current rotation of the wheel
         float _rotation;

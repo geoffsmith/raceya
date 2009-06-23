@@ -5,20 +5,23 @@
 #pragma once
 
 #include "curve.h"
-#include "car.h"
 
 class Car;
 
 class Engine {
     public:
-        Engine(Car * car);
+        Engine(Car & car);
 
         // Setters
-        void setMass(float mass);
-        void setRpm(float maxRpm, float idleRpm, float stallRpm, float startRpm);
-        void setDifferential(float ratio);
-        void setTorqueCurve(Curve & curve, float maxTorque);
-        void setRpm(float rpm);
+        void setMass(const float mass);
+        void setRpm(
+                const float maxRpm, 
+                const float idleRpm, 
+                const float stallRpm, 
+                const float startRpm);
+        void setDifferential(const float ratio);
+        void setTorqueCurve(const Curve & curve, const float maxTorque);
+        void setRpm(const float rpm);
 
         // Getters
         float & getCurrentRpm();
@@ -43,10 +46,10 @@ class Engine {
         void pressAccelerator();
         void releaseAccelerator();
 
-        void print();
+        void print() const;
 
     private:
-        Car * car;
+        Car & car;
 
         // The engine mass
         float _mass;
@@ -94,9 +97,10 @@ class Engine {
 
 class Gearbox {
     public:
-        Gearbox();
+        Gearbox(Car & car);
         ~Gearbox();
 
+        Gearbox(const Gearbox & other);
         Gearbox & operator=(const Gearbox & other);
 
         // Get the current gear ratio
@@ -117,7 +121,7 @@ class Gearbox {
         // Set the shift up / down rpms
         void setShiftRpms(float up, float down);
 
-        void setCar(Car * car);
+        //void setCar(Car * car);
 
         // Print out this gearbox's settings
         void print();
@@ -132,7 +136,7 @@ class Gearbox {
         int _currentGear;
 
         // This gearbox's car
-        Car * _car;
+        Car & car;
 
         // Shift up and down
         void _shiftDown();

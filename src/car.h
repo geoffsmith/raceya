@@ -22,8 +22,6 @@
 #include "frame_timer.h"
 
 class Dof;
-class Engine;
-class Gearbox;
 class Wheel;
 
 class Car {
@@ -48,16 +46,14 @@ class Car {
         void setWheel(Wheel * wheel, int index);
         void setBodyArea(float area);
         void setDragCoefficient(float coefficient);;
-        void setEngine(Engine & engine);
-        void setGearbox(Gearbox & gearbox);
         void setDimensions(float height, float width, float length);
         void setCenter(float * center);
         void setMass(float mass, float * inertia);
         void setBrakeModel(Dof * brake);
 
         // Getters
-        Engine * getEngine();
-        Gearbox * getGearbox();
+        Engine & getEngine();
+        Gearbox & getGearbox();
         int getCurrentGear();
 
         // Calculate the current speed from the car body's velocity vector. Speed should
@@ -106,11 +102,11 @@ class Car {
         float _modelScale;
 
         // Engine related variables
-        Engine * _engine;
+        Engine _engine;
         bool _acceleratorPressed;
 
         // Gear related variables
-        Gearbox * _gearbox;
+        Gearbox gearbox;
         float _finalDriveAxisRatio;
         float * _gearRatios;
         int _numberOfGears;

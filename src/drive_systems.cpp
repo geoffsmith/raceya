@@ -1,22 +1,23 @@
 #include "drive_systems.h"
+#include "car.h"
 
 #include <iostream>
 
 using namespace std;
 
-Engine::Engine(Car * car) {
+Engine::Engine(Car & c) : car(c) {
     this->accelerator = 0;
-    this->car = car;
     this->tractionControl = 1;
     this->tractionControlDelta = 0.05;
 }
 
-void Engine::setMass(float mass) {
+void Engine::setMass(const float mass) {
     this->_mass = mass;
     this->_rpmDelta = 500;
 }
 
-void Engine::setRpm(float maxRpm, float idleRpm, float stallRpm, float startRpm) {
+void Engine::setRpm(const float maxRpm, const float idleRpm, const float stallRpm, 
+        const float startRpm) {
     this->_maxRpm = maxRpm;
     this->_idleRpm = idleRpm;
     this->_stallRpm = stallRpm;
@@ -26,7 +27,7 @@ void Engine::setRpm(float maxRpm, float idleRpm, float stallRpm, float startRpm)
     this->_currentRpm = startRpm;
 }
 
-void Engine::setRpm(float rpm) {
+void Engine::setRpm(const float rpm) {
     this->_currentRpm = rpm;
 
     if (this->_currentRpm < this->_idleRpm) {
@@ -34,16 +35,16 @@ void Engine::setRpm(float rpm) {
     }
 }
 
-void Engine::setDifferential(float ratio) {
+void Engine::setDifferential(const float ratio) {
     this->_differentialRatio = ratio;
 }
 
-void Engine::setTorqueCurve(Curve & curve, float maxTorque) {
+void Engine::setTorqueCurve(const Curve & curve, const float maxTorque) {
     this->_torqueCurve = curve;
     this->_maxTorque = maxTorque;
 }
 
-void Engine::print() {
+void Engine::print() const {
     cout << "RPM - max: " << this->_maxRpm << ", idle: " << this->_idleRpm;
     cout << ", stall: " << this->_stallRpm << ", start: " << this->_startRpm << endl;
 }
@@ -87,7 +88,7 @@ float Engine::calculateTorque(float rpm) {
 
 
     // Calculate the traction control needed
-    float slip = this->car->maxSlip();
+    float slip = this->car.maxSlip();
     if (slip > 0.8 && this->tractionControl > 0) {
         this->tractionControl -= this->tractionControlDelta;
     } else if (slip < 0.8 && this->tractionControl < 1) {
@@ -129,7 +130,7 @@ void Engine::releaseAccelerator() {
 /******************************************************************************
  * The gearbox
  *****************************************************************************/
-Gearbox::Gearbox() {
+Gearbox::Gearbox(Car & c) : car(c) {
     this->_gearRatios = NULL;
 
     // Set the current gear to neutral
@@ -140,7 +141,7 @@ Gearbox::~Gearbox() {
     if (this->_gearRatios != NULL) delete [] this->_gearRatios;
 }
 
-Gearbox & Gearbox::operator=(const Gearbox & other) {
+Gearbox::Gearbox(const Gearbox & other) : car(other.car) {
     this->_nGears = other._nGears;
     this->_gearRatios = new float[this->_nGears];
     for (int i = 0; i < this->_nGears; ++i) {
@@ -149,6 +150,11 @@ Gearbox & Gearbox::operator=(const Gearbox & other) {
 
     this->_shiftDownRpm = other._shiftDownRpm;
     this->_shiftUpRpm = other._shiftUpRpm;
+    this->_currentGear = -1;
+}
+
+Gearbox & Gearbox::operator=(const Gearbox & other) {
+    throw "Not implemented";
     return *this;
 }
 
@@ -164,10 +170,6 @@ void Gearbox::setGearRatio(int gear, float ratio) {
 void Gearbox::setShiftRpms(float up, float down) {
     this->_shiftUpRpm = up;
     this->_shiftDownRpm = down;
-}
-
-void Gearbox::setCar(Car * car) {
-    this->_car = car;
 }
 
 void Gearbox::print() {
@@ -190,16 +192,16 @@ float Gearbox::getCurrentRatio() {
 }
 
 void Gearbox::doShift() {
-    Engine * engine = this->_car->getEngine();
-    float currentRpm = engine->getCurrentRpm();
+    Engine & engine = this->car.getEngine();
+    float currentRpm = engine.getCurrentRpm();
     if (this->_currentGear == -1) {
         // If we have the min rpm, shift into first
-        if (currentRpm >= engine->getIdleRpm()) {
+        if (currentRpm >= engine.getIdleRpm()) {
             this->_currentGear = 1;
         }
     } else if (this->_currentGear == 1) {
         // Check if we need to shift down
-        if (currentRpm < engine->getIdleRpm()) {
+        if (currentRpm < engine.getIdleRpm()) {
             this->_currentGear = -1;
         } else if (currentRpm >= this->_shiftUpRpm) {
             this->_shiftUp();
@@ -219,12 +221,12 @@ void Gearbox::_shiftDown() {
     --this->_currentGear;
 
     // Reset the RPM to the top of the range
-    this->_car->getEngine()->getCurrentRpm() = this->_shiftUpRpm - 100;
+    this->car.getEngine().getCurrentRpm() = this->_shiftUpRpm - 100;
 }
 
 void Gearbox::_shiftUp() {
     ++this->_currentGear;
 
     // Reset the RPM to the bottom of the range
-    this->_car->getEngine()->getCurrentRpm() = this->_shiftDownRpm + 100;
+    this->car.getEngine().getCurrentRpm() = this->_shiftDownRpm + 100;
 }

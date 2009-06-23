@@ -9,7 +9,7 @@
 
 class Camera {
     public:
-        Camera(Car * playersCar);
+        Camera(Car & car);
 
         // Transform the scene to a view from the camera
         void viewTransform();
@@ -18,18 +18,19 @@ class Camera {
         void handleKeyPress(SDL_Event &event);
 
     private:
-        // At the moment the camera moves around the origin, so we need distance an rotations
-        float _distance;
-        float _rotationY;
-        float _rotationDelta;
+        // At the moment the camera moves around the origin, so we need distance an 
+        // rotations
+        float distance;
+        float rotationY;
+        float rotationDelta;
 
         // The target yaw angle from the car yaw
-        float _targetYawAngle;
-        float _targetYawModifier;
-        float _maxYawMovementPerFrame;
-        float _currentYawAngle;
-        void _calculateYawAngle();
+        float targetYawAngle;
+        float targetYawModifier;
+        float maxYawMovementPerFrame;
+        float currentYawAngle;
+        void calculateYawAngle();
 
         // The player's car, so we can follow it
-        Car * _playersCar;
+        Car & playersCar;
 };

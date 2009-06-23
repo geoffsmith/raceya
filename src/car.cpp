@@ -20,7 +20,7 @@
 using namespace std;
 using namespace boost::lambda;
 
-Car::Car() {
+Car::Car() : gearbox(*this), _engine(*this) {
     this->_modelScale = 1;
 
     this->_wheelDiameter = 0.645; // meters;
@@ -113,7 +113,7 @@ void Car::_updateEngine() {
     */
 
     // Since we have a new RPM, do a shift
-    this->_gearbox->doShift();
+    this->gearbox.doShift();
 }
 
 void Car::_updateComponents() {
@@ -193,7 +193,7 @@ void Car::handleKeyPress(SDL_Event &event) {
                     break;
                 case SDLK_UP:
                     this->_acceleratorPressed = true;
-                    this->_engine->pressAccelerator();
+                    this->_engine.pressAccelerator();
                     break;
                 case SDLK_DOWN:
                     this->pressBrake();
@@ -213,7 +213,7 @@ void Car::handleKeyPress(SDL_Event &event) {
                     break;
                 case SDLK_UP:
                     this->_acceleratorPressed = false;
-                    this->_engine->releaseAccelerator();
+                    this->_engine.releaseAccelerator();
                     break;
                 case SDLK_DOWN:
                     this->releaseBrake();
@@ -249,7 +249,7 @@ Vector Car::getPosition() {
 }
 
 float Car::getRPM() {
-    return this->_engine->getCurrentRpm();
+    return this->_engine.getCurrentRpm();
 }
 
 float * Car::getWheelPosition() {
@@ -308,28 +308,16 @@ void Car::setDragCoefficient(float coefficient) {
     this->_dragCoefficient = coefficient;
 }
 
-void Car::setEngine(Engine & engine) {
-    this->_engine = new Engine(this);
-    *(this->_engine) = engine;
-    this->_engine->print();
-}
-
-void Car::setGearbox(Gearbox & gearbox) {
-    this->_gearbox = new Gearbox();
-    *(this->_gearbox) = gearbox;
-    this->_gearbox->setCar(this);
-}
-
 void Car::setDimensions(float height, float width, float length) {
     dGeomBoxSetLengths(this->geomId, height, width, length);
 }
 
-Engine * Car::getEngine() {
+Engine & Car::getEngine() {
     return this->_engine;
 }
 
-Gearbox * Car::getGearbox() {
-    return this->_gearbox;
+Gearbox & Car::getGearbox() {
+    return this->gearbox;
 }
 
 void Car::setCenter(float * center) {
@@ -347,7 +335,7 @@ void Car::setMass(float mass, float * inertia) {
 }
 
 int Car::getCurrentGear() {
-    return this->_gearbox->getCurrentGear();
+    return this->gearbox.getCurrentGear();
 }
 
 void Car::pressBrake() {

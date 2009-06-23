@@ -16,21 +16,16 @@
 
 using namespace std;
 
-Camera::Camera(Car * playersCar) {
-    this->_playersCar = playersCar;
+Camera::Camera(Car & car) : 
+    distance(7), 
+    rotationY(30),
+    rotationDelta(10),
+    targetYawAngle(0),
+    maxYawMovementPerFrame(2),
+    currentYawAngle(180),
+    playersCar(car) {}
 
-    // Initialise the two rotations and distance
-    this->_distance = 7;
-    this->_rotationY = 30;
-    this->_rotationDelta = 10;
-
-    // Initalise yaw
-    this->_targetYawAngle = 0;
-    this->_currentYawAngle = 180;
-    this->_maxYawMovementPerFrame = 2;
-}
-
-void Camera::_calculateYawAngle() {
+void Camera::calculateYawAngle() {
     // First find the angle between the car direction and the X unit vector on the X/Z
     // plane
     float zUnit[] = { 0, 0, -1 };
@@ -41,7 +36,7 @@ void Camera::_calculateYawAngle() {
     float workingAngle;
 
     vector<float> v;
-    this->_playersCar->getVector(v);
+    this->playersCar.getVector(v);
     carXAxis[0] = v[0];
     carXAxis[1] = v[1];
     carXAxis[2] = v[2];
@@ -49,10 +44,10 @@ void Camera::_calculateYawAngle() {
     carAngle = angleInPlane(xUnit, carXAxis, zUnit, xUnit);
 
     // ... then add the target angle
-    targetAngle = carAngle + this->_targetYawAngle;
+    targetAngle = carAngle + this->targetYawAngle;
 
     // ... get the difference between the current and target angle
-    workingAngle = this->_currentYawAngle - targetAngle;
+    workingAngle = this->currentYawAngle - targetAngle;
 
     // We only want to move +/- 180, otherwise, we might try to go the long way round
     if (workingAngle > 180) {
@@ -62,25 +57,25 @@ void Camera::_calculateYawAngle() {
     }
 
     // ... clamp to maximum
-    if (fabs(workingAngle) > this->_maxYawMovementPerFrame) {
-        workingAngle = this->_maxYawMovementPerFrame * fabs(workingAngle) / workingAngle;
+    if (fabs(workingAngle) > this->maxYawMovementPerFrame) {
+        workingAngle = this->maxYawMovementPerFrame * fabs(workingAngle) / workingAngle;
     }
 
     // ... move it
-    this->_currentYawAngle -= workingAngle;
+    this->currentYawAngle -= workingAngle;
 }
 
 void Camera::viewTransform() {
     // Calculate the new yaw angle
-    this->_calculateYawAngle();
+    this->calculateYawAngle();
 
     // Rotate the scene for the camera
-    glTranslatef(0, 0, -1 * this->_distance);
-    glRotatef(this->_rotationY, 1, 0, 0);
-    glRotatef(this->_currentYawAngle - 90, 0, 1, 0);
+    glTranslatef(0, 0, -1 * this->distance);
+    glRotatef(this->rotationY, 1, 0, 0);
+    glRotatef(this->currentYawAngle - 90, 0, 1, 0);
 
     // Translate so that the player's car is the focus
-    Vector playerPosition = this->_playersCar->getPosition();
+    Vector playerPosition = this->playersCar.getPosition();
     glTranslatef(-1 * playerPosition[0], -1 * playerPosition[1], -1 * playerPosition[2]);
 }
 
@@ -89,22 +84,22 @@ void Camera::handleKeyPress(SDL_Event &event) {
         case SDL_KEYUP:
             switch (event.key.keysym.sym) {
                 case SDLK_j:
-                    this->_targetYawAngle -= this->_rotationDelta;
+                    this->targetYawAngle -= this->rotationDelta;
                     break;
                 case SDLK_l:
-                    this->_targetYawAngle += this->_rotationDelta;
+                    this->targetYawAngle += this->rotationDelta;
                     break;
                 case SDLK_i:
-                    this->_rotationY += this->_rotationDelta;
+                    this->rotationY += this->rotationDelta;
                     break;
                 case SDLK_k:
-                    this->_rotationY -= this->_rotationDelta;
+                    this->rotationY -= this->rotationDelta;
                     break;
                 case SDLK_o:
-                    this->_distance -= 1;
+                    this->distance -= 1;
                     break;
                 case SDLK_u:
-                    this->_distance += 1;
+                    this->distance += 1;
                     break;
                 default:
                     break;

@@ -109,7 +109,7 @@ Car * parseCar(string carPathString) {
         if (carIniFile.hasKey(s.str())) {
             p = (carPath / carIniFile[s.str()]).string();
             dof = new Dof(p, 0, false);
-            wheel = new Wheel(i, dof, car);
+            wheel = new Wheel(i, dof, *car);
             car->setWheel(wheel, i);
         } else {
             cout << "Wheel not found: " << s.str() << endl;
@@ -220,7 +220,7 @@ Car * parseCar(string carPathString) {
 }
 
 void parseEngine(Ini & ini, Car * car, path carPath) {
-    Engine engine(car);
+    Engine & engine = car->getEngine();
 
     // Get the engine variables
     engine.setMass(ini.getFloat("/engine/mass"));
@@ -237,11 +237,10 @@ void parseEngine(Ini & ini, Car * car, path carPath) {
             curve,
             ini.getFloat("/engine/max_torque"));
 
-    car->setEngine(engine);
     engine.print();
 
     // Set up the gearbox
-    Gearbox gearbox;
+    Gearbox & gearbox = car->getGearbox();
     int nGears = ini.getInt("/gearbox/gears");
     gearbox.setNGears(nGears);
     for (int i = 0; i < nGears; ++i) {
@@ -252,5 +251,4 @@ void parseEngine(Ini & ini, Car * car, path carPath) {
     gearbox.setShiftRpms(
             ini.getFloat("/engine/shifting/shift_up_rpm"),
             ini.getFloat("/engine/shifting/shift_down_rpm"));
-    car->setGearbox(gearbox);
 }
