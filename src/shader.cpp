@@ -46,7 +46,7 @@ void Shader::parseShaderFile(string shaderPath) {
         // Create a new shader
         shader = new Shader();
         shader->name = name;
-        Shader::_shaders[name] = shader;
+        //Shader::_shaders[name] = shader;
 
         // Check if this shader is sky
         value = ini[*it + "/sky"];
@@ -97,6 +97,16 @@ void Shader::_parseLayers(string iniPath, Ini & ini, Shader & shader) {
                         layer->textureMapPath, 
                         layer->isMipmap);
             }
+
+            // Add this shader to the map indexed by this texture name
+            // .. strip the ending
+            std::string tmpName = value;
+            vector<string> parts;
+            trim(tmpName);
+            to_lower(tmpName);
+            split(parts, tmpName, is_any_of("."));
+            std::cout << "Adding shade: " << parts[0] << std::endl;
+            Shader::_shaders[parts[0]] = &shader;
         }
 
         // Get the culling value if there is one

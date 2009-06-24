@@ -95,7 +95,7 @@ float Engine::calculateTorque(float rpm) {
         this->tractionControl += this->tractionControlDelta;
     }
 
-    std::cout << "slip: " << slip << ", traction: " << this->tractionControl << std::endl;
+    //std::cout << "slip: " << slip << ", traction: " << this->tractionControl << std::endl;
 
     return this->_torqueCurve[rpm] * this->accelerator ;
 }

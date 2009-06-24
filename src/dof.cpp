@@ -103,6 +103,7 @@ void Dof::_parseMats(ifstream * file) {
     char fileString[255];
     int fileStringLength;
     token[4] = NULL;
+    std::cout << "DOF: " << this->_filePath << std::endl;
     path texturePath(this->_filePath);
     texturePath.remove_filename();
     string textureName;
@@ -143,7 +144,8 @@ void Dof::_parseMats(ifstream * file) {
                 parseString(file, fileString);
 
                 // Try and get the shader
-                mat->shader = Shader::getShader(mat->name);
+                //mat->shader = Shader::getShader(mat->name);
+                mat->shader = NULL;
             } else if (strcmp(token, "MCOL") == 0) {
                 // Contains the various material colors
                 parseVector<float>(file, mat->ambient, 4);
@@ -153,19 +155,23 @@ void Dof::_parseMats(ifstream * file) {
                 file->read((char *)&(mat->shininess), sizeof(float));
             } else if (strcmp(token, "MTEX") == 0) {
                 // Load the textures
-                file->read((char *)&(mat->nTextures), sizeof(int));
-                mat->textures = new Texture *[mat->nTextures];
+                int nTextures = 0;
+                mat->nTextures = 0;
+                file->read((char *)&(nTextures), sizeof(int));
+                mat->textures = new Texture *[nTextures];
+                mat->nTextures = nTextures;
 
-                for (int j = 0; j < mat->nTextures; ++j) {
+                for (int j = 0; j < nTextures; ++j) {
                     fileStringLength = parseString(file, fileString);
 
-                    if (mat->shader != NULL) {
-                        //mat->textures[j] = mat->shader->layers[0]->texture;
-                    } else {
-                        textureName = (texturePath / fileString).string();
-                        mat->textures[j] = Texture::getOrMakeTexture(textureName);
-                    }
 
+                    textureName = (texturePath / fileString).string();
+
+                    // Try and get the shader
+                    mat->shader = Shader::getShader(fileString);
+
+                    // If all else fails try and load the image
+                    mat->textures[j] = Texture::getOrMakeTexture(textureName);
                 }
             } else if (strcmp(token, "MUVW") == 0) {
                 file->read((char *)&(mat->uvwUoffset), sizeof(float));

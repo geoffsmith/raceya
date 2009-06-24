@@ -2,6 +2,7 @@
 #include "logger.h"
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#include <iostream>
 
 map<string, Texture * > Texture::textures;
 
@@ -19,6 +20,7 @@ void Texture::_loadTexture(string name) {
     GLenum textureFormat = 0;
     unsigned int error = glGetError();
     
+    std::cout << "Reading file: " << name << std::endl;
     if ((surface = IMG_Load(name.c_str()))) {
         SDL_SetColorKey(surface, SDL_SRCCOLORKEY, SDL_MapRGB(surface->format, 255, 0, 255));
         alphaSurface = SDL_DisplayFormatAlpha(surface);
