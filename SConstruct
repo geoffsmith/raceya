@@ -1,7 +1,8 @@
 #libs = ['SDLmain', 'SDL_ttf', 'SDL', 'glut', 'GLU', 'GL', 'jpeg', 'boost_filesystem-mt', 'boost_system-mt', 'boost_iostreams-mt', 'ftgl', 'freetype', 'ode']
-libs = ['jpeg', 'boost_filesystem-xgcc40-mt', 'boost_system-xgcc40-mt', 'boost_iostreams-xgcc40-mt', 'SDL_ttf', 'SDL_image', 'SDLmain', 'SDL']
+libs = ['jpeg', 'boost_filesystem-mt', 'boost_iostreams-mt', 'boost_system-mt', 'GL', 'GLU', 'SDL_image', 'SDL_ttf']
 
-env = Environment(LIBPATH='/opt/local/lib/', CPPFLAGS='-g -I/opt/local/include/ -I/opt/local/include/boost-1_39/ -Wall', FRAMEWORKS=['Cocoa', 'OpenGL'])
+env = Environment(LIBPATH='/usr/lib/', CPPFLAGS='-D GL_GLEXT_PROTOTYPES -g -I/usr/include/ -Wall')
+#define GL_GLEXT_PROTOTYPES
 conf = Configure(env)
 
 for lib in libs:
@@ -10,12 +11,12 @@ for lib in libs:
 		Exit(1)
 
 # Get SDL
-#env.ParseConfig('/opt/local/bin/sdl-config --cflags')
-#env.ParseConfig('/opt/local/bin/sdl-config --libs')
+env.ParseConfig('sdl-config --cflags')
+env.ParseConfig('sdl-config --libs')
 
 # and ode
-env.ParseConfig('/usr/local/bin/ode-config --cflags')
-env.ParseConfig('/usr/local/bin/ode-config --libs')
+env.ParseConfig('ode-config --cflags')
+env.ParseConfig('ode-config --libs')
 env.Append(LIBS = ['ode'])
 
 

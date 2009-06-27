@@ -6,7 +6,7 @@
 #include <sstream>
 #include <vector>
 #include <deque>
-#include <OpenGL/gl.h>
+#include <GL/gl.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 

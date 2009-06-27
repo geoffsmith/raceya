@@ -10,7 +10,7 @@
 #include "lib.h"
 #include "vector.h"
 
-#include <OpenGL/gl.h>
+#include <GL/gl.h>
 #include <iostream>
 #include <math.h>
 

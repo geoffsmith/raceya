@@ -22,8 +22,8 @@ Wheel::Wheel(int position, Dof * dof, Car & c) : car(c) {
     this->geomId = dCreateCylinder(this->car.spaceId, 1, 1);
     dGeomSetBody(this->geomId, this->bodyId);
 
-    //this->suspensionJointId = dJointCreateSlider(Track::worldId, 0);
-    this->suspensionJointId = dJointCreatePiston(Track::worldId, 0);
+    this->suspensionJointId = dJointCreateSlider(Track::worldId, 0);
+    //this->suspensionJointId = dJointCreatePiston(Track::worldId, 0);
     dJointAttach(this->suspensionJointId, this->bodyId, this->car.bodyId);
 
     // Initialise the lateral pacejka constants with 15 0s
@@ -76,8 +76,8 @@ void Wheel::turn(float turn) {
 void Wheel::setAngle(float angle) {
     this->_wheelAngle = -angle * 0.0174532925;
 
-    dJointSetPistonParam(this->suspensionJointId, dParamHiStop2, this->_wheelAngle);
-    dJointSetPistonParam(this->suspensionJointId, dParamLoStop2, this->_wheelAngle);
+    //dJointSetPistonParam(this->suspensionJointId, dParamHiStop2, this->_wheelAngle);
+    //dJointSetPistonParam(this->suspensionJointId, dParamLoStop2, this->_wheelAngle);
 }
 
 float Wheel::getAngle() {
@@ -95,24 +95,25 @@ void Wheel::setCarPosition(const float * position) {
             this->_wheelCenter[0] + position[0], 
             this->_wheelCenter[1] + position[1], 
             this->_wheelCenter[2] + position[2]);
-    dJointSetPistonAnchor(this->suspensionJointId, 
+    /*dJointSetPistonAnchor(this->suspensionJointId, 
             this->_wheelCenter[0] + position[0], 
             this->_wheelCenter[1] + position[1], 
             this->_wheelCenter[2] + position[2]);
+            */
     /*
     dJointSetSliderAxis(this->suspensionJointId, 0, 1, 0);
     dJointSetSliderParam(this->suspensionJointId, dParamHiStop, 0);
     dJointSetSliderParam(this->suspensionJointId, dParamLoStop, -0.15);
     dJointSetSliderParam(this->suspensionJointId, dParamCFM, 1);
     */
-    dJointSetPistonAxis(this->suspensionJointId, 0, 1, 0);
-    dJointSetPistonParam(this->suspensionJointId, dParamHiStop, 0);
-    dJointSetPistonParam(this->suspensionJointId, dParamLoStop, -0.15);
+    //dJointSetPistonAxis(this->suspensionJointId, 0, 1, 0);
+    //dJointSetPistonParam(this->suspensionJointId, dParamHiStop, 0);
+    //dJointSetPistonParam(this->suspensionJointId, dParamLoStop, -0.15);
 
-    dJointSetPistonParam(this->suspensionJointId, dParamHiStop2, 0);
-    dJointSetPistonParam(this->suspensionJointId, dParamLoStop2, 0);
+    //dJointSetPistonParam(this->suspensionJointId, dParamHiStop2, 0);
+    //dJointSetPistonParam(this->suspensionJointId, dParamLoStop2, 0);
 
-    dJointSetPistonParam(this->suspensionJointId, dParamCFM, 1);
+    //dJointSetPistonParam(this->suspensionJointId, dParamCFM, 1);
 }
 
 void Wheel::setCenter(float * center) {

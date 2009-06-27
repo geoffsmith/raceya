@@ -14,8 +14,8 @@
 #include "texture.h"
 #include "opengl_state.h"
 
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include <string>
 #include <boost/ptr_container/ptr_list.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
@@ -61,7 +61,7 @@ class Geob {
         Dof * dof;
 
         // Generate the vao
-        void Geob::generateVAO();
+        void generateVAO();
 
         // Get the shader for this geob, NULL if there isn't one
         Shader * getShader();

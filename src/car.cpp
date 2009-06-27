@@ -6,8 +6,8 @@
 #include "logger.h"
 
 #include <SDL/SDL.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include <iostream>
 #include <math.h>
 #include <boost/lambda/lambda.hpp>
@@ -128,7 +128,6 @@ void * Car::update(void * _car) {
     Car * car = (Car *)_car;
     float d;
     while (true) {
-
         car->timer->newFrame();
         car->_updateComponents();
         // TODO: Sort out this constant step business
@@ -141,11 +140,10 @@ void * Car::update(void * _car) {
 
         // Delete the joints
         for (int i = 0; i < car->_nJoints; ++i) {
-            dJointDestroy(car->_joints[i]);
+            //dJointDestroy(car->_joints[i]);
         }
 
         d = car->timer->getTimeTillNext();
-        SDL_Delay(d);
     }
 }
 

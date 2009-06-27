@@ -41,7 +41,7 @@ class Quaternion {
         Quaternion & operator+=(const Quaternion & rhs);
 
         // Add to quaternions
-        void Quaternion::add(Quaternion & quaternion);
+        void add(Quaternion & quaternion);
 
         void print() const;
 };

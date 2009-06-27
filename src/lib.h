@@ -1,8 +1,8 @@
 #pragma once
 
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <GLUT/glut.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
 #include <SDL/SDL.h>
 #include <string>
 

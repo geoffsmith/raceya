@@ -3,8 +3,8 @@
 #include "texture.h"
 #include "lib.h"
 
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include <iostream>
 
 using namespace std;

@@ -13,7 +13,7 @@
 
 class Vector;
 
-#include <OpenGL/gl.h>
+#include <GL/gl.h>
 #include <ode/ode.h>
 
 class Matrix {
@@ -47,7 +47,7 @@ class Matrix {
         void multiplyMatrix(float * matrix);
         
         // Calculate the minor matrix of order - 1
-        void minor(Matrix & minor, int row, int column);
+        void minor_(Matrix & minor, int row, int column);
 
         // Calculate the determinant of this matrix
         float determinant();
@@ -76,7 +76,7 @@ class Matrix {
 // NOTE: Assumes square matrix of same order as vector
 inline Vector operator *(const Vector & v, const Matrix & m);
 inline Vector operator *(const Matrix & m, const Vector & v);
-inline Matrix operator*(const Matrix & m, const Matrix & m);
+inline Matrix operator*(const Matrix & m, const Matrix & n);
 inline Matrix operator*(const Matrix & m, const float s);
 
 /******************************************************************************

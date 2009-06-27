@@ -1,7 +1,7 @@
 #include "shader.h"
 #include "lib.h"
 
-#include <OpenGL/gl.h>
+#include <GL/gl.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <iostream>

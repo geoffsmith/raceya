@@ -12,6 +12,8 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 #include <math.h>
+#define GL_GLEXT_PROTOTYPES
+#include <GL/glext.h>
 
 using namespace std;
 using namespace boost;
@@ -342,8 +344,8 @@ void Dof::_renderGeob(Geob & geob) {
 
     // Bind to VAO
     //glBindVertexArrayAPPLE(geob->vao);
-    glBindBuffer(GL_ARRAY_BUFFER, geob.vertexVBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geob.indexVBO);
+    glBindBufferARB(GL_ARRAY_BUFFER, geob.vertexVBO);
+    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, geob.indexVBO);
     glVertexPointer(3, GL_FLOAT, 0, (GLvoid*)((char*)NULL));
     glNormalPointer(GL_FLOAT, 0, 
             (GLvoid*)((char*)NULL + geob.nVertices * 3 * sizeof(float)));
@@ -603,7 +605,7 @@ void Geob::generateVAO() {
 
     // SEt up the VAO
     glGenBuffers(1, &(this->vertexVBO));
-    glBindBuffer(GL_ARRAY_BUFFER, this->vertexVBO);
+    glBindBufferARB(GL_ARRAY_BUFFER, this->vertexVBO);
     const GLsizeiptr vSize = this->nVertices * 3 * sizeof(float);
     const GLsizeiptr nSize = this->nNormals * 3 * sizeof(float);
     const GLsizeiptr tSize = this->nTextureCoords * 2 * sizeof(float);
@@ -621,7 +623,7 @@ void Geob::generateVAO() {
     glBufferSubData(GL_ARRAY_BUFFER, vSize + nSize, tSize, this->textureCoords);
 
     glGenBuffers(1, &(this->indexVBO));
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->indexVBO);
+    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, this->indexVBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->nIndices * sizeof(unsigned short), this->indices, GL_STATIC_DRAW);
 }
 

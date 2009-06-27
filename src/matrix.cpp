@@ -325,7 +325,7 @@ float* Matrix::getMatrix() {
     return this->_matrix;
 }
 
-void Matrix::minor(Matrix & minor, int row, int column) {
+void Matrix::minor_(Matrix & min, int row, int column) {
     int p, q;
 
     p = q = 0;
@@ -335,7 +335,7 @@ void Matrix::minor(Matrix & minor, int row, int column) {
             q = 0;
             for (int j = 0; j < this->order; ++j) {
                 if (j != column) {
-                    minor[q * minor.order + p] = this->_matrix[j * this->order + i];
+                    min[q * min.order + p] = this->_matrix[j * this->order + i];
                     ++q;
                 }
             }
@@ -362,12 +362,12 @@ float Matrix::determinant() {
         return this->_matrix[0] * this->_matrix[3] - this->_matrix[1] * this->_matrix[2];
     }
 
-    Matrix minor(this->order - 1);
+    Matrix min(this->order - 1);
 
     for (int i = 0; i < 1; ++i) {
         for (int j = 0; j < this->order; ++j) {
-            this->minor(minor, i, j);
-            factor = minor.determinant();
+            this->minor_(min, i, j);
+            factor = min.determinant();
             result += pow(-1, i + j)  
                 * this->_matrix[j * this->order + i] 
                 * factor;
@@ -390,12 +390,12 @@ Matrix Matrix::inverse() {
     float determinant = this->determinant();
     determinant = 1.0 / this->determinant();
 
-    Matrix minor(this->order - 1);
+    Matrix min(this->order - 1);
 
     for (int i = 0; i < this->order; ++i) {
         for (int j = 0; j < this->order; ++j) {
-            this->minor(minor, j, i);
-            result[j * this->order + i] = determinant * minor.determinant();
+            this->minor_(min, j, i);
+            result[j * this->order + i] = determinant * min.determinant();
             if ((i + j) % 2 == 1) {
                 result[j * this->order + i] = -result[j * this->order + i];
             }

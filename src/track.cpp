@@ -3,7 +3,7 @@
 #include "closest_point.h"
 #include "logger.h"
 
-#include <OpenGL/gl.h>
+#include <GL/gl.h>
 #include <unistd.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -76,7 +76,7 @@ void Track::initCollisionDetection() {
                 vertices[k * 4 + 3] = 1;
             }
 
-            dTriIndex * indices = new dTriIndex[geob.nIndices];
+            int * indices = new int[geob.nIndices];
             for (int k = 0; k < geob.nIndices; ++k) {
                 indices[k] = geob.indices[k];
             }

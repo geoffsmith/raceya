@@ -5,8 +5,8 @@
 #include <config.h>
 #endif
 
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 
@@ -126,7 +126,10 @@ void reshape(int w, int h) {
 
 void display(void) {
     // Render the scene
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    std::cout << "Clearing" << std::endl;
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT);
 
     glColor3f(1.0, 1.0, 1.0);
     glLoadIdentity(); // clear the matrix

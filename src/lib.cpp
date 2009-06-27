@@ -3,10 +3,6 @@
 
 #include <math.h>
 #include <iostream>
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <GLUT/glut.h>
-#include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 
 

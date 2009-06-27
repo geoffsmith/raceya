@@ -46,9 +46,9 @@ class Track {
 
         // Load the special ini file which includes: grid positions, camera positions, 
         // high level track variables (sun position and colour)
-        void Track::loadSpecialIni();
+        void loadSpecialIni();
 
         // Initialise the collision detection, this uses the built in ODE collision 
         // detection for now. 
-        void Track::initCollisionDetection();
+        void initCollisionDetection();
 };
