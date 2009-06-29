@@ -131,11 +131,11 @@ void * Car::update(void * _car) {
         car->timer->newFrame();
         car->_updateComponents();
         // TODO: Sort out this constant step business
-        car->_addForces();
-        car->_updateCollisionBox();
+        //car->_addForces();
+        //car->_updateCollisionBox();
 
         car->mutex.lock();
-        dWorldStep(Track::worldId, car->timer->getTargetSeconds());
+        //dWorldStep(Track::worldId, car->timer->getTargetSeconds());
         car->mutex.unlock();
 
         // Delete the joints

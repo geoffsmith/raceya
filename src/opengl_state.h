@@ -61,6 +61,6 @@ class OpenGLState {
         int lastUsedTextures;
 
         // Set an array of textures
-        void setTextures(list<ShaderLayer *> * layers);
+        void setTextures(const list<ShaderLayer *> & layers);
         void setTexture(int texture);
 };

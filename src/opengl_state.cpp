@@ -6,6 +6,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <iostream>
+#include <boost/foreach.hpp>
 
 using namespace std;
 
@@ -158,16 +159,12 @@ void OpenGLState::setTexture(int texture) {
     this->lastUsedTextures = 1;
 }
 
-void OpenGLState::setTextures(list<ShaderLayer *> * layers) {
-    Texture * texture;
-    ShaderLayer * layer;
+void OpenGLState::setTextures(const list<ShaderLayer *> & layers) {
     int index = 0;
-    list<ShaderLayer *>::iterator it;
 
     // Iterate through the textures to set
-    for (it = layers->begin(); it != layers->end(); ++it) {
-        layer = *it;
-        texture = layer->texture;
+    BOOST_FOREACH (ShaderLayer * layer, layers) {
+        Texture * texture = layer->texture;
 
         // Skip if the current texture is not valid, NOTE, this will skip ++index too
         if (texture == NULL) {

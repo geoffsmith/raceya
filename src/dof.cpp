@@ -12,7 +12,6 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 #include <math.h>
-#define GL_GLEXT_PROTOTYPES
 #include <GL/glext.h>
 
 using namespace std;
@@ -75,12 +74,6 @@ Dof::Dof(string filePath, int flags, bool perGeobDisplayList) {
             this->geobs.end(), 
             std::mem_fun_ref(&Geob::generateVAO));
 
-    /*
-    for (int i = 0; i < this->_nGeobs; ++i) {
-        this->_geobs[i].generateVAO();
-    }
-    */
-    
     // Calculate bounding box
     this->_calculateBoundingBox();
 
@@ -105,7 +98,7 @@ void Dof::_parseMats(ifstream * file) {
     char fileString[255];
     int fileStringLength;
     token[4] = NULL;
-    std::cout << "DOF: " << this->_filePath << std::endl;
+    //std::cout << "DOF: " << this->_filePath << std::endl;
     path texturePath(this->_filePath);
     texturePath.remove_filename();
     string textureName;
@@ -144,10 +137,6 @@ void Dof::_parseMats(ifstream * file) {
                 mat->name = fileString;
                 // Ignore the material class
                 parseString(file, fileString);
-
-                // Try and get the shader
-                //mat->shader = Shader::getShader(mat->name);
-                mat->shader = NULL;
             } else if (strcmp(token, "MCOL") == 0) {
                 // Contains the various material colors
                 parseVector<float>(file, mat->ambient, 4);
@@ -157,20 +146,20 @@ void Dof::_parseMats(ifstream * file) {
                 file->read((char *)&(mat->shininess), sizeof(float));
             } else if (strcmp(token, "MTEX") == 0) {
                 // Load the textures
-                int nTextures = 0;
-                mat->nTextures = 0;
-                file->read((char *)&(nTextures), sizeof(int));
-                mat->textures = new Texture *[nTextures];
-                mat->nTextures = nTextures;
+                file->read((char *)&(mat->nTextures), sizeof(int));
+                mat->textures = new Texture *[mat->nTextures];
 
-                for (int j = 0; j < nTextures; ++j) {
+                for (int j = 0; j < mat->nTextures; ++j) {
                     fileStringLength = parseString(file, fileString);
 
 
                     textureName = (texturePath / fileString).string();
 
                     // Try and get the shader
-                    mat->shader = Shader::getShader(fileString);
+                    Shader * tmpShader = Shader::getShader(fileString);
+                    if (tmpShader != NULL) {
+                        mat->shader = tmpShader;
+                    }
 
                     // If all else fails try and load the image
                     mat->textures[j] = Texture::getOrMakeTexture(textureName);
@@ -401,7 +390,7 @@ void Dof::loadMaterial(Mat & mat) {
         for (int i = 0; i < mat.shader->nLayers; ++i) {
             layers.push_back(mat.shader->layers[i]);
         }
-        OpenGLState::global.setTextures(&layers);
+        OpenGLState::global.setTextures(layers);
     }
 
     if (mat.shader != NULL) { 
@@ -635,6 +624,7 @@ Shader * Geob::getShader() {
 
 Mat::Mat() {
     this->shader = NULL;
+    this->nTextures = 0;
 }
 
 Mat::~Mat() {}

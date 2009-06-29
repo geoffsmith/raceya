@@ -105,7 +105,7 @@ void Shader::_parseLayers(string iniPath, Ini & ini, Shader & shader) {
             trim(tmpName);
             to_lower(tmpName);
             split(parts, tmpName, is_any_of("."));
-            std::cout << "Adding shade: " << parts[0] << std::endl;
+            std::cout << "Adding shader: " << parts[0] << std::endl;
             Shader::_shaders[parts[0]] = &shader;
         }
 
@@ -229,7 +229,6 @@ void Shader::_checkForTexGen(Ini & ini, string type, int & result) {
 Shader * Shader::getShader(string name) {
     map<string, Shader * >::iterator it;
     vector<string> parts;
-    string tmp;
     // Strip the file type from the file name
     trim(name);
     to_lower(name);
@@ -237,18 +236,20 @@ Shader * Shader::getShader(string name) {
 
     // Check if we have this shader, based on the material name
     for (it = Shader::_shaders.begin(); it != Shader::_shaders.end(); ++it) {
+        std::string tmp;
         // Strip the "shader_ part out"
-        if (it->first.size() < 7) {
-            //cout << "out of range shader: " << it->first << endl;
-            continue;
+        if (it->first.size() > 7 && it->first.substr(7) == "shader_") {
+            tmp = it->first.substr(7);
+        } else {
+            tmp = it->first;
         }
-        tmp = it->first.substr(7);
+
         if (tmp == parts[0]) {
             return Shader::_shaders[it->first];
         }
     }
 
-    cout << "Shader NOT found: " << name << endl;
+    cout << "Shader NOT found: " << name  << "(" << parts[0] << ")" << endl;
     return NULL;
 }
 

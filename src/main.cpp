@@ -126,7 +126,6 @@ void reshape(int w, int h) {
 
 void display(void) {
     // Render the scene
-    std::cout << "Clearing" << std::endl;
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClear(GL_COLOR_BUFFER_BIT);
     glClear(GL_DEPTH_BUFFER_BIT);
