@@ -3,6 +3,8 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <iostream>
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 
 map<string, Texture * > Texture::textures;
 
@@ -20,8 +22,8 @@ void Texture::_loadTexture(string name) {
     GLenum textureFormat = 0;
     unsigned int error = glGetError();
     
-    std::cout << "Reading file: " << name << std::endl;
-    if ((surface = IMG_Load(name.c_str()))) {
+    std::string realFilename = Texture::findRealFileName(name);
+    if ((surface = IMG_Load(realFilename.c_str()))) {
         SDL_SetColorKey(surface, SDL_SRCCOLORKEY, SDL_MapRGB(surface->format, 255, 0, 255));
         alphaSurface = SDL_DisplayFormatAlpha(surface);
 
@@ -115,6 +117,7 @@ void Texture::_loadTexture(string name) {
         // Free the surface
         SDL_FreeSurface(surface);
     } else {
+        std::cout << "Error loading texture (" << name << "): " << IMG_GetError() << endl;
         Logger::debug << "Error loading texture (" << name << "): " << IMG_GetError() << endl;
         texture = 0;
     }
@@ -133,4 +136,43 @@ Texture * Texture::getOrMakeTexture(string name, bool isMipmap) {
     }
 
     return texture;
+}
+
+std::string Texture::findRealFileName(const std::string originalFile) {
+    // Check if the path exists straight off
+    if (boost::filesystem::exists(originalFile)) {
+        return originalFile;
+    }
+
+    // Get the path of the file and check it exists
+    boost::filesystem::path originalPath(originalFile);
+    originalPath.remove_filename();
+
+    if (!boost::filesystem::exists(originalPath)) return originalFile;
+
+    // Create a lower case version of the original path so that we can compare
+    std::string originalLowerPath = originalFile;
+    boost::to_lower(originalLowerPath);
+
+    // We List the contents of the directory and check each file in lowercase
+    boost::filesystem::directory_iterator endIt;
+    for (boost::filesystem::directory_iterator it(originalPath); it != endIt; ++it) {
+        // Skip if it is a subdirectory
+        if (boost::filesystem::is_directory(it->status())) continue;
+
+        // Get lowercase version of this file
+        std::string path = it->path().string();
+        boost::to_lower(path);
+
+        //std::cout << path << std::endl;
+        //std::cout << originalLowerPath << std::endl;
+
+        if (originalLowerPath == path) {
+            return it->path().string();
+        }
+    }
+
+    // If we don't find anything, just return the original path and let 
+    // SDL throw the error
+    return originalFile;
 }

@@ -137,6 +137,9 @@ void Dof::_parseMats(ifstream * file) {
                 mat->name = fileString;
                 // Ignore the material class
                 parseString(file, fileString);
+
+                // Look for a shader that matches the material name
+                mat->shader = Shader::getShader(mat->name);
             } else if (strcmp(token, "MCOL") == 0) {
                 // Contains the various material colors
                 parseVector<float>(file, mat->ambient, 4);
@@ -339,13 +342,13 @@ void Dof::_renderGeob(Geob & geob) {
     glNormalPointer(GL_FLOAT, 0, 
             (GLvoid*)((char*)NULL + geob.nVertices * 3 * sizeof(float)));
 
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     for (int i = 0; i < OpenGLState::global.lastUsedTextures; ++i) {
 
         glClientActiveTexture(GL_TEXTURE0 + i);
         glTexCoordPointer(2, GL_FLOAT, 0, (GLvoid*)((char*)NULL + geob.nVertices * 3 * sizeof(float) + geob.nNormals * 3 * sizeof(float)));
     }
 
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);

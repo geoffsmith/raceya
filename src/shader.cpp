@@ -46,7 +46,7 @@ void Shader::parseShaderFile(string shaderPath) {
         // Create a new shader
         shader = new Shader();
         shader->name = name;
-        //Shader::_shaders[name] = shader;
+        Shader::_shaders[name] = shader;
 
         // Check if this shader is sky
         value = ini[*it + "/sky"];
@@ -105,7 +105,6 @@ void Shader::_parseLayers(string iniPath, Ini & ini, Shader & shader) {
             trim(tmpName);
             to_lower(tmpName);
             split(parts, tmpName, is_any_of("."));
-            std::cout << "Adding shader: " << parts[0] << std::endl;
             Shader::_shaders[parts[0]] = &shader;
         }
 
@@ -238,7 +237,7 @@ Shader * Shader::getShader(string name) {
     for (it = Shader::_shaders.begin(); it != Shader::_shaders.end(); ++it) {
         std::string tmp;
         // Strip the "shader_ part out"
-        if (it->first.size() > 7 && it->first.substr(7) == "shader_") {
+        if (boost::starts_with(it->first, "shader_")) {
             tmp = it->first.substr(7);
         } else {
             tmp = it->first;

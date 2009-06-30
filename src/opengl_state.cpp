@@ -39,8 +39,8 @@ void OpenGLState::reset() {
     // NOTE: It looks like it's quicker just to enable this from the start and not
     // keep enabling / disabling all the time. However, alpha testing seems to be
     // really slow
-    glDisable(GL_ALPHA_TEST);
-    //glEnable(GL_ALPHA_TEST);
+    //glDisable(GL_ALPHA_TEST);
+    glEnable(GL_ALPHA_TEST);
     this->alphaFunction = 1;
 
     // Set up the multi texture stuff
@@ -91,8 +91,6 @@ void OpenGLState::setCulling(int culling) {
 }
 
 void OpenGLState::setAlpha(int function, int value) {
-    GLenum func;
-    GLclampf ref;
 
     // Check if the function is different
     if (function != this->alphaFunction) {
@@ -104,6 +102,7 @@ void OpenGLState::setAlpha(int function, int value) {
         }
 
         // Change the actual function
+        GLenum func;
         switch (function) {
             case 0:
                 func = GL_NEVER;
@@ -135,7 +134,8 @@ void OpenGLState::setAlpha(int function, int value) {
         }
 
         // Get the clamp
-        ref = value;
+        GLclampf ref = value / 255.0;
+        std::cout << "clamp: " << ref << std::endl;
 
         // Set up the new function
         glAlphaFunc(func, ref);
@@ -200,7 +200,6 @@ void OpenGLState::setTextures(const list<ShaderLayer *> & layers) {
 
         ++index;
     }
-
 
     // Now go through disabling anything thats left
     for (int i = index; i < this->lastUsedTextures; ++i) {

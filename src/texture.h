@@ -35,6 +35,10 @@ class Texture {
 	static Texture * getOrMakeTexture(string name, bool isMipmap=true);
 
     private:
-	// Load a texture into a texture object
-	void _loadTexture(string name);
+        // Load a texture into a texture object
+        void _loadTexture(string name);
+
+        // The filenames given by the shader are case insensitive, so for case-sensitive
+        // filesystems, we need to search for the file
+        static std::string findRealFileName(std::string);
 };

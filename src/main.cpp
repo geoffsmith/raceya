@@ -79,10 +79,10 @@ void checkExtensions() {
     // Not using any extensions at the moment
     
     // Check for GL_ARB_point_sprite
-    //if (strstr(extensions, "GL_ARB_pixel_buffer_object") == NULL) {
-        //cout << "GL_ARB_pixel_buffer_object not available" << endl;
-        //exit(1);
-    //}
+    if (strstr(extensions, "GL_ARB_multitexture") == NULL) {
+        cout << "GL_ARB_multitexture not available" << endl;
+        exit(1);
+    }
 }
 
 void setupLighting() {
